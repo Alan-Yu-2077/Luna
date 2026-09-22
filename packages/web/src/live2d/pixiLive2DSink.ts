@@ -322,11 +322,16 @@ export async function createPixiLive2DSink(
     }
   ).focusController;
   let gazeOn = flagOn(GAZE_KEY);
+  // v0.46.4 (owner, from the lobby): a sleeping girl does not turn her head after the cursor. While
+  // the state is `sleeping` — the lobby, a dream — the pointer is ignored and the focus eases back to
+  // centre; the moment she wakes the next mouse move picks her gaze up again. Transient, so it never
+  // touches the persisted gaze-follow preference.
+  let asleep = false;
   const HEAD_FRAC = 0.18;
   const clamp1 = (v: number): number => Math.max(-1, Math.min(1, v));
   if (!gazeOn) focusController.focus(0, 0, true);
   window.addEventListener('pointermove', (e) => {
-    if (!gazeOn || drag) return;
+    if (!gazeOn || drag || asleep) return;
     const rect = canvas.getBoundingClientRect();
     const headX = rect.left + model.x + model.width / 2;
     const headY = rect.top + model.y + model.height * HEAD_FRAC;
@@ -362,7 +367,11 @@ export async function createPixiLive2DSink(
 
   return {
     setExpression: (key, emotion) => faceVm.setExpression(key, emotion),
-    setState: (state: Live2DState) => faceVm.setState(state),
+    setState: (state: Live2DState) => {
+      asleep = state === 'sleeping';
+      if (asleep) focusController.focus(0, 0); // ease home; the wake resumes tracking on its own
+      faceVm.setState(state);
+    },
     setMouth: (frame) => faceVm.setMouth(frame),
     clear: () => faceVm.clear(),
     // v0.25.2: FLIP-style layout glide. Capture the model's screen-space x, run the layout change
