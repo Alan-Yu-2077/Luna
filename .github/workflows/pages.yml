@@ -1,14 +1,19 @@
 name: Pages
 
-# Deploys the engineering showcase (showcase/engineering/ — the agent-harness map + component
-# decks) to GitHub Pages as the site root. Pure static upload, no build step. Luna TV (the
-# earlier showcase/ CRT-channel page) is retired — see the commit that removed it.
+# v0.46.2: one artifact, two sites. The showcase replay (packages/web's demo.html — the real front
+# end on a tape, see ARCHITECTURE.md "The showcase replay") is built here and becomes the site
+# root; the engineering map (showcase/engineering/) is copied under /engineering/ by the same
+# build script. So a change to either — or to the protocol the tape is validated against —
+# redeploys both.
 
 on:
   push:
     branches: [main]
     paths:
+      - 'packages/web/**'
+      - 'packages/protocol/**'
       - 'showcase/engineering/**'
+      - 'bun.lock'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -29,9 +34,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build the showcase (replay at /, engineering map at /engineering/)
+        run: bun run --cwd packages/web build:demo
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: showcase/engineering
+          path: packages/web/dist-demo
       - id: deployment
         uses: actions/deploy-pages@v4

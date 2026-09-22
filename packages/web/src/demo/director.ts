@@ -23,6 +23,29 @@ export type Director = {
 export const TYPE_MS = 45;
 export const TYPE_LEAD_MS = 500;
 
+// v0.46.2: the way out of the replay — a muted corner link to the engineering map, shown only while
+// the lobby is up (the session is hers; the link belongs to the front door). Mounted at boot, before
+// any Talk, which is why it is not part of the director the session creates.
+export function mountMapLink(doc: Document, root: HTMLElement, href: string, label: string): () => void {
+  const style = doc.createElement('style');
+  style.textContent = `
+.demo-map-link { display: none; position: fixed; right: 26px; bottom: 26px; z-index: 6;
+  font-size: 12px; letter-spacing: 0.04em; color: var(--muted); text-decoration: none; }
+.demo-map-link:hover { color: var(--sky-text); text-decoration: underline; }
+.menu-mode .demo-map-link { display: inline; }
+`;
+  doc.head.appendChild(style);
+  const a = doc.createElement('a');
+  a.className = 'demo-map-link';
+  a.href = href;
+  a.textContent = label;
+  root.appendChild(a);
+  return () => {
+    a.remove();
+    style.remove();
+  };
+}
+
 const STYLE = `
 .demo-pill {
   position: absolute; left: 50%; top: 10px; transform: translateX(-50%); z-index: 5;

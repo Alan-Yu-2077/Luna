@@ -2,7 +2,7 @@ import { MessageDelivery, type ServerEvent } from '@luna/protocol';
 import { createController } from './controller';
 import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
 import { createTapeClient } from './demo/tapeClient';
-import { mountDirector, type Director } from './demo/director';
+import { mountDirector, mountMapLink, type Director } from './demo/director';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -831,6 +831,9 @@ async function boot(): Promise<void> {
       });
     };
     mountMenu();
+    // v0.46.2: the replay's front door carries the one link out — to the engineering map, which the
+    // showcase build places beside it. Lobby only; it disappears the moment she wakes.
+    if (demo) mountMapLink(document, root, './engineering/', 'Engineering map →');
 
     // ← Menu lives in the chat header, and the disconnect is POLITE: mid-turn it waits for the
     // turn's end (returnGate), then closes the socket and she goes back down.

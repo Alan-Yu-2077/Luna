@@ -144,6 +144,9 @@ The registry is assembled **once at boot** — flipping a mount flag needs a res
 - The harness shell may pre-set `ANTHROPIC_BASE_URL=https://api.anthropic.com`; the owner's key is a
   yunwu.ai gateway key, so `env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY` before running anything
   that talks to the real model, or it 401s.
+- Showcase path (GitHub Pages, v0.46.2): `bun run --cwd packages/web build:demo` → `dist-demo/`
+  (replay at `/`, engineering map at `/engineering/`); `pages.yml` builds it on push. New script
+  lines need `bun run --cwd packages/web render:voice` against a throwaway api_v2 (never his 9880).
 - Packaged path (only needed for shell changes): `bun run --cwd packages/web build`,
   `bun run --cwd packages/desktop compile:server`, `pack`, `smoke:packaged`.
 

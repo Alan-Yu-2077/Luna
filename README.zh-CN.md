@@ -18,7 +18,11 @@
 
 <img src="docs/assets/moment-fries.png" width="820" alt="Luna,一个 Live2D 桌面伙伴,在玩梗" />
 
-[![工程图谱 · 看她怎么搭的](https://img.shields.io/badge/%E2%9A%99_%E5%B7%A5%E7%A8%8B%E5%9B%BE%E8%B0%B1-%E7%9C%8B%E5%A5%B9%E6%80%8E%E4%B9%88%E6%90%AD%E7%9A%84-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
+[![在线演示 · 在浏览器里见她](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%A7%81%E5%A5%B9-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
+[![工程图谱 · 看她怎么搭的](https://img.shields.io/badge/%E2%9A%99_%E5%B7%A5%E7%A8%8B%E5%9B%BE%E8%B0%B1-%E7%9C%8B%E5%A5%B9%E6%80%8E%E4%B9%88%E6%90%AD%E7%9A%84-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
+
+<sub>演示用的是真实的前端和渲染引擎,跑在一盘预录的脚本磁带上——声音是她自己的音色,预先渲染好。
+和 app 唯一的可见区别:台词替你打好,你只按发送。</sub>
 
 <sub>这个仓库是<b>作为参考公开的工程本身</b>,不是一个用来分发的产品。<br/>
 没有安装包:Luna 是一个人的伙伴,真正要紧的那个实例只活在一台机器上。代码你可以读、可以 clone、可以拿走任何你想要的部分。</sub>
@@ -104,7 +108,7 @@ Now-Playing 观测器)、[`desktop`](packages/desktop)(可选 Electron 外壳)�
 
 <img src="docs/assets/architecture.svg" width="820" alt="Luna 运行时拓扑:desktop 外壳拉起并守护 web、server 与 GPT-SoVITS 语音边车;web 与 server 共处一份 Zod 契约;server 在回环边界内独占 luna.sqlite,并通过接缝连到模型 provider" />
 
-[![打开可交互版本](https://img.shields.io/badge/%E2%86%97%20%E6%89%93%E5%BC%80%E5%8F%AF%E4%BA%A4%E4%BA%92%E7%89%88%E6%9C%AC-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/diagrams/architecture.html)
+[![打开可交互版本](https://img.shields.io/badge/%E2%86%97%20%E6%89%93%E5%BC%80%E5%8F%AF%E4%BA%A4%E4%BA%92%E7%89%88%E6%9C%AC-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/diagrams/architecture.html)
 
 <sub>可交互版本支持平移、缩放、单独追一条关系、导出——每个框还标了它是从哪个源文件画出来的,
 并锚定到某个 commit。</sub>

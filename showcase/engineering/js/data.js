@@ -21,6 +21,7 @@ window.LUNA_MAP = (function () {
       tagline: { zh: 'agent harness · 上下文 / 循环 / 工具 / 控制 / 状态 / 时钟', en: 'agent harness · context / loop / tools / control / state / clock' },
       navTree: { zh: '结构', en: 'Structure' },
       navFlow: { zh: '时序', en: 'Sequence' },
+      navLuna: { zh: '← 去见她', en: '← Meet her' }, /* v0.46.2: the replay lives one level up, at the site root */
       navStory: { zh: '开发故事 →', en: 'Dev stories →' }, /* TODO: story/ 仍是占位稿，未定稿前不要挂在顶栏 */
       reopen: { zh: '重看扉页', en: 'Cover' },
       flip: { zh: '进入图谱 →', en: 'Open the map →' },

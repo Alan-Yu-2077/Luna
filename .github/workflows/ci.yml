@@ -62,5 +62,10 @@ jobs:
       - name: Build web (portable)
         run: bun run --cwd packages/web build
 
+      # v0.46.2: the showcase replay is a second build of the same package (demo.html → dist-demo/);
+      # a tape that no longer bundles should go red here, not on the Pages deploy.
+      - name: Build showcase (portable)
+        run: bun run --cwd packages/web build:demo
+
       - name: Test
         run: bun test

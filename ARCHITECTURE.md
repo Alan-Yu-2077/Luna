@@ -228,6 +228,29 @@ No avatar model or voice weights ship in this repo. The front end renders a frie
 Live2D model is installed; voice is bring-your-own. See [`.env.example`](.env.example) for the
 configuration surface.
 
+## The showcase replay (v0.46.x)
+
+The public demo at the GitHub Pages root is this front end — the same bundle entry, the same
+controller, views, physics, FaceVm and lip-sync — running on a tape instead of a socket. It hangs off
+two seams that already existed:
+
+- **The client seam.** `app.ts` builds one `onEvent`/`onStatus` pair and hands it to either
+  `LunaWsClient` or the tape client (`web/src/demo/tapeClient.ts`), which has the same
+  `connect`/`send`/`close` surface and sends the server's own open sequence (history if any, then
+  `settings.state`). Nothing below the seam knows which one it has.
+- **The voice seam.** `WebAudioSink`'s injectable `fetchSpeechFn` resolves a line to a pre-rendered
+  mp3 (`scripts/renderVoice.ts` synthesizes every script line through api_v2 with the request the
+  live forward builds, so it is her voice). A line without a file takes the sink's real failure path.
+
+The script (`web/demo/script.json`) is authored as beats — `user` / `luna` / `tool` / `proactive` /
+`action` / `pulse` / `pause` — and compiled (`demo/compile.ts`) into `ServerEvent` frames timed like a
+real turn; every frame is parsed against the protocol at compile time, and a test loads the shipped
+script. The visitor presses the real Send on a line typed for them and a Next-scene button; the
+input is read-only for the whole demo (the one visible deviation — a scripted conversation must not
+look like one you can join). `demo.html` sets the `window.lunaDemo` bridge; `bun run build:demo`
+emits a separate `dist-demo/` that the packaged app never carries, with the engineering map placed
+under `/engineering/`.
+
 ## The front door (v0.44.x)
 
 Opening the app lands on a **main menu**, not mid-conversation: she sleeps on the right (a pure

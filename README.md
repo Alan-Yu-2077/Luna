@@ -18,7 +18,11 @@ code-agent capability — embodied as a Live2D avatar with lip-synced custom voi
 
 <img src="docs/assets/moment-fries.png" width="820" alt="Luna, a Live2D companion, sharing a joke" />
 
-[![Engineering Map — the agent harness, mapped](https://img.shields.io/badge/%E2%9A%99_Engineering_Map-the_agent_harness%2C_mapped-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
+[![Live demo — meet her in the browser](https://img.shields.io/badge/%E2%96%B6_Live_demo-meet_her_in_the_browser-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
+[![Engineering Map — the agent harness, mapped](https://img.shields.io/badge/%E2%9A%99_Engineering_Map-the_agent_harness%2C_mapped-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
+
+<sub>The demo is the real front end and rendering engine on a scripted tape — her actual voice, pre-rendered.
+The one visible difference from the app: you press Send on lines that are typed for you.</sub>
 
 <sub>This repository is the <b>engineering, published as a reference</b> — not a distributed product.<br/>
 There are no installers: Luna is one person's companion, and the instance that matters lives on one
@@ -114,7 +118,7 @@ Electron shell). The deep dive lives in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 <img src="docs/assets/architecture.svg" width="820" alt="Luna runtime topology: the desktop shell spawns and supervises web, server, and the GPT-SoVITS voice sidecar; web and server sit inside one shared Zod contract; server owns luna.sqlite behind a loopback boundary and reaches the model provider through a seam" />
 
-[![Open the interactive version](https://img.shields.io/badge/%E2%86%97%20Open%20the%20interactive%20version-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/diagrams/architecture.html)
+[![Open the interactive version](https://img.shields.io/badge/%E2%86%97%20Open%20the%20interactive%20version-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/diagrams/architecture.html)
 
 <sub>The live version pans, zooms, traces a single relationship, and exports — every box also carries the
 source file it was drawn from, pinned to a commit.</sub>
