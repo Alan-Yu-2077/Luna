@@ -2,7 +2,7 @@ import { MessageDelivery, type ServerEvent } from '@luna/protocol';
 import { createController } from './controller';
 import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
 import { createTapeClient } from './demo/tapeClient';
-import { mountDirector, mountMapLink, type Director } from './demo/director';
+import { mountDirector, mountGuide, mountMapLink, type Director } from './demo/director';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -397,8 +397,9 @@ async function boot(): Promise<void> {
       // demo's only DOM: it types the armed beat into the real input and owns the Next button.
       const bundle = demo;
       director ??= mountDirector(document, refs, {
-        sceneCount: bundle.compiled.scenes.length,
+        sceneTitles: bundle.titles,
         onNext: () => tape.nextScene(),
+        onJump: (i) => tape.jumpTo(i),
       });
       const tape = createTapeClient({
         compiled: bundle.compiled,
@@ -413,6 +414,12 @@ async function boot(): Promise<void> {
         },
         onSceneStart: (i, scene) => director?.sceneStart(i, scene.title),
         onSceneEnd: (i, hasNext) => director?.sceneEnd(i, hasNext),
+        // v0.47.0: the director's devices — the curtain is DOM, the turntable is the music store
+        // the card polls through the demo fetch.
+        onStage: (cue) => {
+          if (cue.kind === 'skip') director?.skip(cue.label, cue.ms);
+          else bundle.music?.set(cue.track);
+        },
       });
       client = tape;
     } else {
@@ -810,9 +817,10 @@ async function boot(): Promise<void> {
           activateSession();
           if (ttsBackend === 'http' && !demo) void warmUpTts('/api/tts', () => {});
         },
-        // v0.46.0: no Dream door on the tape — a dream is a scene, not a menu action there; the
-        // item renders disabled, as it does wherever onDream is absent.
-        ...(demo
+        // v0.46.0: no Dream door on a tape without a dream — the item renders disabled, as it does
+        // wherever onDream is absent. v0.47.0: a script with a dream block opens the door; the tape
+        // answers dream.enter with the cycle's own frames and she wakes when it ends (the tap above).
+        ...(demo && !demo.hasDream
           ? {}
           : {
               onDream: () => {
@@ -838,7 +846,12 @@ async function boot(): Promise<void> {
     mountMenu();
     // v0.46.2: the replay's front door carries the one link out — to the engineering map, which the
     // showcase build places beside it. Lobby only; it disappears the moment she wakes.
-    if (demo) mountMapLink(document, root, './engineering/', 'Engineering map →');
+    if (demo) {
+      mountMapLink(document, root, './engineering/', 'Engineering map →');
+      // v0.47.0: the entrance guide sits over the lobby while the model loads behind it. Its
+      // Enter is the visitor's first gesture — the one that also lets the page make a sound later.
+      mountGuide(document);
+    }
 
     // ← Menu lives in the chat header, and the disconnect is POLITE: mid-turn it waits for the
     // turn's end (returnGate), then closes the socket and she goes back down.

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import type { ServerEvent, Setting } from '@luna/protocol';
-import { compileScript, type Compiled, type SinkCall } from './compile';
+import { compileScript, type Compiled, type SinkCall, type StageCue } from './compile';
 import { DemoScript } from './script';
 import { createTapeClient, type Scheduler, type TapeClient } from './tapeClient';
 
@@ -8,6 +8,7 @@ import { createTapeClient, type Scheduler, type TapeClient } from './tapeClient'
 // sends (the server's open sequence), that Send only counts when a beat is armed, that frames fire
 // at their offsets and the scene hands over at the run's end, that settings round-trip like ws.ts
 // does, and that a ← Menu / Talk pause resumes without replaying or dropping a frame.
+// v0.47.0 — the dream door, stage cues, and the scene picker's jump.
 
 function fakeScheduler(): Scheduler & { advance: (ms: number) => void } {
   let now = 0;
@@ -64,19 +65,53 @@ const compiled: Compiled = compileScript(
   () => 1000,
 );
 
-type Log = { events: ServerEvent[]; status: string[]; arms: string[]; sent: number; sinks: SinkCall[]; starts: number[]; ends: Array<[number, boolean]> };
+// v0.47.0 fixture: a dream block, a curtain, a record on the turntable.
+const staged: Compiled = compileScript(
+  DemoScript.parse({
+    version: 1,
+    music: { tracks: [{ id: 'hw', title: 'Heat Waves', artist: 'Glass Animals', album: 'Dreamland', duration: 238, cover: 'hw' }] },
+    dream: { steps: [{ step: 'rate_salience', status: 'ok', detail: 'rated 3 turns', ms: 100 }, { step: 'run_diaries', status: 'ok', detail: '1 diary', ms: 100 }] },
+    scenes: [
+      {
+        id: 's',
+        title: 'S',
+        beats: [
+          { kind: 'user', text: 'play it' },
+          { kind: 'music', track: 'hw' },
+          { kind: 'luna', text: 'on' },
+          { kind: 'skip', label: 'later', ms: 1000 },
+          { kind: 'proactive', delayMs: 0, lines: [{ text: 'still on' }] },
+        ],
+      },
+      { id: 't', title: 'T', beats: [{ kind: 'user', text: 'x' }, { kind: 'luna', text: 'y' }] },
+    ],
+  }),
+  () => 500,
+);
 
-function harness(): { tape: TapeClient; log: Log; clock: ReturnType<typeof fakeScheduler> } {
+type Log = {
+  events: ServerEvent[];
+  status: string[];
+  arms: string[];
+  sent: number;
+  sinks: SinkCall[];
+  stages: StageCue[];
+  starts: number[];
+  ends: Array<[number, boolean]>;
+};
+
+function harness(c: Compiled = compiled): { tape: TapeClient; log: Log; clock: ReturnType<typeof fakeScheduler> } {
   const clock = fakeScheduler();
-  const log: Log = { events: [], status: [], arms: [], sent: 0, sinks: [], starts: [], ends: [] };
+  const log: Log = { events: [], status: [], arms: [], sent: 0, sinks: [], stages: [], starts: [], ends: [] };
   const tape = createTapeClient({
-    compiled,
+    compiled: c,
     settings: SETTINGS,
     onEvent: (e) => log.events.push(e),
     onStatus: (s) => log.status.push(s),
     onArm: (t) => log.arms.push(t),
     onSent: () => log.sent++,
-    onSink: (c) => log.sinks.push(c),
+    onSink: (s) => log.sinks.push(s),
+    onStage: (s) => log.stages.push(s),
     onSceneStart: (i) => log.starts.push(i),
     onSceneEnd: (i, n) => log.ends.push([i, n]),
     scheduler: clock,
@@ -174,6 +209,87 @@ describe('scenes', () => {
     tape.nextScene();
     expect(tape.phase()).toBe('done');
   });
+
+  test('jumpTo leaves the current run cold — its remaining frames never fire — and starts the target scene', () => {
+    const { tape, log, clock } = harness();
+    tape.connect();
+    clock.advance(0);
+    tape.send({ type: 'chat.send', text: 'hi' });
+    clock.advance(700); // turn.started fired, the message frames are pending
+    const before = types(log).length;
+    tape.jumpTo(1);
+    expect(log.starts).toEqual([0, 1]);
+    clock.advance(0);
+    expect(types(log).slice(before)).toEqual([]); // nothing from scene 0 leaked
+    clock.advance(100);
+    expect(types(log).slice(-1)).toEqual(['proactive.started']); // scene 1 is playing
+    expect(types(log).filter((t) => t === 'turn.result')).toHaveLength(0);
+    tape.jumpTo(7); // out of range — ignored
+    expect(log.starts).toEqual([0, 1]);
+  });
+});
+
+describe('stage cues (v0.47.0)', () => {
+  test('music and skip cues reach the director, never the app; the curtain holds the clock', () => {
+    const { tape, log, clock } = harness(staged);
+    tape.connect();
+    clock.advance(0);
+    tape.send({ type: 'chat.send', text: 'play it' });
+    clock.advance(0);
+    expect(log.stages).toEqual([{ kind: 'music', track: 'hw' }]);
+    expect(types(log).filter((t) => t.startsWith('stage'))).toEqual([]);
+    // "on" streams (700 + 25), its voice runs 500 → the curtain falls at 1225 and lasts 1000.
+    clock.advance(700 + 25 + 500);
+    expect(log.stages[1]).toEqual({ kind: 'skip', label: 'later', ms: 1000 });
+    const atCurtain = types(log).length;
+    clock.advance(999);
+    expect(types(log).length).toBe(atCurtain); // nothing fires under the curtain
+    clock.advance(1);
+    expect(types(log).slice(-1)).toEqual(['proactive.started']);
+  });
+});
+
+describe('the dream door (v0.47.0)', () => {
+  test('dream.enter while a beat is armed plays the block and re-arms the beat when she wakes', () => {
+    const { tape, log, clock } = harness(staged);
+    tape.connect();
+    clock.advance(0);
+    expect(tape.phase()).toBe('armed');
+    tape.send({ type: 'dream.enter' });
+    expect(tape.phase()).toBe('dream');
+    clock.advance(0);
+    expect(types(log).slice(-1)).toEqual(['dream.status']);
+    clock.advance(600 + 100 + 250 + 100 + 250);
+    const tail = types(log).slice(-4);
+    expect(tail).toEqual(['dream.status', 'dream.step', 'dream.step', 'dream.status']);
+    const last = log.events[log.events.length - 1];
+    expect(last?.type === 'dream.status' ? [last.is_dreaming, last.current_step] : null).toEqual([false, 'finished_idle']);
+    expect(tape.phase()).toBe('armed');
+    expect(log.arms).toEqual(['play it', 'play it']); // re-armed on waking
+  });
+
+  test('dream.wake ends it early with a waking status; dream.enter mid-run is refused; no block → nothing', () => {
+    const { tape, log, clock } = harness(staged);
+    tape.connect();
+    clock.advance(0);
+    tape.send({ type: 'dream.enter' });
+    clock.advance(650); // inside step 1
+    tape.send({ type: 'dream.wake' });
+    const last = log.events[log.events.length - 1];
+    expect(last?.type === 'dream.status' ? last.is_dreaming : null).toBe(false);
+    expect(tape.phase()).toBe('armed');
+    clock.advance(5000);
+    expect(types(log).filter((t) => t === 'dream.step')).toHaveLength(1); // the second step never came
+    tape.send({ type: 'chat.send', text: 'play it' });
+    tape.send({ type: 'dream.enter' });
+    expect(tape.phase()).toBe('running');
+
+    const plain = harness();
+    plain.tape.connect();
+    plain.clock.advance(0);
+    plain.tape.send({ type: 'dream.enter' });
+    expect(plain.tape.phase()).toBe('armed');
+  });
 });
 
 describe('pause and resume (← Menu, then Talk)', () => {
@@ -205,12 +321,16 @@ describe('pause and resume (← Menu, then Talk)', () => {
     expect(log.arms).toEqual(['hi', 'again', 'again']); // the armed beat is re-armed on resume
   });
 
-  test('chat.send while closed is ignored', () => {
-    const { tape, log, clock } = harness();
+  test('chat.send while closed is ignored; closing during a dream wakes her', () => {
+    const { tape, log, clock } = harness(staged);
     tape.connect();
     clock.advance(0);
+    tape.send({ type: 'dream.enter' });
     tape.close();
-    tape.send({ type: 'chat.send', text: 'hi' });
+    expect(tape.phase()).toBe('armed');
+    const last = log.events[log.events.length - 1];
+    expect(last?.type === 'dream.status' ? last.is_dreaming : null).toBe(false);
+    tape.send({ type: 'chat.send', text: 'play it' });
     expect(log.sent).toBe(0);
   });
 });

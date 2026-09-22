@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { join } from 'node:path';
 import { compileScript } from './compile';
 import { lineKey } from './demoAudio';
-import { DemoScript, VoiceManifest, spokenLines } from './script';
+import { DemoScript, DREAM_ORDER, VoiceManifest, spokenLines } from './script';
 
 // v0.46.0 — the SHIPPED tape, not a fixture: `demo/script.json` must parse and compile, and once a
 // voice manifest exists every spoken line must be in it (an edited line with a stale voice is a
@@ -48,5 +48,26 @@ describe('demo/script.json', () => {
     DataDreams.parse(await Bun.file(join(demoDir, 'data', 'dreams.json')).json());
     DataSkills.parse(await Bun.file(join(demoDir, 'data', 'skills.json')).json());
     DemoSettings.parse(await Bun.file(join(demoDir, 'data', 'settings.json')).json());
+  });
+});
+
+// ── v0.47.0 — the blocks the full show rides on ─────────────────────────────────────────────────
+
+describe('demo/script.json — dream and music blocks', () => {
+  test.skipIf(!script.dream)('the dream’s steps follow the cycle’s order (a script cannot dream backwards)', () => {
+    const order = script.dream!.steps.map((s) => DREAM_ORDER.indexOf(s.step));
+    for (let i = 1; i < order.length; i++) expect(order[i]!).toBeGreaterThanOrEqual(order[i - 1]!);
+  });
+
+  test.skipIf(!script.music)('every cover the shelf names exists as a generated svg', async () => {
+    for (const t of script.music!.tracks) {
+      if (!t.cover) continue;
+      expect(await Bun.file(join(demoDir, 'music', `${t.cover}.svg`)).exists()).toBe(true);
+    }
+  });
+
+  test('the shelf, if any, and the dream, if any, compile into the menu door and the card', () => {
+    const c = compileScript(script);
+    expect(c.dream === null).toBe(script.dream === undefined);
   });
 });

@@ -2,6 +2,7 @@ import type { Setting } from '@luna/protocol';
 import { compileScript, type Compiled } from './compile';
 import { createDemoSpeech, durationLookup, type FetchLike, type SpeechFetcher } from './demoAudio';
 import { createDemoFetch } from './demoData';
+import { createMusicStore, type MusicStore } from './demoMusic';
 import { DemoScript, DemoSettings, VoiceManifest } from './script';
 
 // v0.46.0 — is this boot the showcase replay? `window.lunaDemo` is a bridge in the same family as
@@ -41,6 +42,11 @@ export type DemoBundle = {
   settings: Setting[];
   speech: SpeechFetcher;
   fetch: FetchLike;
+  // v0.47.0: the turntable's shelf (null when the script names no tracks), whether the menu's
+  // Dream door has a dream to play, and the scene titles the picker lists.
+  music: MusicStore | null;
+  hasDream: boolean;
+  titles: string[];
 };
 
 // The three files the demo rides on. The script is required; a missing voice manifest or settings
@@ -56,11 +62,15 @@ export async function loadDemo(bridge: DemoBridge, fetchFn: FetchLike = (u, i) =
   const script = DemoScript.parse(await scriptRes.json());
   const manifest = voiceRes.ok ? VoiceManifest.parse(await voiceRes.json()) : { lines: [] };
   const settings = settingsRes.ok ? DemoSettings.parse(await settingsRes.json()) : [];
+  const music = script.music ? createMusicStore(script.music.tracks) : null;
   return {
     base,
     compiled: compileScript(script, durationLookup(manifest)),
     settings,
     speech: createDemoSpeech(manifest, base, fetchFn),
-    fetch: createDemoFetch(base, fetchFn),
+    fetch: createDemoFetch(base, fetchFn, music),
+    music,
+    hasDream: script.dream !== undefined,
+    titles: script.scenes.map((s) => s.title),
   };
 }

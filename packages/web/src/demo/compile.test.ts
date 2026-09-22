@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { ServerEvent } from '@luna/protocol';
-import { compileScene, compileScript, estimateSpeechMs, moreInTurn, PACING, type Cue } from './compile';
+import { compileScene, compileScript, dreamFrames, estimateSpeechMs, moreInTurn, PACING, type Cue } from './compile';
 import { DemoScript, type Scene } from './script';
 
 // v0.46.0 — the script compiler. What it pins: every frame is a valid ServerEvent (the wsClient
@@ -242,5 +242,129 @@ describe('compileScript', () => {
   test('the schema rejects a line without text and a scene id with spaces', () => {
     expect(DemoScript.safeParse({ version: 1, scenes: [{ id: 'has space', title: 'x', beats: [{ kind: 'user', text: 'u' }] }] }).success).toBe(false);
     expect(DemoScript.safeParse({ version: 1, scenes: [{ id: 'ok', title: 'x', beats: [{ kind: 'luna', text: '' }] }] }).success).toBe(false);
+  });
+});
+
+// ── v0.47.0 — the full show's beats ──────────────────────────────────────────────────────────────
+
+describe('skip — the curtain', () => {
+  test('closes the turn, waits for the voice, holds the clock for its stay', () => {
+    const compiled = compileScene(
+      scene([
+        { kind: 'user', text: 'u' },
+        { kind: 'luna', text: 'aa' },
+        { kind: 'skip', label: 'later', ms: 1000 },
+        { kind: 'luna', text: 'bb' },
+      ]),
+      () => 5000,
+    );
+    const cues = compiled.turns[0]!.run.cues;
+    const stage = cues.find((c) => c.kind === 'stage')!;
+    const finishedAt = PACING.thinkMs + PACING.chunkMs; // "aa" = one chunk
+    expect(stage.at).toBe(finishedAt + 5000); // not the gap — the voice
+    const resultIdx = cues.findIndex((c) => c.kind === 'frame' && c.frame.type === 'turn.result');
+    expect(resultIdx).toBeLessThan(cues.indexOf(stage));
+    const second = cues.find((c) => c.kind === 'frame' && c.frame.type === 'turn.started' && c.at > 0)!;
+    expect(second.at).toBe(stage.at + 1000);
+    expect(compiled.turns[0]!.run.turns).toHaveLength(2); // two turns, either side of the curtain
+  });
+
+  test('a luna line before a skip is final', () => {
+    expect(moreInTurn([{ kind: 'user', text: 'u' }, { kind: 'luna', text: 'a' }, { kind: 'skip', label: 'x' }], 1)).toBe(false);
+  });
+});
+
+describe('music — the turntable', () => {
+  test('a music beat is a stage cue at the current time and moves nothing', () => {
+    const compiled = compileScene(
+      scene([{ kind: 'user', text: 'u' }, { kind: 'pause', ms: 200 }, { kind: 'music', track: 'hw' }, { kind: 'music', track: null }]),
+      () => undefined,
+    );
+    expect(compiled.turns[0]!.run.cues).toEqual([
+      { at: 200, kind: 'stage', stage: { kind: 'music', track: 'hw' } },
+      { at: 200, kind: 'stage', stage: { kind: 'music', track: null } },
+    ]);
+  });
+});
+
+describe('dream — the block and the beat', () => {
+  const block = {
+    steps: [
+      { step: 'rate_salience' as const, status: 'ok' as const, detail: 'rated 31 turns', ms: 400 },
+      { step: 'refine_layer1' as const, status: 'skipped' as const, detail: '', ms: 0 },
+      { step: 'distill_skills' as const, status: 'ok' as const, detail: 'new:late-night-brevity', ms: 300 },
+    ],
+  };
+
+  test('dreamFrames: one status on entry (no step), a step per node, one status on exit naming finished_idle', () => {
+    const { frames, endMs } = dreamFrames(block, 100);
+    expect(frames.map((f) => f.frame.type)).toEqual(['dream.status', 'dream.step', 'dream.step', 'dream.step', 'dream.status']);
+    const first = frames[0]!.frame;
+    const last = frames[frames.length - 1]!.frame;
+    expect(first.type === 'dream.status' ? [first.is_dreaming, first.current_step] : null).toEqual([true, null]);
+    expect(last.type === 'dream.status' ? [last.is_dreaming, last.current_step] : null).toEqual([false, 'finished_idle']);
+    expect(frames[1]!.at).toBe(100 + PACING.dreamLeadMs);
+    expect(endMs).toBe(100 + PACING.dreamLeadMs + (400 + 250) + (0 + 250) + (300 + 250));
+  });
+
+  test('a dream beat closes the turn first and the run ends after the wake', () => {
+    const compiled = compileScene(
+      scene([{ kind: 'user', text: 'night' }, { kind: 'luna', text: 'sleep well' }, { kind: 'dream' }]),
+      () => 800,
+      block,
+    );
+    const fs = frames(compiled.turns[0]!.run.cues).map((f) => f.type);
+    expect(fs.indexOf('turn.result')).toBeLessThan(fs.indexOf('dream.status'));
+    expect(fs.slice(-5)).toEqual(['dream.status', 'dream.step', 'dream.step', 'dream.step', 'dream.status']);
+    expect(compiled.turns[0]!.run.endMs).toBeGreaterThan(compiled.turns[0]!.run.cues[compiled.turns[0]!.run.cues.length - 1]!.at);
+  });
+
+  test('a dream beat without a block is refused by the schema, and by the compiler', () => {
+    const bad = { version: 1, scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'user', text: 'u' }, { kind: 'dream' }] }] };
+    expect(DemoScript.safeParse(bad).success).toBe(false);
+    expect(() => compileScene(scene([{ kind: 'user', text: 'u' }, { kind: 'dream' }]), () => undefined)).toThrow(/dream block/);
+  });
+
+  test('compileScript carries the menu-door run only when the block exists', () => {
+    const withDream = DemoScript.parse({ version: 1, dream: block, scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'user', text: 'u' }] }] });
+    expect(compileScript(withDream).dream?.cues.map((c) => c.kind === 'frame' && c.frame.type)).toEqual([
+      'dream.status',
+      'dream.step',
+      'dream.step',
+      'dream.step',
+      'dream.status',
+    ]);
+    const without = DemoScript.parse({ version: 1, scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'user', text: 'u' }] }] });
+    expect(compileScript(without).dream).toBeNull();
+  });
+});
+
+describe('the 💭 second thought and tool notes', () => {
+  test('continuation marks the cycle the way continuation.ts does', () => {
+    const fs = frames(
+      compileScene(scene([{ kind: 'user', text: 'u' }, { kind: 'proactive', delayMs: 0, continuation: true, lines: [{ text: 'oh, also' }] }]), () => undefined)
+        .turns[0]!.run.cues,
+    );
+    const started = fs.find((f) => f.type === 'proactive.started');
+    expect(started?.type === 'proactive.started' ? started.cycle_id.includes(':cont:') : null).toBe(true);
+  });
+
+  test('a tool note is a progress frame between started and finished', () => {
+    const fs = frames(
+      compileScene(scene([{ kind: 'user', text: 'u' }, { kind: 'tool', name: 'web_fetch', summary: 'read it', ms: 900, note: '正在读这一页…' }]), () => undefined)
+        .turns[0]!.run.cues,
+    );
+    expect(fs.map((f) => f.type)).toEqual(['turn.started', 'tool.started', 'tool.progress', 'tool.finished', 'turn.result']);
+    const note = fs[2];
+    expect(note?.type === 'tool.progress' ? note.payload : null).toEqual({ note: '正在读这一页…' });
+  });
+
+  test('the schema refuses a music beat naming a track the block does not have', () => {
+    const bad = {
+      version: 1,
+      music: { tracks: [{ id: 'a', title: 'A', artist: 'B', album: '', duration: 10 }] },
+      scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'music', track: 'zzz' }] }],
+    };
+    expect(DemoScript.safeParse(bad).success).toBe(false);
   });
 });
