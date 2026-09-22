@@ -1,7 +1,9 @@
 # Live2D models
 
-This directory is where Luna looks for the avatar model. **No model ships with the repo** — you bring
-your own.
+This directory is where Luna looks for the avatar model. **The app ships no model of its own** — you
+bring your own. The one tracked subfolder, `yumi/`, is the showcase avatar: the GitHub Pages replay
+(`demo.html`, `bun run build:demo`) is built from this tree in CI and needs it there. The desktop app
+does not pick it up unless you point `LUNA_MODEL_URL` at it.
 
 ## Drop-in contract
 

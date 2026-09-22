@@ -1,1 +1,52 @@
-{ "lines": [] }
+{
+  "lines": [
+    {
+      "id": "b4b7068b8917",
+      "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Last night I filed away the fries argument, in case you try to reopen it.",
+      "file": "b4b7068b8917.mp3",
+      "durationMs": 12000
+    },
+    {
+      "id": "7e5b8aa61f79",
+      "text": "So. What are we doing today?",
+      "file": "7e5b8aa61f79.mp3",
+      "durationMs": 2300
+    },
+    {
+      "id": "36ea68326df6",
+      "text": "Heat Waves. Six plays on Tuesday alone, and you paused it right before the end every single time.",
+      "file": "36ea68326df6.mp3",
+      "durationMs": 7540
+    },
+    {
+      "id": "c237d0d4f98b",
+      "text": "Still hanging around the lower half of the global chart, years later. You have consistent taste — I'll give you that much.",
+      "file": "c237d0d4f98b.mp3",
+      "durationMs": 8020
+    },
+    {
+      "id": "f58fb3d37369",
+      "text": "Go. I'll be here.",
+      "file": "f58fb3d37369.mp3",
+      "durationMs": 1620
+    },
+    {
+      "id": "35f51048f6a4",
+      "text": "Random thought while you're gone: the playlist you made in March is still your most-played. Whatever you were chasing, you already found it once.",
+      "file": "35f51048f6a4.mp3",
+      "durationMs": 9020
+    },
+    {
+      "id": "ba79cbe29042",
+      "text": "Night. I'll go over today while you sleep — the good bits stay, the noise doesn't.",
+      "file": "ba79cbe29042.mp3",
+      "durationMs": 6260
+    },
+    {
+      "id": "d6e65b03e0f8",
+      "text": "Same time tomorrow?",
+      "file": "d6e65b03e0f8.mp3",
+      "durationMs": 1900
+    }
+  ]
+}
