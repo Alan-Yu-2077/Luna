@@ -13,11 +13,16 @@ const PET_ZOOM = 1.7;
 // off the bottom).
 const PET_TOP = 0.06;
 
+// v0.46.3: the same portrait, tunable. The showcase replay opens on a half-body portrait too (the
+// owner's framing of her), with its own zoom/headroom set by the page — pet mode keeps its constants.
+export type PortraitOpts = { zoom?: number; top?: number };
+
 export function petFraming(
   hostW: number,
   hostH: number,
   naturalW: number,
   naturalH: number,
+  opts: PortraitOpts = {},
 ): Framing {
   // Defensive: a model that failed to measure (0 dims) would make scale NaN/Infinity and break
   // model.scale.set()/setBase(). Live2DModel.from() validates dims, so this is latent — but a pure
@@ -26,11 +31,11 @@ export function petFraming(
     return { scale: 1, baseX: 0, baseY: 0 };
   }
   const fullBodyScale = (hostH * 0.92) / naturalH; // the windowed height-fit
-  const scale = fullBodyScale * PET_ZOOM;
+  const scale = fullBodyScale * (opts.zoom ?? PET_ZOOM);
   const scaledW = naturalW * scale;
   return {
     scale,
     baseX: (hostW - scaledW) / 2, // center horizontally (arms may clip at the sides — fine for a bust)
-    baseY: hostH * PET_TOP, // top-anchored: head near the top, feet clip below
+    baseY: hostH * (opts.top ?? PET_TOP), // top-anchored: head near the top, feet clip below
   };
 }

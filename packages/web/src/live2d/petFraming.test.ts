@@ -40,3 +40,16 @@ describe('petFraming', () => {
     }
   });
 });
+
+// v0.46.3: the portrait is tunable — the showcase replay opens on it with its own zoom/headroom.
+describe('petFraming — portrait options', () => {
+  test('defaults are the pet constants; overrides scale and anchor exactly', () => {
+    const base = petFraming(560, 900, W, H);
+    const tuned = petFraming(560, 900, W, H, { zoom: 2, top: 0.1 });
+    const fullBody = (900 * 0.92) / H;
+    expect(tuned.scale).toBeCloseTo(fullBody * 2, 6);
+    expect(tuned.baseY).toBeCloseTo(90, 6);
+    expect(tuned.scale).not.toBeCloseTo(base.scale, 3);
+    expect(petFraming(560, 900, W, H, {})).toEqual(base);
+  });
+});

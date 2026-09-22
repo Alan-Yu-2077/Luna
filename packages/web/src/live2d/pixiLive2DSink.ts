@@ -89,13 +89,18 @@ function clampOffset(v: number, max: number): number {
 
 export async function createPixiLive2DSink(
   host: HTMLElement,
-  opts: { pet?: boolean; modelUrl?: string } = {},
+  opts: { pet?: boolean; modelUrl?: string; portrait?: { zoom: number; top: number } } = {},
 ): Promise<Live2DSink | null> {
   const modelUrl = opts.modelUrl;
   if (!modelUrl) return null; // no avatar installed — the caller shows the empty state
   // v0.28.1: pet mode fixes the model as a half-body portrait — no drag, no scroll-zoom (v0.28.2
   // hands move/resize to the WINDOW instead). Windowed mode keeps full-body + drag + zoom.
   const pet = opts.pet === true;
+  // v0.46.3: a windowed boot may still OPEN on a half-body portrait — the showcase replay does, so a
+  // visitor's first sight of her is the owner's framing, not a full figure in a tall room. Unlike pet
+  // mode it stays live: the wheel zoom multiplies on top, drag moves her, double-click returns to
+  // THIS default. The head line is the anchor, so zooming grows her downward and the face holds.
+  const portrait = opts.portrait;
   if (!webglAvailable()) return null;
 
   let runtime: Live2DRuntime;
@@ -136,11 +141,19 @@ export async function createPixiLive2DSink(
       driver.setPositionOffset(0, 0);
       return;
     }
-    const baseScale = (hostH * 0.92) / model.height;
-    model.scale.set(baseScale * zoom);
+    let baseY: number;
+    if (portrait) {
+      const f = petFraming(hostW, hostH, model.width, model.height, portrait);
+      model.scale.set(f.scale * zoom);
+      baseY = f.baseY;
+    } else {
+      const baseScale = (hostH * 0.92) / model.height;
+      model.scale.set(baseScale * zoom);
+      baseY = (hostH - model.height) / 2;
+    }
     // v0.44.8: centre inside the FRAME, not the host — with no frame this is the old expression.
     const frame = frameOf?.() ?? { left: 0, width: hostW };
-    driver.setBase(framedBaseX(frame, model.width), (hostH - model.height) / 2);
+    driver.setBase(framedBaseX(frame, model.width), baseY);
     // v0.25.2 review fix: re-clamp the persisted drag against the CURRENT host dims (the pointermove
     // clamp only ran at drag time — a drag saved in full-width collapsed mode could strand her
     // entirely off-canvas after expand shrinks the host; persisted, so she stayed gone on reload).

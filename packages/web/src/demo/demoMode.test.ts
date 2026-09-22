@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { loadDemo, readDemoBridge } from './demoMode';
+import { loadDemo, readDemoBridge, readPortrait } from './demoMode';
 
 // v0.46.0 — the bridge that decides whether this boot is the replay, and the bundle it loads.
 
@@ -46,5 +46,25 @@ describe('loadDemo', () => {
 
   test('a missing script is the one thing that fails', async () => {
     await expect(loadDemo({ base: '/d/' }, async () => new Response('', { status: 404 }))).rejects.toThrow(/script/);
+  });
+});
+
+// v0.46.3: the opening framing rides the bridge; nonsense is dropped, not clamped into something.
+describe('readPortrait via the bridge', () => {
+  test('a valid portrait comes through; absent → none (the full figure)', () => {
+    expect(readDemoBridge({ lunaDemo: { portrait: { zoom: 1.7, top: 0.12 } } })).toEqual({
+      base: './demo/',
+      portrait: { zoom: 1.7, top: 0.12 },
+    });
+    expect(readDemoBridge({ lunaDemo: {} })).toEqual({ base: './demo/' });
+  });
+
+  test('out-of-bounds or malformed values are ignored', () => {
+    expect(readPortrait({ zoom: 0.5, top: 0.1 })).toBeNull();
+    expect(readPortrait({ zoom: 4, top: 0.1 })).toBeNull();
+    expect(readPortrait({ zoom: 1.7, top: 0.9 })).toBeNull();
+    expect(readPortrait({ zoom: '1.7', top: 0.1 })).toBeNull();
+    expect(readPortrait({ zoom: Number.NaN, top: 0.1 })).toBeNull();
+    expect(readPortrait('portrait')).toBeNull();
   });
 });

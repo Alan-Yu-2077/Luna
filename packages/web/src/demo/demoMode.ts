@@ -9,16 +9,30 @@ import { DemoScript, DemoSettings, VoiceManifest } from './script';
 // runs. demo.html sets it; nothing else ever does, so the desktop app and the dev server cannot
 // wander onto the tape.
 
-export type DemoBridge = { base: string };
+// v0.46.3: how she is framed when the page opens — a half-body portrait (zoom on the full-body
+// height-fit, headroom as a fraction of the stage), the owner's own framing of her. Absent = the
+// app's full figure. Bounds keep a typo from opening on a nostril or a dot.
+export type Portrait = { zoom: number; top: number };
+export type DemoBridge = { base: string; portrait?: Portrait };
+
+export function readPortrait(raw: unknown): Portrait | null {
+  if (raw === null || typeof raw !== 'object') return null;
+  const { zoom, top } = raw as { zoom?: unknown; top?: unknown };
+  if (typeof zoom !== 'number' || typeof top !== 'number') return null;
+  if (!Number.isFinite(zoom) || !Number.isFinite(top)) return null;
+  if (zoom < 1 || zoom > 3 || top < 0 || top > 0.5) return null;
+  return { zoom, top };
+}
 
 export function readDemoBridge(
   g: { lunaDemo?: unknown } = globalThis as { lunaDemo?: unknown },
 ): DemoBridge | null {
   const raw = g.lunaDemo;
   if (raw === null || typeof raw !== 'object') return null;
-  const base = (raw as { base?: unknown }).base;
+  const { base, portrait } = raw as { base?: unknown; portrait?: unknown };
   const b = typeof base === 'string' && base.trim() !== '' ? base.trim() : './demo/';
-  return { base: b.endsWith('/') ? b : `${b}/` };
+  const p = readPortrait(portrait);
+  return { base: b.endsWith('/') ? b : `${b}/`, ...(p ? { portrait: p } : {}) };
 }
 
 export type DemoBundle = {

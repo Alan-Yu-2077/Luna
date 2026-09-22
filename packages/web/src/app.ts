@@ -193,7 +193,12 @@ async function boot(): Promise<void> {
     if (!modelUrl) modelState = 'none';
     else if (!webglAvailable()) modelState = 'webgl-off';
     else {
-      const sink = await createPixiLive2DSink(refs.modelStage, { pet: isPet, modelUrl });
+      // v0.46.3: the replay opens on the owner's half-body framing of her (the bridge's `portrait`).
+      const sink = await createPixiLive2DSink(refs.modelStage, {
+        pet: isPet,
+        modelUrl,
+        ...(demoBridge?.portrait ? { portrait: demoBridge.portrait } : {}),
+      });
       if (sink) {
         live2d = sink;
         modelState = 'ok';
