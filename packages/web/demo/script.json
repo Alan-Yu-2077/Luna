@@ -1,0 +1,88 @@
+{
+  "_note": "PLACEHOLDER SCRIPT — every line here is a stand-in written to prove the pipeline. Replace the scenes with the real script; re-run `bun run --cwd packages/web render:voice` afterwards so each line has a voice.",
+  "version": 1,
+  "scenes": [
+    {
+      "id": "first-words",
+      "title": "First words",
+      "beats": [
+        { "kind": "user", "text": "Morning. Did you sleep well?" },
+        {
+          "kind": "luna",
+          "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Last night I filed away the fries argument, in case you try to reopen it.",
+          "expression": "soft_warmth",
+          "emotion": 0.5
+        },
+        { "kind": "luna", "text": "So. What are we doing today?", "expression": "curious_attention", "emotion": 0.4 }
+      ]
+    },
+    {
+      "id": "a-tool-mid-sentence",
+      "title": "A tool, mid-sentence",
+      "beats": [
+        { "kind": "user", "text": "What was that song I kept replaying last week?" },
+        { "kind": "tool", "name": "recall", "summary": "3 moments about that song", "ms": 900 },
+        {
+          "kind": "luna",
+          "text": "Heat Waves. Six plays on Tuesday alone, and you paused it right before the end every single time.",
+          "expression": "amused_smirk",
+          "emotion": 0.6
+        },
+        { "kind": "user", "text": "Is it still on any charts?" },
+        {
+          "kind": "tool",
+          "name": "web_search",
+          "summary": "5 results for \u201cHeat Waves chart 2026\u201d",
+          "ms": 1400,
+          "sources": [{ "url": "https://en.wikipedia.org/wiki/Heat_Waves", "title": "Heat Waves — Wikipedia" }]
+        },
+        {
+          "kind": "luna",
+          "text": "Still hanging around the lower half of the global chart, years later. You have consistent taste — I'll give you that much.",
+          "expression": "playful_brightness",
+          "emotion": 0.7
+        }
+      ]
+    },
+    {
+      "id": "she-speaks-first",
+      "title": "She speaks first",
+      "beats": [
+        { "kind": "user", "text": "Going to grab a coffee. Back in a bit." },
+        { "kind": "luna", "text": "Go. I'll be here.", "expression": "steady_presence", "emotion": 0.3 },
+        {
+          "kind": "proactive",
+          "delayMs": 4000,
+          "lines": [
+            {
+              "text": "Random thought while you're gone: the playlist you made in March is still your most-played. Whatever you were chasing, you already found it once.",
+              "expression": "gentle_concern",
+              "emotion": 0.45
+            }
+          ]
+        },
+        {
+          "kind": "proactive",
+          "delayMs": 3500,
+          "tools": [{ "name": "remember", "summary": "kept: coffee breaks, never announced twice", "ms": 700 }],
+          "quiet_note": "Noted that his coffee breaks are never announced twice — filed under small habits."
+        }
+      ]
+    },
+    {
+      "id": "goodnight",
+      "title": "Goodnight",
+      "beats": [
+        { "kind": "user", "text": "Okay, I'm done for today. Night, Luna." },
+        {
+          "kind": "luna",
+          "text": "Night. I'll go over today while you sleep — the good bits stay, the noise doesn't.",
+          "expression": "soft_warmth",
+          "emotion": 0.6
+        },
+        { "kind": "action", "name": "slowBlinkAffection" },
+        { "kind": "luna", "text": "Same time tomorrow?", "expression": "curious_attention", "emotion": 0.4 }
+      ]
+    }
+  ]
+}

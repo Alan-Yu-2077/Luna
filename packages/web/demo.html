@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Luna</title>
+    <link rel="stylesheet" href="./src/ui/theme.css" />
+    <!-- v0.46.0: the showcase replay. Same app, same bundle entry; two bridges set before it runs:
+         lunaConfig points the avatar + voice at the demo's static assets (relative — the page lives
+         under /Luna/ on GitHub Pages), lunaDemo names where the tape lives. -->
+    <script src="./demo/bridge.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./src/app.ts"></script>
+  </body>
+</html>

@@ -204,7 +204,11 @@ export const TURN_MS = 1600;
 export const HALF_TURN_MS = 1000;
 const SKELETON_MIN_MS = 300;
 
-async function loadBook(fetchFn: typeof fetch): Promise<BookIndex> {
+// v0.46.0: the injected fetch is the one-argument shape both callers use (the browser's, or the
+// showcase's static one) — `typeof fetch` would drag Bun's `preconnect` along for nothing.
+type FetchLike = (url: string) => Promise<Response>;
+
+async function loadBook(fetchFn: FetchLike): Promise<BookIndex> {
   const [diariesRes, dreamsRes] = await Promise.all([
     fetchFn('/api/data/diaries'),
     fetchFn('/api/data/dreams'),
@@ -215,7 +219,7 @@ async function loadBook(fetchFn: typeof fetch): Promise<BookIndex> {
   return buildBookIndex(diaries.entries, dreams.dreams);
 }
 
-export function mountDiaryBook(doc: Document, fetchFn: typeof fetch = fetch): HTMLElement {
+export function mountDiaryBook(doc: Document, fetchFn: FetchLike = (u) => fetch(u)): HTMLElement {
   const book = doc.createElement('div');
   book.className = 'diary-book';
   const skeleton = doc.createElement('div');

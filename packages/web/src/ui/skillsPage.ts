@@ -31,7 +31,10 @@ export function relativeTime(ms: number, now: number): string {
   return `${Math.floor(hours / 24)} 天前`;
 }
 
-export function mountSkillsPage(doc: Document, fetchFn: typeof fetch = fetch): HTMLElement {
+// v0.46.0: one-argument fetch shape (see diaryBook.ts) — the showcase injects a static one.
+type FetchLike = (url: string) => Promise<Response>;
+
+export function mountSkillsPage(doc: Document, fetchFn: FetchLike = (u) => fetch(u)): HTMLElement {
   const page = doc.createElement('div');
   page.className = 'skills-page';
 

@@ -1,5 +1,8 @@
-import { MessageDelivery } from '@luna/protocol';
+import { MessageDelivery, type ServerEvent } from '@luna/protocol';
 import { createController } from './controller';
+import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
+import { createTapeClient } from './demo/tapeClient';
+import { mountDirector, type Director } from './demo/director';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -101,6 +104,14 @@ async function boot(): Promise<void> {
     window.addEventListener('pagehide', () => bench.dispose());
     return;
   }
+
+  // v0.46.0: the showcase replay. demo.html sets `window.lunaDemo` (a bridge like lunaConfig /
+  // lunaSetup / lunaPet); when it is there, the session half below runs on a tape instead of a
+  // socket and her voice comes from pre-rendered files. Everything else — the lobby, the wake, the
+  // controller, the views, the sink — is this same boot, untouched. Loaded up front so the Talk
+  // click (the visitor's audio-unlocking gesture) can activate synchronously, as it does for real.
+  const demoBridge = readDemoBridge();
+  const demo: DemoBundle | null = demoBridge ? await loadDemo(demoBridge) : null;
 
   // v0.36.0: Reduce-motion is gone (Initiative 26 constitution — the app is always alive). Clean up
   // the stale persisted key so a previously-on instance doesn't carry a dead flag forever.
@@ -267,7 +278,11 @@ async function boot(): Promise<void> {
   // sequence). In menu mode nothing here runs until Talk: no WS construction, no controller, no
   // voice sink, no geolocation prompt. `wsClient` is the null-until-activated seam the lobby-safe
   // listeners below guard on.
-  let wsClient: LunaWsClient | null = null;
+  // v0.46.0: the surface the session half drives — the real socket client, or the tape wearing its
+  // clothes. Structural on purpose: nothing below this line may care which one it holds.
+  type SessionClient = Pick<LunaWsClient, 'connect' | 'send' | 'close'>;
+  let wsClient: SessionClient | null = null;
+  let director: Director | null = null;
   // v0.44.1: ← Menu closes the socket politely; Talk after that reuses the same client — connect()
   // resets its deliberate-close latch. `wsLive` is the belt against a double activate.
   let wsLive = false;
@@ -280,7 +295,7 @@ async function boot(): Promise<void> {
   const mountPlayer = (): void => {
     if (playerMounted || isPet || agentOnly) return;
     playerMounted = true;
-    mountPlayerCard(document);
+    mountPlayerCard(document, demo ? { fetchFn: demo.fetch } : {});
   };
   const activateSession = (): void => {
     mountPlayer();
@@ -301,6 +316,8 @@ async function boot(): Promise<void> {
         onUnspoken: (text) => {
           console.warn(`[voice] her voice is unavailable — skipping this line: ${text.slice(0, 40)}`);
         },
+        // v0.46.0: the replay's pre-rendered lines enter at the sink's existing synthesis seam.
+        ...(demo ? { fetchSpeechFn: demo.speech } : {}),
       });
     }
     // Speech-gate the stack: when Luna actually begins speaking a reply, restart the newest bubble's
@@ -321,6 +338,9 @@ async function boot(): Promise<void> {
       stop: () => audio.stop(),
     };
 
+    // Assigned below, before anything that can call it runs: the closures here only fire once the
+    // client exists (the controller's settings writes, the status hook's geo re-send).
+    let client: SessionClient;
     const controller = createController({
       view,
       live2d,
@@ -331,52 +351,76 @@ async function boot(): Promise<void> {
         ),
     });
 
-    const client = new LunaWsClient({
-      url: WS_URL,
-      onEvent: (e) => {
-        // v0.44.1: the polite-disconnect gate watches the turn lifecycle; and a dream entered
-        // straight from the menu wakes her when it ENDS (she slept into it, so the wake she skipped
-        // on the way in plays on the way out).
-        returnGate.onEvent(e);
-        if (e.type === 'dream.status' && !e.is_dreaming && dreamWakePending) {
-          dreamWakePending = false;
-          runSequence(live2d, WAKE_STEPS);
-        }
-        // The typing indicator is owned by the controller now (v0.21.9): it keeps the
-        // dots up for the whole turn and hides them on turn.result / proactive.finished,
-        // instead of this open-only show that the first tool/message used to kill.
-        if (e.type === 'dream.status') setDream(e.is_dreaming);
-        if (e.type === 'dream.step') refs.dreamCaption.textContent = e.detail || e.step;
-        // barge-in: a new user turn clears the beside-model stack (the window keeps the full log).
-        if (e.type === 'turn.started') speechStack.clearAll();
-        if (e.type === 'tool.finished' && e.result.kind === 'ok') {
-          const parsed = MessageDelivery.safeParse(e.result.data);
-          if (parsed.success && parsed.data.expression) updateMood(parsed.data.expression);
-        }
-        controller.handle(e);
-      },
-      onStatus: (s) => {
-        refs.statusBadge.textContent = STATUS_TEXT[s];
-        refs.statusBadge.dataset['status'] = s;
-        // v0.35.6: a broken config (dead backend, reconnect loop) surfaces the way back to the
-        // wizard right on the badge — no hunting through Settings while nothing works.
-        updateReconfigure(s);
-        // Re-send the cached GPS fix on every (re)connect so a server restart still
-        // gets the location (the server holds it in-memory).
-        if (s === 'open') {
-          const fix = lastGeoFix();
-          if (fix) client.send({ type: 'client.geo', lat: fix.lat, lon: fix.lon });
-        }
-      },
-    });
+    const onEvent = (e: ServerEvent): void => {
+      // v0.44.1: the polite-disconnect gate watches the turn lifecycle; and a dream entered
+      // straight from the menu wakes her when it ENDS (she slept into it, so the wake she skipped
+      // on the way in plays on the way out).
+      returnGate.onEvent(e);
+      if (e.type === 'dream.status' && !e.is_dreaming && dreamWakePending) {
+        dreamWakePending = false;
+        runSequence(live2d, WAKE_STEPS);
+      }
+      // The typing indicator is owned by the controller now (v0.21.9): it keeps the
+      // dots up for the whole turn and hides them on turn.result / proactive.finished,
+      // instead of this open-only show that the first tool/message used to kill.
+      if (e.type === 'dream.status') setDream(e.is_dreaming);
+      if (e.type === 'dream.step') refs.dreamCaption.textContent = e.detail || e.step;
+      // barge-in: a new user turn clears the beside-model stack (the window keeps the full log).
+      if (e.type === 'turn.started') speechStack.clearAll();
+      if (e.type === 'tool.finished' && e.result.kind === 'ok') {
+        const parsed = MessageDelivery.safeParse(e.result.data);
+        if (parsed.success && parsed.data.expression) updateMood(parsed.data.expression);
+      }
+      controller.handle(e);
+    };
+    const onStatus = (s: WsStatus): void => {
+      refs.statusBadge.textContent = STATUS_TEXT[s];
+      refs.statusBadge.dataset['status'] = s;
+      // v0.35.6: a broken config (dead backend, reconnect loop) surfaces the way back to the
+      // wizard right on the badge — no hunting through Settings while nothing works.
+      updateReconfigure(s);
+      // Re-send the cached GPS fix on every (re)connect so a server restart still
+      // gets the location (the server holds it in-memory).
+      if (s === 'open') {
+        const fix = lastGeoFix();
+        if (fix) client.send({ type: 'client.geo', lat: fix.lat, lon: fix.lon });
+      }
+    };
+
+    if (demo) {
+      // v0.46.0: the tape, fed into the SAME onEvent the socket would feed. The director is the
+      // demo's only DOM: it types the armed beat into the real input and owns the Next button.
+      const bundle = demo;
+      director ??= mountDirector(document, refs, {
+        sceneCount: bundle.compiled.scenes.length,
+        onNext: () => tape.nextScene(),
+      });
+      const tape = createTapeClient({
+        compiled: bundle.compiled,
+        settings: bundle.settings,
+        onEvent,
+        onStatus,
+        onArm: (text) => director?.arm(text),
+        onSent: () => director?.disarm(),
+        onSink: (call) => {
+          if (call.kind === 'action') live2d.playAction?.(call.name, call.intensity);
+          else live2d.pulse?.(call.pose, call.ms);
+        },
+        onSceneStart: (i, scene) => director?.sceneStart(i, scene.title),
+        onSceneEnd: (i, hasNext) => director?.sceneEnd(i, hasNext),
+      });
+      client = tape;
+    } else {
+      client = new LunaWsClient({ url: WS_URL, onEvent, onStatus });
+    }
     wsClient = client;
     wsLive = true;
     client.connect();
     // Watch the browser for the user's location (one-time permission prompt). Fires on the
     // initial fix AND every real move (v0.37.17 — the old one-shot froze at page-load time);
     // onStatus re-sends the newest fix on later reconnects. Silently no-ops if
-    // denied/unavailable → the LUNA_LAT_LON env fallback.
-    requestGeolocation((fix) => client.send({ type: 'client.geo', lat: fix.lat, lon: fix.lon }));
+    // denied/unavailable → the LUNA_LAT_LON env fallback. A replay has no weather to place.
+    if (!demo) requestGeolocation((fix) => client.send({ type: 'client.geo', lat: fix.lat, lon: fix.lon }));
   };
   if (!lobbyOn) activateSession();
 
@@ -759,22 +803,29 @@ async function boot(): Promise<void> {
           // 1.8s animation — the wake gate is the wake itself, not an overlay that would hide it.
           runSequence(live2d, WAKE_STEPS);
           activateSession();
-          if (ttsBackend === 'http') void warmUpTts('/api/tts', () => {});
+          if (ttsBackend === 'http' && !demo) void warmUpTts('/api/tts', () => {});
         },
-        onDream: () => {
-          // Straight from sleep into the dream — a sleeper does not wake to fall asleep. The wake
-          // she skipped here plays when the dream ENDS (the dream.status tap above).
-          swapToChat();
-          dreamWakePending = true;
-          activateSession();
-          wsClient?.send({ type: 'dream.enter' });
-        },
+        // v0.46.0: no Dream door on the tape — a dream is a scene, not a menu action there; the
+        // item renders disabled, as it does wherever onDream is absent.
+        ...(demo
+          ? {}
+          : {
+              onDream: () => {
+                // Straight from sleep into the dream — a sleeper does not wake to fall asleep. The
+                // wake she skipped here plays when the dream ENDS (the dream.status tap above).
+                swapToChat();
+                dreamWakePending = true;
+                activateSession();
+                wsClient?.send({ type: 'dream.enter' });
+              },
+            }),
         // v0.44.3/4/5: the three real pages. The diary book rides the HTTP data surface (reading
         // her diary never wakes her); the settings page ADOPTS the old panel's live rows, so the
-        // controls keep their exact wiring wherever they are displayed.
+        // controls keep their exact wiring wherever they are displayed. The replay hands the two
+        // data pages its static fetch — the pages' own seam, nothing forked.
         pageBody: (id) =>
-          id === 'diary' ? mountDiaryBook(document)
-          : id === 'skills' ? mountSkillsPage(document)
+          id === 'diary' ? mountDiaryBook(document, demo?.fetch)
+          : id === 'skills' ? mountSkillsPage(document, demo?.fetch)
           : mountSettingsPage(document, refs),
         ...(quitBridge ? { quit: () => quitBridge() } : {}),
       });

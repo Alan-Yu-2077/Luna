@@ -1,0 +1,15 @@
+[
+  { "key": "proactive.enabled", "label": "Proactive messages", "hint": "She may reach out on her own when you go quiet", "category": "Companion", "kind": "boolean", "value": "1", "source": "default", "restart_required": false },
+  { "key": "proactive.quiet_hours", "label": "Quiet hours", "hint": "Local hours she stays silent, comma-separated", "category": "Companion", "kind": "text", "value": "0,1,2,3,4,5", "source": "default", "restart_required": false },
+  { "key": "proactive.activeness", "label": "Outreach intensity", "hint": "How eagerly she opens first: aloof, balanced, or clingy (still capped by the safety rails)", "category": "Companion", "kind": "text", "value": "balanced", "source": "default", "restart_required": false },
+  { "key": "selfcont.enabled", "label": "Follow-up thoughts", "hint": "She may add a second thought shortly after replying", "category": "Companion", "kind": "boolean", "value": "1", "source": "default", "restart_required": false },
+  { "key": "selfcont.probability", "label": "Follow-up chance", "hint": "0 = never, 1 = always", "category": "Companion", "kind": "number", "value": "0.35", "source": "default", "restart_required": false, "min": 0, "max": 1 },
+  { "key": "time.aware", "label": "Time awareness", "hint": "She knows the clock, the date, and how long you were away", "category": "Perception", "kind": "boolean", "value": "1", "source": "default", "restart_required": false },
+  { "key": "weather.ambient", "label": "Weather awareness", "hint": "Real weather colors her mood and small talk", "category": "Perception", "kind": "boolean", "value": "1", "source": "default", "restart_required": false },
+  { "key": "web.search", "label": "Web search", "hint": "She can search the web (needs a search API key)", "category": "Abilities", "kind": "boolean", "value": "1", "source": "env", "restart_required": true },
+  { "key": "web.fetch", "label": "Read web pages", "hint": "She can open and read URLs", "category": "Abilities", "kind": "boolean", "value": "1", "source": "default", "restart_required": true },
+  { "key": "skills.enabled", "label": "Skill library", "hint": "She keeps + reuses saved procedures (save_skill / recall_skill + the skill shelf)", "category": "Abilities", "kind": "boolean", "value": "1", "source": "default", "restart_required": true },
+  { "key": "skills.dream_distill", "label": "Dream skill distillation", "hint": "Her dream turns the day’s significant moments into reusable skills (audited, undoable)", "category": "Memory", "kind": "boolean", "value": "1", "source": "default", "restart_required": false },
+  { "key": "memory.inject", "label": "Memory in context", "hint": "Core memory and recalled moments shape her replies", "category": "Memory", "kind": "boolean", "value": "1", "source": "default", "restart_required": false },
+  { "key": "dream.shutdown", "label": "Dream on quit", "hint": "She consolidates memories before shutting down (at most once every few hours, not every close)", "category": "Memory", "kind": "boolean", "value": "1", "source": "default", "restart_required": false }
+]

@@ -19,7 +19,9 @@ let corePromise: Promise<void> | null = null;
 // Cubism Core is a non-module global script. It MUST be present before the
 // cubism4 plugin module evaluates (it checks for the runtime at import time),
 // so we load the script here and only then dynamic-import the plugin.
-function loadCubismCore(src = '/live2dcubismcore.min.js'): Promise<void> {
+// v0.46.0: relative, not root-absolute — the page is served from a sub-path on GitHub Pages
+// (/Luna/); at '/', where dev-server.ts, serve.ts and the packaged app all sit, it resolves the same.
+function loadCubismCore(src = './live2dcubismcore.min.js'): Promise<void> {
   if (corePromise) return corePromise;
   corePromise = new Promise<void>((resolve, reject) => {
     if ((globalThis as Record<string, unknown>)['Live2DCubismCore']) return resolve();

@@ -65,6 +65,9 @@ packages/
     turn/ tools/ memory/ dream/ proactive/ provider/ persona/ skills/ code/
     data/ settings/ trace/ workspace/ migrations/ (22 files)
   web/        thin reactive view — app.ts controller.ts wsClient.ts + live2d/ (18) ui/ (25)
+              demo/ (v0.46.0) the showcase replay: script.ts compile.ts tapeClient.ts director.ts
+              — `window.lunaDemo` (set by demo.html via demo/bridge.js) swaps the socket for a tape
+              at app.ts's ONE client seam; `bun run build:demo` → dist-demo/ (Pages), never dist/
               audio/ physics/ tts/ + menuMode wakeSequence returnGate quietLeaf uiMode workbenchMode
   music-cli/  vendored macOS Now-Playing observer (v0.45.0, re-vendored v0.45.8)
               adapter.ts (the ONLY file that knows media-control's JSON)

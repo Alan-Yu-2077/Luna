@@ -1,0 +1,18 @@
+{
+  "_note": "PLACEHOLDER — one stand-in dream report. Replace with the owner's curated export.",
+  "dreams": [
+    {
+      "cycle_id": "dream-placeholder-0921",
+      "started_ms": 1789952400000,
+      "ended_ms": 1789952640000,
+      "aborted": false,
+      "steps": [
+        { "step": "rate_salience", "status": "ok", "detail": "rated 14 turns", "ms": 41000 },
+        { "step": "write_diary", "status": "ok", "detail": "one day entry", "ms": 38000 },
+        { "step": "consolidate_facts", "status": "ok", "detail": "2 kept, 1 merged", "ms": 52000 },
+        { "step": "evolve_soul", "status": "ok", "detail": "a line about restraint", "ms": 47000 },
+        { "step": "distill_skills", "status": "skipped", "detail": "nothing new worth keeping", "ms": 9000 }
+      ]
+    }
+  ]
+}

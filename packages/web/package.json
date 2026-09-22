@@ -14,7 +14,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "bun scripts/build.ts"
+    "build": "bun scripts/build.ts",
+    "build:demo": "bun scripts/buildDemo.ts"
   },
   "dependencies": {
     "@luna/protocol": "workspace:*",
