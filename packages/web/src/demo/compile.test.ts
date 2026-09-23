@@ -321,6 +321,49 @@ describe('press_play — the player prompt', () => {
   });
 });
 
+// v0.49.0 — speaking before a surface tool, and his hands on the desk.
+describe('proactive then_tools and open_file', () => {
+  test('a waking that speaks first runs its surface tools after the words — and no line is her last word', () => {
+    const compiled = compileScene(
+      scene([
+        {
+          kind: 'proactive',
+          delayMs: 0,
+          tools: [{ name: 'web_search', summary: '1 result for "q": [1] https://x.test/' }],
+          lines: [{ text: 'found it' }],
+          then_tools: [{ name: 'shell', summary: 'shell exit 0' }],
+        },
+      ]),
+      () => undefined,
+    );
+    const frames = compiled.prelude.cues.flatMap((c) => (c.kind === 'frame' ? [c.frame] : []));
+    const order = frames.flatMap((f) => (f.type === 'tool.started' ? [f.tool_name] : []));
+    expect(order).toEqual(['web_search', 'message', 'shell']);
+    const said = frames.find((f) => f.type === 'tool.started' && f.tool_name === 'message');
+    expect(said?.type === 'tool.started' ? (said.input as { is_final?: boolean }).is_final : null).toBe(false);
+    const done = frames[frames.length - 1];
+    expect(done?.type === 'proactive.finished' ? done.spoke : null).toBe(true);
+  });
+
+  test('open_file closes the turn after her voice and hands the desk to the director', () => {
+    const doc = { title: 'T', authors: ['A'], affiliations: 'X', lead: 'L…', venue: 'V', id: 'arXiv:1', url: 'https://arxiv.org/abs/1' };
+    const compiled = compileScene(
+      scene([
+        { kind: 'user', text: 'u' },
+        { kind: 'luna', text: 'aa' },
+        { kind: 'open_file', folder: 'From Luna', file: 'p.pdf', label: 'Open it', doc },
+        { kind: 'user', text: 'back' },
+      ]),
+      () => 3000,
+    );
+    const cues = compiled.turns[0]!.run.cues;
+    const stage = cues.find((c) => c.kind === 'stage')!;
+    expect(stage.stage).toEqual({ kind: 'open_file', folder: 'From Luna', file: 'p.pdf', label: 'Open it', doc });
+    expect(stage.at).toBe(PACING.thinkMs + PACING.chunkMs + 3000);
+    expect(compiled.turns.map((t) => t.userText)).toEqual(['u', 'back']);
+  });
+});
+
 describe('dream — the block and the beat', () => {
   const block = {
     steps: [

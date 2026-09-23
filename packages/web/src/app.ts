@@ -128,10 +128,15 @@ async function boot(): Promise<void> {
   // while the lobby and the model come in behind it.
   let demo: DemoBundle | null = null;
   if (demoBridge) {
+    // v0.49.0: a visitor's first entry ALWAYS starts with the question — a shared `?lang=` link does
+    // not skip it. Only a choice already made in this tab (Replay ↻, the lobby's language switch)
+    // goes straight to the guide in that language.
     const urlLang = parseUiLang(new URLSearchParams(location.search).get('lang'));
-    const guide = mountGuide(document, { lang: urlLang });
+    const chosen = readDemoChoice();
+    const guide = mountGuide(document, { lang: chosen && urlLang ? urlLang : null });
     const lang = await guide.language;
-    if (!urlLang) {
+    storeDemoChoice();
+    if (lang !== urlLang) {
       const params = new URLSearchParams(location.search);
       params.set('lang', lang);
       history.replaceState(null, '', `${location.pathname}?${params.toString()}${location.hash}`);
@@ -454,7 +459,7 @@ async function boot(): Promise<void> {
           else if (cue.kind === 'press_play') {
             const track = cue.track;
             director?.pressPlay(cue.label, () => bundle.music?.set(track));
-          }
+          } else if (cue.kind === 'open_file') director?.openFile(cue);
           // 'await' never reaches here — the tape holds on it itself (a finished dream waits for Wake).
         },
       });
@@ -949,6 +954,24 @@ async function boot(): Promise<void> {
   }
 
   startTimestampRefresh(refs.chatLog);
+}
+
+// v0.49.0: has the visitor answered the language question in this tab already? sessionStorage — a new
+// tab (a link from the README, a shared URL) asks again; a reload in the same tab does not.
+const DEMO_CHOICE_KEY = 'luna:demo-lang-chosen';
+function readDemoChoice(): boolean {
+  try {
+    return sessionStorage.getItem(DEMO_CHOICE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+function storeDemoChoice(): void {
+  try {
+    sessionStorage.setItem(DEMO_CHOICE_KEY, '1');
+  } catch {
+    /* storage unavailable — the next load simply asks again */
+  }
 }
 
 // The empty-state placeholder copy, keyed by why no avatar rendered. `none` is the default

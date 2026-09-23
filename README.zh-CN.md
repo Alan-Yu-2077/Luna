@@ -18,7 +18,7 @@
 
 <img src="docs/assets/moment-fries.png" width="820" alt="Luna,一个 Live2D 桌面伙伴,在玩梗" />
 
-[![在线演示 · 在浏览器里见她](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%A7%81%E5%A5%B9-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/?lang=zh)
+[![在线演示 · 在浏览器里见她](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%A7%81%E5%A5%B9-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
 [![工程图谱 · 看她怎么搭的](https://img.shields.io/badge/%E2%9A%99_%E5%B7%A5%E7%A8%8B%E5%9B%BE%E8%B0%B1-%E7%9C%8B%E5%A5%B9%E6%80%8E%E4%B9%88%E6%90%AD%E7%9A%84-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
 
 <sub>演示用的是真实的前端和渲染引擎,跑在一盘预录的脚本磁带上——声音是她自己的音色,预先渲染好;

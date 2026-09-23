@@ -93,6 +93,9 @@ export const Beat = z.discriminatedUnion('kind', [
     delayMs: z.number().int().nonnegative().optional(),
     lines: z.array(LunaLine).optional(),
     tools: z.array(ToolCall).optional(),
+    // v0.49.0: tools she runs AFTER speaking. A `surface` tool (shell, edit…) is refused in a waking
+    // until she has spoken — the real gate (proactive/safetyGate.ts) — so it can only come here.
+    then_tools: z.array(ToolCall).optional(),
     quiet_note: z.string().optional(),
     continuation: z.boolean().optional(),
   }),
@@ -113,10 +116,29 @@ export const Beat = z.discriminatedUnion('kind', [
   // she hears it. The director dims the room like the time curtain and asks the visitor to do it;
   // the track starts on the click, and the next line waits for it. Never inside a turn.
   z.object({ kind: z.literal('press_play'), track: z.string().regex(SLUG), label: z.string().min(1) }),
+  // v0.49.0: HIS hands again — back at his desk, he opens the folder she left and the file in it.
+  // The director draws the desktop, the folder window and the document's first page; the next line
+  // waits until he closes it. `doc` is what the first page shows (the facts on a title page).
+  z.object({
+    kind: z.literal('open_file'),
+    folder: z.string().min(1),
+    file: z.string().min(1),
+    label: z.string().min(1),
+    doc: z.object({
+      title: z.string().min(1),
+      authors: z.array(z.string().min(1)).min(1),
+      affiliations: z.string().min(1),
+      lead: z.string().min(1),
+      venue: z.string().min(1),
+      id: z.string().min(1),
+      url: z.string().url(),
+    }),
+  }),
   // She dreams, in the chat: the script's dream block plays here (after the turn closes).
   z.object({ kind: z.literal('dream') }),
 ]);
 export type Beat = z.infer<typeof Beat>;
+export type OpenFileBeat = Extract<Beat, { kind: 'open_file' }>;
 
 export const Scene = z.object({
   id: z.string().regex(SLUG),

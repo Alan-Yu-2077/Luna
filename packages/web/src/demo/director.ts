@@ -11,6 +11,7 @@
 // picker on the pill. None of them touches the app's DOM tree beyond appending to it.
 
 import { t, type UiLang } from '../ui/uiCopy';
+import type { StageCue } from './compile';
 
 export type DirectorRefs = {
   input: HTMLInputElement;
@@ -27,8 +28,12 @@ export type Director = {
   // v0.48.3: his hand on the player — the room dims like the time curtain, an app icon waits for
   // the visitor's click; the click starts the track (`onPlay`) and only then is the next line typed.
   pressPlay(label: string, onPlay: () => void): void;
+  // v0.49.0: back at his desk — a drawn desktop, the folder she left, the file in it, its first page.
+  openFile(file: OpenFileCue): void;
   dispose(): void;
 };
+
+export type OpenFileCue = Extract<StageCue, { kind: 'open_file' }>;
 
 export const TYPE_MS = 45;
 export const TYPE_LEAD_MS = 500;
@@ -88,7 +93,54 @@ const STYLE = `
 .demo-curtain .demo-curtain-label { font-size: 16px; letter-spacing: 0.08em; color: #c9d4e3; }
 
 .demo-play { gap: 16px; }
-body:has(.menu-mode) .demo-play { display: none; }
+body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none; }
+
+.demo-desk { background: radial-gradient(120% 90% at 20% 10%, #50709a 0%, #2d4262 55%, #1b2638 100%); gap: 18px; }
+.demo-desk .demo-desk-hint {
+  position: absolute; top: 34px; left: 50%; transform: translateX(-50%); max-width: calc(100vw - 48px);
+  background: rgba(20, 26, 38, 0.55); color: #e8edf5; font-size: 14px; letter-spacing: 0.04em;
+  padding: 8px 16px; border-radius: 999px; text-align: center;
+}
+.demo-desk .demo-desk-icon, .demo-desk .demo-desk-file {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; border: none; background: none;
+  cursor: pointer; padding: 10px 12px; border-radius: 12px; font: inherit;
+}
+.demo-desk .demo-desk-icon svg { width: 76px; height: 62px; }
+.demo-desk .demo-desk-icon span { color: #fff; font-size: 13px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); }
+.demo-desk .demo-desk-icon:hover, .demo-desk .demo-desk-file:hover { background: rgba(255, 255, 255, 0.14); }
+.demo-desk .demo-desk-pulse { animation: demo-desk-pulse 1.6s ease-in-out infinite; }
+@keyframes demo-desk-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.demo-desk .demo-desk-window {
+  width: min(460px, calc(100vw - 32px)); background: #f7f9fc; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45); color: #2c3a4d;
+}
+.demo-desk .demo-desk-window.reader { width: min(640px, calc(100vw - 32px)); }
+.demo-desk .demo-desk-bar {
+  display: flex; align-items: center; gap: 7px; padding: 9px 12px; background: #e6ebf2; font-size: 12px; color: #5b6a80;
+}
+.demo-desk .demo-desk-bar i { width: 11px; height: 11px; border-radius: 50%; background: #c9d3df; display: inline-block; }
+.demo-desk .demo-desk-bar span { margin-left: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.demo-desk .demo-desk-body { padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.demo-desk .demo-desk-file svg { width: 48px; height: 60px; }
+.demo-desk .demo-desk-file span { font-size: 13px; color: #2c3a4d; }
+.demo-desk .demo-desk-file:hover { background: #e8eef6; }
+.demo-desk .demo-desk-sub { margin: 0; font-size: 12px; color: #8a97a8; }
+.demo-desk .demo-desk-page {
+  width: 100%; max-height: min(52vh, 460px); overflow: auto; background: #fff; border: 1px solid #dfe5ee;
+  padding: 26px 30px; font-family: 'Times New Roman', Times, serif; color: #1d2430; text-align: center;
+}
+.demo-desk .doc-title { font-size: 26px; margin: 0 0 14px; font-weight: 700; }
+.demo-desk .doc-authors { font-size: 13px; margin: 0 0 6px; line-height: 1.5; }
+.demo-desk .doc-aff { font-size: 12px; margin: 0 0 18px; color: #4a5566; font-style: italic; }
+.demo-desk .doc-abs { font-size: 15px; margin: 0 0 6px; }
+.demo-desk .doc-lead { font-size: 13px; margin: 0 auto 18px; max-width: 460px; text-align: left; line-height: 1.55; }
+.demo-desk .doc-venue, .demo-desk .doc-id { font-size: 11px; margin: 0 0 4px; color: #6b7686; }
+.demo-desk .demo-desk-actions { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.demo-desk .demo-desk-actions a { font-size: 13px; color: #27496b; }
+.demo-desk .demo-desk-back {
+  border: none; cursor: pointer; background: var(--sky); color: var(--sky-text); font: inherit; font-size: 14px;
+  font-weight: 600; padding: 8px 18px; border-radius: 999px; box-shadow: 0 2px 0 var(--sky-deep);
+}
 .demo-play .demo-play-app {
   position: relative; width: 104px; height: 104px; border: none; border-radius: 28px; padding: 0; cursor: pointer;
   background: #d43c33; box-shadow: 0 10px 30px rgba(212, 60, 51, 0.35); transition: transform 0.15s ease;
@@ -223,7 +275,16 @@ export function mountDirector(
   playHint.className = 'demo-play-hint';
   play.append(appBtn, appName, playLabel, playHint);
   doc.body.appendChild(play);
-  let playGate: (() => void) | null = null;
+  // v0.49.0: the desk — his screen, drawn: a folder on a wallpaper, a Finder-like window, a page.
+  const desk = doc.createElement('div');
+  desk.className = 'demo-curtain demo-desk';
+  desk.setAttribute('role', 'dialog');
+  doc.body.appendChild(desk);
+
+  // A visitor action the next line waits for (his hand on the player, on the folder). While one is
+  // open, `arm` parks the line; finishing the action types it — he did the thing, then he says so.
+  let gate: 'play' | 'file' | null = null;
+  let onPlay: (() => void) | null = null;
   let pendingArm: string | null = null;
 
   refs.input.readOnly = true;
@@ -277,25 +338,135 @@ export function mountDirector(
     );
   };
 
-  const closePlay = (): void => {
-    playGate = null;
+  const release = (): void => {
+    const text = pendingArm;
+    gate = null;
+    onPlay = null;
+    pendingArm = null;
+    // The next line is typed once the room is lit again.
+    if (text !== null) setTimeout(() => typeIn(text), CURTAIN_FADE_MS);
+  };
+  const closeGates = (): void => {
+    gate = null;
+    onPlay = null;
     pendingArm = null;
     play.classList.remove('on');
+    desk.classList.remove('on');
   };
   appBtn.addEventListener('click', () => {
-    const start = playGate;
-    if (!start) return;
-    const text = pendingArm;
-    closePlay();
-    start();
-    // The next line is typed once the room is lit again: he pressed play, then he says so.
-    if (text !== null) setTimeout(() => typeIn(text), CURTAIN_FADE_MS);
+    if (gate !== 'play') return;
+    const start = onPlay;
+    play.classList.remove('on');
+    start?.();
+    release();
   });
+
+  const FOLDER =
+    '<svg viewBox="0 0 64 52" aria-hidden="true"><path fill="#7fb3e6" d="M4 8a4 4 0 0 1 4-4h16l6 6h26a4 4 0 0 1 4 4v4H4z"/>' +
+    '<rect x="4" y="14" width="56" height="34" rx="4" fill="#9cc7f0"/><rect x="4" y="14" width="56" height="6" fill="#b5d6f5"/></svg>';
+  const PDF =
+    '<svg viewBox="0 0 40 50" aria-hidden="true"><path fill="#fff" stroke="#c9d3df" d="M2 2h26l10 10v36H2z"/><path fill="#e8edf3" d="M28 2v10h10"/>' +
+    '<rect x="6" y="30" width="28" height="12" rx="2" fill="#d9534f"/><text x="20" y="39.5" font-size="9" font-weight="700" fill="#fff" ' +
+    'text-anchor="middle" font-family="system-ui, sans-serif">PDF</text></svg>';
+
+  // Three states on one surface: the desktop (a folder waiting), the folder open (a file waiting),
+  // the file open (its first page). Only drawn things — no vendor icon, no copied body text: the page
+  // shows what a title page carries and a line of the abstract, and links out to the real paper.
+  const showDesktop = (cue: OpenFileCue): void => {
+    desk.replaceChildren();
+    const hint = doc.createElement('div');
+    hint.className = 'demo-desk-hint';
+    hint.textContent = cue.label;
+    const icon = doc.createElement('button');
+    icon.type = 'button';
+    icon.className = 'demo-desk-icon demo-desk-pulse';
+    icon.innerHTML = FOLDER;
+    const name = doc.createElement('span');
+    name.textContent = cue.folder;
+    icon.appendChild(name);
+    icon.addEventListener('click', () => showFolder(cue));
+    desk.append(hint, icon);
+  };
+
+  const windowFrame = (title: string): { win: HTMLElement; body: HTMLElement } => {
+    const win = doc.createElement('div');
+    win.className = 'demo-desk-window';
+    const bar = doc.createElement('div');
+    bar.className = 'demo-desk-bar';
+    bar.innerHTML = '<i></i><i></i><i></i>';
+    const name = doc.createElement('span');
+    name.textContent = title;
+    bar.appendChild(name);
+    const body = doc.createElement('div');
+    body.className = 'demo-desk-body';
+    win.append(bar, body);
+    return { win, body };
+  };
+
+  const showFolder = (cue: OpenFileCue): void => {
+    desk.replaceChildren();
+    const { win, body } = windowFrame(cue.folder);
+    const item = doc.createElement('button');
+    item.type = 'button';
+    item.className = 'demo-desk-file demo-desk-pulse';
+    item.innerHTML = PDF;
+    const name = doc.createElement('span');
+    name.textContent = cue.file;
+    item.appendChild(name);
+    item.addEventListener('click', () => showPage(cue));
+    const hint = doc.createElement('p');
+    hint.className = 'demo-desk-sub';
+    hint.textContent = t('demo.openFileHint');
+    body.append(item, hint);
+    desk.appendChild(win);
+  };
+
+  const showPage = (cue: OpenFileCue): void => {
+    desk.replaceChildren();
+    const { win, body } = windowFrame(cue.file);
+    win.classList.add('reader');
+    const page = doc.createElement('article');
+    page.className = 'demo-desk-page';
+    const el = (tag: string, cls: string, text: string): HTMLElement => {
+      const n = doc.createElement(tag);
+      n.className = cls;
+      n.textContent = text;
+      return n;
+    };
+    page.append(
+      el('h1', 'doc-title', cue.doc.title),
+      el('p', 'doc-authors', cue.doc.authors.join(' · ')),
+      el('p', 'doc-aff', cue.doc.affiliations),
+      el('h2', 'doc-abs', 'Abstract'),
+      el('p', 'doc-lead', cue.doc.lead),
+      el('p', 'doc-venue', cue.doc.venue),
+      el('p', 'doc-id', cue.doc.id),
+    );
+    const actions = doc.createElement('div');
+    actions.className = 'demo-desk-actions';
+    const out = doc.createElement('a');
+    out.href = cue.doc.url;
+    out.target = '_blank';
+    out.rel = 'noopener noreferrer';
+    out.textContent = t('demo.readOriginal');
+    const back = doc.createElement('button');
+    back.type = 'button';
+    back.className = 'demo-desk-back';
+    back.textContent = t('demo.backToLuna');
+    back.addEventListener('click', () => {
+      if (gate !== 'file') return;
+      desk.classList.remove('on');
+      release();
+    });
+    actions.append(out, back);
+    body.append(page, actions);
+    desk.appendChild(win);
+  };
 
   return {
     arm(text) {
-      // Behind the player prompt the line waits — it is typed after the click, not under the curtain.
-      if (playGate) {
+      // Behind a visitor action the line waits — it is typed after it, not under the curtain.
+      if (gate) {
         disarm();
         pendingArm = text;
         return;
@@ -307,7 +478,7 @@ export function mountDirector(
 
     sceneStart(index, title) {
       disarm(); // a jump mid-typing must not leave a half line armed later
-      closePlay();
+      closeGates();
       refs.input.value = '';
       label.textContent = t('demo.scene', { n: index + 1, total: opts.sceneTitles.length, title });
       items.forEach((b, i) => b.classList.toggle('current', i === index));
@@ -335,18 +506,26 @@ export function mountDirector(
       curtainTimer = setTimeout(() => curtain.classList.remove('on'), Math.max(0, ms - CURTAIN_FADE_MS));
     },
 
-    pressPlay(text, onPlay) {
+    pressPlay(text, start) {
       appName.textContent = t('demo.playApp');
       playLabel.textContent = text;
       playHint.textContent = t('demo.playHint');
-      playGate = onPlay;
+      gate = 'play';
+      onPlay = start;
       play.classList.add('on');
+    },
+
+    openFile(cue) {
+      gate = 'file';
+      showDesktop(cue);
+      desk.classList.add('on');
     },
 
     dispose() {
       disarm();
-      closePlay();
+      closeGates();
       play.remove();
+      desk.remove();
       clearTimeout(curtainTimer);
       refs.input.removeEventListener('keydown', guard, true);
       next.removeEventListener('click', onNextClick);

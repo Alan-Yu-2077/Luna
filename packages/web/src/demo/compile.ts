@@ -1,5 +1,5 @@
 import { ServerEvent, type Citation, type MessageDelivery } from '@luna/protocol';
-import type { Beat, DemoScript, DreamBlock, LunaLine, Scene, ToolCall } from './script';
+import type { Beat, DemoScript, DreamBlock, LunaLine, OpenFileBeat, Scene, ToolCall } from './script';
 
 // v0.46.0 — script → tape. Pure: a scene's beats become runs of timed cues, one run per stretch
 // between visitor actions. The timings are the SHAPE of a real turn (a thinking gap, a streamed
@@ -37,6 +37,8 @@ export type StageCue =
   | { kind: 'music'; track: string | null }
   // v0.48.3: the visitor presses play in "his" player — the director gates the next line on it.
   | { kind: 'press_play'; track: string; label: string }
+  // v0.49.0: back at his desk — the folder she left, the file in it.
+  | { kind: 'open_file'; folder: string; file: string; label: string; doc: OpenFileBeat['doc'] }
   | { kind: 'await'; what: 'wake' };
 
 export type Cue =
@@ -258,6 +260,14 @@ class RunBuilder {
         this.settle();
         this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'press_play', track: beat.track, label: beat.label } });
         return;
+      case 'open_file':
+        this.settle();
+        this.cues.push({
+          at: this.t,
+          kind: 'stage',
+          stage: { kind: 'open_file', folder: beat.folder, file: beat.file, label: beat.label, doc: beat.doc },
+        });
+        return;
       case 'dream': {
         if (!this.dream) throw new Error('a dream beat needs the script-level dream block');
         this.settle();
@@ -276,7 +286,10 @@ class RunBuilder {
         this.t += PACING.thinkMs;
         for (const call of beat.tools ?? []) this.tool(call);
         const lines = beat.lines ?? [];
-        lines.forEach((line, i) => this.message(line, i === lines.length - 1));
+        // With tools still to run after her words, no line of hers is the last word of the turn.
+        const after = beat.then_tools ?? [];
+        lines.forEach((line, i) => this.message(line, i === lines.length - 1 && after.length === 0));
+        for (const call of after) this.tool(call);
         const spoke = lines.length > 0;
         this.frame(this.t, {
           type: 'proactive.finished',
@@ -303,7 +316,9 @@ export function moreInTurn(beats: readonly Beat[], i: number): boolean {
   for (let j = i + 1; j < beats.length; j++) {
     const k = beats[j]?.kind;
     if (k === 'luna' || k === 'tool') return true;
-    if (k === 'user' || k === 'proactive' || k === 'skip' || k === 'dream' || k === 'press_play') return false;
+    if (k === 'user' || k === 'proactive' || k === 'skip' || k === 'dream' || k === 'press_play' || k === 'open_file') {
+      return false;
+    }
   }
   return false;
 }
