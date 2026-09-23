@@ -54,7 +54,8 @@ describe.skipIf(!existsSync(notesPath))('demo/notes.json', () => {
             bad.push(`${id}: missing file ${b.file}`);
             continue;
           }
-          const file = readFileSync(path, 'utf8').split('\n');
+          // Split on \r?\n: a Windows checkout (CI) has CRLF line ends; the snippets are stored with \n.
+          const file = readFileSync(path, 'utf8').split(/\r?\n/);
           const want = b.snippet.replace(/\n+$/, '').split('\n');
           const got = file.slice(b.from - 1, b.from - 1 + want.length);
           if (got.join('\n') !== want.join('\n')) bad.push(`${id}: ${b.file}:${b.from} does not match`);

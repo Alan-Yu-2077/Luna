@@ -790,6 +790,8 @@ Fact:
   and one checked against GitHub's raw file at that commit. `notes.test.ts` (quotes may be verbatim excerpts)
   now runs on the real file: every scene has notes, every code block equals its file at `from`, every quote
   is in the scene's tape.
+- Follow-up: CI's Windows job checks the repo out with CRLF line ends, so the snippet test (which compares
+  lines) failed there; it now splits files on `\r?\n`.
 - `bun test` 2167 pass / 0 fail; five packages tsc clean. Browser: scenes 5, 9 (en), 9, 14 (zh) — pagination,
   code with pinned links, flow boxes, the Chinese hand; README captions mention the notes and "use a computer".
 
