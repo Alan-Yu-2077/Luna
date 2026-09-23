@@ -116,12 +116,13 @@ describe('demo/data — the shared files', () => {
 
 // ── v0.48.1 — one story in two languages ────────────────────────────────────────────────────────
 
-// Everything but the words: scene titles, what he types, what she says, and the curtain's labels.
+// Everything but the words: scene titles, what he types, what she says, the curtain's labels, and the
+// name of the folder she leaves on his desktop.
 function skeleton(script: Script): unknown {
   const { _note, ...rest } = script as Script & { _note?: string };
   void _note;
   return JSON.parse(
-    JSON.stringify(rest, (key, value: unknown) => (key === 'title' || key === 'text' || key === 'label' ? undefined : value)),
+    JSON.stringify(rest, (key, value: unknown) => (key === 'title' || key === 'text' || key === 'label' || key === 'folder' ? undefined : value)),
   );
 }
 

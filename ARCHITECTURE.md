@@ -255,8 +255,10 @@ two seams that already existed:
 
 The script (`web/demo/script.json`) is authored as beats — `user` / `luna` / `tool` (with the real
 `summarize()` line and an optional progress note) / `proactive` (lines, or tools + a quiet note; a
-`continuation` is the 💭) / `action` / `pulse` / `pause` / `skip` (a time skip) / `music` (a record
-on the turntable) / `dream` (the cycle, in-chat) — and compiled (`demo/compile.ts`) into
+`continuation` is the 💭; `then_tools` run after she has spoken — the only order the proactive safety
+gate allows a `surface` tool) / `action` / `pulse` / `pause` / `skip` (a time skip) / `music` (a record
+on the turntable) / `press_play` and `open_file` (his hand: the player, the desk) / `dream` (the
+cycle, in-chat) — and compiled (`demo/compile.ts`) into
 `ServerEvent` frames timed like a real turn plus **stage cues** the app never sees; every frame is
 parsed against the protocol at compile time, and a test loads the shipped script and its data files.
 The tape's rules are the server's: the dream block emits what ws.ts + `cycle.ts` emit and **holds** at
@@ -271,12 +273,14 @@ read-only for the whole demo (a scripted conversation must not look like one you
 NOT the app is held to one rule — demo-only DOM in `demo/director.ts`, `demo-` prefixed, nothing
 inside her: the entrance guide (bilingual; *there is no AI running behind this page; nothing here is
 invented*), the curtain with a sweeping clock under which the compiler advances its own clock, the
-scene pill with its picker. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
+scene pill with its picker, and his hand when the story needs it — a play prompt over the player, a
+drawn desk with the folder she left and the first page of the paper in it (a real link out, no copied
+body text); the next scripted line waits behind either. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
 framing); `bun run build:demo` emits a separate `dist-demo/` that the packaged app never carries,
 with the engineering map placed under `/engineering/`.
 
-**Two languages (v0.48.x).** The replay's entrance opens on a language choice (skipped when the URL
-carries `?lang=`), and the choice selects both the interface language and the tape. What she said
+**Two languages (v0.48.x).** The replay's entrance opens on a language choice (asked on a tab's first
+entry even when the URL carries `?lang=`; only a choice made in the same tab skips it), and the choice selects both the interface language and the tape. What she said
 and wrote lives per language — `demo/<lang>/` holds the script, her pre-rendered voice, her diaries
 and her skills — while what the server writes is shared, because the server writes one English:
 `demo/data/` holds the dream reports and the settings registry, and the views re-present them. A

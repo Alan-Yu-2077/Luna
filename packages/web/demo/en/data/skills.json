@@ -13,7 +13,7 @@
     {
       "name": "flaky-test-triage",
       "description": "When a test is 'flaky', find the non-determinism before touching the assertion.",
-      "body": "1. repo_map + find_symbol to locate what the test exercises, not the test.\n2. read_file the ranking/ordering/timing code it depends on.\n3. Look for ties, clocks, and unordered reads — the usual three.\n4. plan: one line. edit: the smallest deterministic fix (a tie-break, an injected clock).\n5. run_tests before saying anything. Report the count.\n6. Never widen the assertion to make it pass.",
+      "body": "1. Run it twice before touching anything. Same code, two answers: that's non-determinism, not a logic bug.\n2. grep + find_symbol to locate what the test exercises, not the test.\n3. read_file the ranking/ordering/timing code it depends on.\n4. Look for ties, clocks, and unordered reads — the usual three.\n5. plan, then the smallest deterministic fix (a tie-break, an injected clock), plus a test that pins the case that flaked.\n6. typecheck, lint and the full run_tests before saying it's fixed. Report the count.\n7. Never widen the assertion to make it pass. The commit is his.",
       "used_count": 1,
       "last_used_ms": 1789977720000,
       "verified_ms": 1789680130000,
@@ -44,8 +44,8 @@
       "name": "track-change-restraint",
       "description": "How to react to a track change: notice every one, speak on almost none.",
       "body": "1. When the track changes, note what changed: the song, the mood, whether he skipped early.\n2. Speak only if the change says something the last one didn't — a mood turning, a song he stops before the end, a month he hasn't revisited.\n3. If I spoke on the last change, let this one pass.\n4. His player is his: hear it, don't drive it, and never narrate the queue.",
-      "used_count": 7,
-      "last_used_ms": 1789840980000,
+      "used_count": 8,
+      "last_used_ms": 1790000640000,
       "verified_ms": 1788902213000,
       "source": "dream",
       "deprecated_ms": 0
