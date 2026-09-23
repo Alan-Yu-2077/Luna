@@ -239,7 +239,7 @@ settings by their stable key (`ui/settingsView.ts`), the quiet note through a ph
 with the server in `@luna/protocol` (`quietNote.ts`), so a server-side rewording fails a test instead
 of leaking English into a Chinese screen. A tool's own finish summary is shown as the tool wrote it.
 
-## The showcase replay (v0.46.x – v0.47.x)
+## The showcase replay (v0.46.x – v0.48.x)
 
 The public demo at the GitHub Pages root is this front end — the same bundle entry, the same
 controller, views, physics, FaceVm and lip-sync — running on a tape instead of a socket. It hangs off
@@ -274,6 +274,14 @@ invented*), the curtain with a sweeping clock under which the compiler advances 
 scene pill with its picker. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
 framing); `bun run build:demo` emits a separate `dist-demo/` that the packaged app never carries,
 with the engineering map placed under `/engineering/`.
+
+**Two languages (v0.48.x).** The replay's entrance opens on a language choice (skipped when the URL
+carries `?lang=`), and the choice selects both the interface language and the tape. What she said
+and wrote lives per language — `demo/<lang>/` holds the script, her pre-rendered voice, her diaries
+and her skills — while what the server writes is shared, because the server writes one English:
+`demo/data/` holds the dream reports and the settings registry, and the views re-present them. A
+test holds the Chinese tape to the English tape's skeleton byte for byte (the same tools with the
+same summaries, the same faces, the same timing), so the two can differ only where words are.
 
 ## The front door (v0.44.x)
 

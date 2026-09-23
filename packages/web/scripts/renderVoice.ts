@@ -1,10 +1,13 @@
-// v0.46.1: pre-render her voice for the showcase script. Every spoken line in demo/script.json is
-// synthesized ONCE through a GPT-SoVITS api_v2 — the same request `planTtsForward` builds for the
+// v0.46.1: pre-render her voice for the showcase script. Every spoken line in demo/<lang>/script.json
+// is synthesized ONCE through a GPT-SoVITS api_v2 — the same request `planTtsForward` builds for the
 // live app, so the demo voice is the app's voice — then encoded to mp3 and recorded in
-// demo/voice/manifest.json with its duration (the compiler paces each run by it). Idempotent: a
-// line whose file already exists is skipped; a line the script no longer says is removed.
+// demo/<lang>/voice/manifest.json with its duration (the compiler paces each run by it). Idempotent:
+// a line whose file already exists is skipped; a line the script no longer says is removed.
+// v0.48.1: one voice directory per language, so a render of one can never sweep the other's files.
+// The request is still the app's own: text_lang comes from luna.env (`auto`), so a Chinese line is
+// voiced exactly as the app would voice her speaking Chinese.
 //
-//   bun scripts/renderVoice.ts [--url http://127.0.0.1:9881] [--env <path to luna.env>]
+//   bun scripts/renderVoice.ts --lang en|zh [--url http://127.0.0.1:9881] [--env <path to luna.env>]
 //
 // The voice reference (LUNA_TTS_REF_AUDIO / PROMPT_TEXT / PROMPT_LANG / TEXT_LANG) is read from the
 // owner's luna.env — read, never copied into the repo. Run against a throwaway api_v2 port, not the
@@ -18,7 +21,13 @@ import { DemoScript, spokenLines, VoiceManifest, type VoiceLine } from '../src/d
 import { planTtsForward, readTtsEnv } from '../src/tts/apiV2';
 
 const root = join(import.meta.dir, '..');
-const demoDir = join(root, 'demo');
+function arg0(name: string, fallback: string): string {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? (process.argv[i + 1] ?? fallback) : fallback;
+}
+const lang = arg0('--lang', 'en');
+if (lang !== 'en' && lang !== 'zh') throw new Error(`--lang must be en or zh, got ${lang}`);
+const demoDir = join(root, 'demo', lang);
 const voiceDir = join(demoDir, 'voice');
 const manifestPath = join(voiceDir, 'manifest.json');
 

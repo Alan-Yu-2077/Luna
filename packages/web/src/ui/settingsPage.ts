@@ -65,7 +65,14 @@ export function iaKeys(): string[] {
 
 // Which old-panel rows land where. The refs are the SAME elements the old panel built — adoption
 // moves them, listeners and all.
-export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement {
+// v0.48.1: the replay passes its own fetch (the voice-health line gets the tape's answer, not a
+// 404 that reads "not running" while her voice plays) and `replay` — which keeps two things out of
+// a public page that cannot honour them: the persona editor (her soul file lives on the owner's
+// machine) and the door to the workbench (a dev tool, and a navigation away from the tape).
+export type SettingsPageOpts = { fetchFn?: (url: string) => Promise<Response>; replay?: boolean };
+
+export function mountSettingsPage(doc: Document, refs: LayoutRefs, opts: SettingsPageOpts = {}): HTMLElement {
+  const fetchFn = opts.fetchFn ?? ((u: string) => fetch(u));
   const page = doc.createElement('div');
   page.className = 'settings-page';
 
@@ -117,7 +124,7 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
   health.className = 'settings-voice-health';
   health.textContent = t('settings.health.checking');
   sections.get('voice')?.appendChild(health);
-  void fetch('/api/tts/health')
+  void fetchFn('/api/tts/health')
     .then(async (r) => {
       const body = (await r.json().catch(() => null)) as { backend?: { state?: string } } | null;
       const state = body?.backend?.state ?? (r.ok ? 'ready' : 'down');
@@ -160,7 +167,14 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
   sections.get('behaviour')?.appendChild(note);
 
   // ── Persona (v0.44.6) — the soul endpoints; the self-edit firewall lives in the tool layer. ──
-  sections.get('persona')?.appendChild(mountPersonaSection(doc));
+  if (opts.replay) {
+    const personaNote = doc.createElement('p');
+    personaNote.className = 'settings-page-note';
+    personaNote.textContent = t('demo.personaNote');
+    sections.get('persona')?.appendChild(personaNote);
+  } else {
+    sections.get('persona')?.appendChild(mountPersonaSection(doc));
+  }
 
   // ── Modules (v0.44.6) — four uniform cards over the wizard's own bridges. ──
   const setup = (globalThis as { lunaSetup?: Record<string, unknown> }).lunaSetup as
@@ -185,10 +199,12 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
   // ── System — the server registry card is adopted whole; its render pipeline is untouched. ──
   adopt('system', rowOf(refs.languageSelect));
   adopt('system', refs.serverSettings);
-  const wbRow = doc.createElement('div');
-  wbRow.className = 'settings-page-tools';
-  adopt('system', wbRow);
-  wbRow.appendChild(refs.workbenchBtn);
+  if (!opts.replay) {
+    const wbRow = doc.createElement('div');
+    wbRow.className = 'settings-page-tools';
+    adopt('system', wbRow);
+    wbRow.appendChild(refs.workbenchBtn);
+  }
 
   select('voice');
   return page;

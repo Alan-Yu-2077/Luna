@@ -232,6 +232,17 @@ const UI_COPY = {
   'boot.unavailable': { en: 'No voice service detected, entering…', zh: '没检测到语音服务，直接进入…' },
   'boot.failed': { en: 'Voice failed to load, entering muted', zh: '语音加载失败，静音进入' },
 
+  // ── the showcase replay's director (demo-only DOM; the app never shows these) ──
+  'demo.scene': { en: 'Scene {n}/{total} · {title}', zh: '第 {n}/{total} 幕 · {title}' },
+  'demo.next': { en: 'Next scene →', zh: '下一幕 →' },
+  'demo.replay': { en: 'Replay ↻', zh: '重看 ↻' },
+  'demo.map': { en: 'Engineering map →', zh: '工程图谱 →' },
+  'demo.switchLang': { en: '中文', zh: 'English' },
+  'demo.personaNote': {
+    en: "Her persona file lives on the owner's machine — the replay doesn't carry it. In the app, this is where he edits the fixed core and reads what she has grown.",
+    zh: '她的人格文件在主人的机器上，回放里不带。在 app 里，这一栏是主人改 Fixed 底色、看她自己长出来的 Evolving 的地方。',
+  },
+
   // ── desktop-only chrome ──
   'reconfigure.label': { en: '⚙ Setup', zh: '⚙ 重新配置' },
   'reconfigure.title': { en: 'Open the setup wizard (fix keys, model, voice)', zh: '打开配置向导（改 key、模型、语音）' },

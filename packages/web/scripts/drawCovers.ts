@@ -3,12 +3,16 @@
 // script's `music.tracks`:
 //
 //   bun scripts/drawCovers.ts
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { DemoScript } from '../src/demo/script';
 
 const root = join(import.meta.dir, '..');
-const script = DemoScript.parse(JSON.parse(readFileSync(join(root, 'demo', 'script.json'), 'utf8')));
+// v0.48.1: every language's shelf (the tracks are the same records; the covers are shared).
+const tracks = ['en', 'zh']
+  .map((lang) => join(root, 'demo', lang, 'script.json'))
+  .filter((f) => existsSync(f))
+  .flatMap((f) => DemoScript.parse(JSON.parse(readFileSync(f, 'utf8'))).music?.tracks ?? []);
 const outDir = join(root, 'demo', 'music');
 mkdirSync(outDir, { recursive: true });
 
@@ -23,7 +27,7 @@ function esc(s: string): string {
 }
 
 let n = 0;
-for (const t of script.music?.tracks ?? []) {
+for (const t of tracks) {
   if (!t.cover) continue;
   const h1 = hue(t.id, 1);
   const h2 = (h1 + 40 + hue(t.id, 2) % 60) % 360;

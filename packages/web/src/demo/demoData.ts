@@ -8,36 +8,49 @@ import type { MusicStore } from './demoMusic';
 //
 // v0.47.0 — with a music store, the card's three routes answer too: now / control / artwork, the
 // shapes `musicApi.ts` serves, so the card's real polling and real buttons drive the demo's shelf.
+//
+// v0.48.1 — two bases. What she WROTE follows the language she was spoken to in (her diaries, her
+// own skills: `demo/<lang>/data/`); what the server writes is one English grammar for both (the
+// dream reports, the settings registry: `demo/data/`, re-presented by the views). And the voice
+// health line gets the answer the real sidecar gives while her voice is playing — the tape imitates
+// the server here as it does everywhere, instead of the settings page saying "not running" over it.
 
-const DATA_ROUTES: Readonly<Record<string, string>> = {
-  '/api/data/diaries': 'data/diaries.json',
-  '/api/data/dreams': 'data/dreams.json',
-  '/api/data/skills': 'data/skills.json',
+export type DemoBases = { lang: string; shared: string };
+
+const DATA_ROUTES: Readonly<Record<string, { file: string; scope: keyof DemoBases }>> = {
+  '/api/data/diaries': { file: 'data/diaries.json', scope: 'lang' },
+  '/api/data/skills': { file: 'data/skills.json', scope: 'lang' },
+  '/api/data/dreams': { file: 'data/dreams.json', scope: 'shared' },
 };
+
+const TTS_HEALTH = { ok: true, backend: { ready: true, state: 'ready' } };
 
 function parse(url: string): URL {
   return new URL(url, 'http://demo.invalid/');
 }
 
-export function demoRoute(base: string, url: string): string | null {
-  let path = url;
+function pathOf(url: string): string {
   try {
-    path = parse(url).pathname;
+    return parse(url).pathname;
   } catch {
-    /* not a URL — match the raw string */
+    return url; // not a URL — match the raw string
   }
-  const file = DATA_ROUTES[path];
-  return file === undefined ? null : `${base}${file}`;
+}
+
+export function demoRoute(bases: DemoBases, url: string): string | null {
+  const route = DATA_ROUTES[pathOf(url)];
+  return route === undefined ? null : `${bases[route.scope]}${route.file}`;
 }
 
 const COVER_HASH = /^[a-z0-9-]+$/;
 
 export function createDemoFetch(
-  base: string,
+  bases: DemoBases,
   fetchFn: FetchLike = (u, i) => fetch(u, i),
   music: MusicStore | null = null,
 ): FetchLike {
   return async (url, init) => {
+    if (pathOf(url) === '/api/tts/health') return Response.json(TTS_HEALTH);
     if (music) {
       const u = parse(url);
       const method = (init?.method ?? 'GET').toUpperCase();
@@ -51,10 +64,10 @@ export function createDemoFetch(
         const h = u.searchParams.get('h') ?? '';
         const file = COVER_HASH.test(h) ? music.coverFile(h) : null;
         if (file === null) return new Response('not found', { status: 404 });
-        return fetchFn(`${base}${file}`, init);
+        return fetchFn(`${bases.shared}${file}`, init);
       }
     }
-    const target = demoRoute(base, url);
+    const target = demoRoute(bases, url);
     if (target === null) return new Response('not found', { status: 404 });
     return fetchFn(target, init);
   };

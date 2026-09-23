@@ -4,35 +4,45 @@ import { createMusicStore } from './demoMusic';
 
 // v0.46.0 — the static data surface: three reads answered from files, everything else a 404.
 
+const BASES = { lang: './demo/zh/', shared: './demo/' };
+
 describe('demoRoute', () => {
-  test('maps the three data reads under the base, ignoring query strings and origins', () => {
-    expect(demoRoute('./demo/', '/api/data/diaries')).toBe('./demo/data/diaries.json');
-    expect(demoRoute('./demo/', '/api/data/dreams?limit=5')).toBe('./demo/data/dreams.json');
-    expect(demoRoute('/x/', 'http://127.0.0.1:5173/api/data/skills')).toBe('/x/data/skills.json');
+  // v0.48.1: what she wrote follows her language; what the server writes is shared English.
+  test('her diaries and skills come from the language base, the dream reports from the shared one', () => {
+    expect(demoRoute(BASES, '/api/data/diaries')).toBe('./demo/zh/data/diaries.json');
+    expect(demoRoute(BASES, '/api/data/dreams?limit=5')).toBe('./demo/data/dreams.json');
+    expect(demoRoute({ lang: '/x/en/', shared: '/x/' }, 'http://127.0.0.1:5173/api/data/skills')).toBe('/x/en/data/skills.json');
   });
 
-  test('anything else has no route', () => {
-    expect(demoRoute('./demo/', '/api/tts/health')).toBeNull();
-    expect(demoRoute('./demo/', '/api/music/now')).toBeNull();
-    expect(demoRoute('./demo/', '/api/data/soul')).toBeNull();
+  test('anything else has no file route', () => {
+    expect(demoRoute(BASES, '/api/tts/health')).toBeNull();
+    expect(demoRoute(BASES, '/api/music/now')).toBeNull();
+    expect(demoRoute(BASES, '/api/data/soul')).toBeNull();
   });
 });
 
 describe('createDemoFetch', () => {
   test('routes a data read to the file and hands the init through', async () => {
     const calls: string[] = [];
-    const f = createDemoFetch('./demo/', async (u) => {
+    const f = createDemoFetch(BASES, async (u) => {
       calls.push(u);
       return new Response('{"entries":[]}');
     });
     const res = await f('/api/data/diaries');
     expect(res.ok).toBe(true);
-    expect(calls).toEqual(['./demo/data/diaries.json']);
+    expect(calls).toEqual(['./demo/zh/data/diaries.json']);
+  });
+
+  test('the voice health line hears what the real sidecar says while her voice plays', async () => {
+    const f = createDemoFetch(BASES, async () => new Response('', { status: 500 }));
+    const res = await f('/api/tts/health');
+    expect(res.ok).toBe(true);
+    expect(((await res.json()) as { backend: { state: string } }).backend.state).toBe('ready');
   });
 
   test('a non-data URL is a 404 without touching the network — the same answer a missing backend gives', async () => {
     let touched = false;
-    const f = createDemoFetch('./demo/', async () => {
+    const f = createDemoFetch(BASES, async () => {
       touched = true;
       return new Response('');
     });
@@ -51,7 +61,7 @@ describe('createDemoFetch with a music store', () => {
     const store = createMusicStore(tracks, () => 0);
     const hits: string[] = [];
     const f = createDemoFetch(
-      './demo/',
+      BASES,
       async (u) => {
         hits.push(u);
         return new Response('<svg/>', { headers: { 'content-type': 'image/svg+xml' } });
@@ -74,9 +84,9 @@ describe('createDemoFetch with a music store', () => {
   });
 
   test('without a store the music routes stay 404, and the data routes are untouched by the store', async () => {
-    const bare = createDemoFetch('./demo/', async () => new Response(''));
+    const bare = createDemoFetch(BASES, async () => new Response(''));
     expect((await bare('/api/music/now')).status).toBe(404);
-    const withStore = createDemoFetch('./demo/', async (u) => new Response(u), createMusicStore(tracks));
-    expect(await (await withStore('/api/data/skills')).text()).toBe('./demo/data/skills.json');
+    const withStore = createDemoFetch(BASES, async (u) => new Response(u), createMusicStore(tracks));
+    expect(await (await withStore('/api/data/skills')).text()).toBe('./demo/zh/data/skills.json');
   });
 });

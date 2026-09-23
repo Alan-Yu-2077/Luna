@@ -18,10 +18,11 @@ code-agent capability — embodied as a Live2D avatar with lip-synced custom voi
 
 <img src="docs/assets/moment-fries.png" width="820" alt="Luna, a Live2D companion, sharing a joke" />
 
-[![Live demo — meet her in the browser](https://img.shields.io/badge/%E2%96%B6_Live_demo-meet_her_in_the_browser-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
+[![Live demo — meet her in the browser](https://img.shields.io/badge/%E2%96%B6_Live_demo-meet_her_in_the_browser-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/?lang=en)
 [![Engineering Map — the agent harness, mapped](https://img.shields.io/badge/%E2%9A%99_Engineering_Map-the_agent_harness%2C_mapped-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
 
-<sub>The demo is the real front end and rendering engine on a scripted tape — her actual voice, pre-rendered.
+<sub>The demo is the real front end and rendering engine on a scripted tape — her actual voice, pre-rendered,
+in English or in Chinese (the same scenes; pick at the door).
 What differs from the app sits around her, not in her: the lines are typed for you (you only press ➤),
 a scene pill carries Next, and a curtain marks each skip in time.</sub>
 

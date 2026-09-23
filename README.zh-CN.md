@@ -18,11 +18,12 @@
 
 <img src="docs/assets/moment-fries.png" width="820" alt="Luna,一个 Live2D 桌面伙伴,在玩梗" />
 
-[![在线演示 · 在浏览器里见她](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%A7%81%E5%A5%B9-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
+[![在线演示 · 在浏览器里见她](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%A7%81%E5%A5%B9-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/?lang=zh)
 [![工程图谱 · 看她怎么搭的](https://img.shields.io/badge/%E2%9A%99_%E5%B7%A5%E7%A8%8B%E5%9B%BE%E8%B0%B1-%E7%9C%8B%E5%A5%B9%E6%80%8E%E4%B9%88%E6%90%AD%E7%9A%84-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
 
-<sub>演示用的是真实的前端和渲染引擎,跑在一盘预录的脚本磁带上——声音是她自己的音色,预先渲染好。
-和 app 的区别都在她之外:台词替你打好(你只按 ➤)、顶部的场景药丸带着 Next、每次时间跳跃拉一道幕。</sub>
+<sub>演示用的是真实的前端和渲染引擎,跑在一盘预录的脚本磁带上——声音是她自己的音色,预先渲染好;
+中文、英文两个版本,场景相同,进门时选。
+和 app 的区别都在她之外:台词替你打好(你只按 ➤)、顶部的场景药丸带着「下一幕」、每次时间跳跃拉一道幕。</sub>
 
 <sub>这个仓库是<b>作为参考公开的工程本身</b>,不是一个用来分发的产品。<br/>
 没有安装包:Luna 是一个人的伙伴,真正要紧的那个实例只活在一台机器上。代码你可以读、可以 clone、可以拿走任何你想要的部分。</sub>

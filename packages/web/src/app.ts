@@ -2,7 +2,7 @@ import { MessageDelivery, type ServerEvent } from '@luna/protocol';
 import { createController } from './controller';
 import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
 import { createTapeClient } from './demo/tapeClient';
-import { mountDirector, mountGuide, mountMapLink, type Director } from './demo/director';
+import { mountDirector, mountGuide, mountLobbyLinks, type Director } from './demo/director';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -122,7 +122,32 @@ async function boot(): Promise<void> {
   // controller, the views, the sink — is this same boot, untouched. Loaded up front so the Talk
   // click (the visitor's audio-unlocking gesture) can activate synchronously, as it does for real.
   const demoBridge = readDemoBridge();
-  const demo: DemoBundle | null = demoBridge ? await loadDemo(demoBridge) : null;
+  // v0.48.1: the replay comes in two languages. Its entrance card opens on the choice (unless the
+  // URL already names one — a shared link, Replay ↻) BEFORE anything is built, because the choice
+  // decides both the interface language and which tape loads. The card stays up, now as the guide,
+  // while the lobby and the model come in behind it.
+  let demo: DemoBundle | null = null;
+  if (demoBridge) {
+    const urlLang = parseUiLang(new URLSearchParams(location.search).get('lang'));
+    const guide = mountGuide(document, { lang: urlLang });
+    const lang = await guide.language;
+    if (!urlLang) {
+      const params = new URLSearchParams(location.search);
+      params.set('lang', lang);
+      history.replaceState(null, '', `${location.pathname}?${params.toString()}${location.hash}`);
+    }
+    setUiLang(lang);
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    try {
+      demo = await loadDemo(demoBridge, lang);
+    } catch (err) {
+      // A missing tape in one language must not leave a blank page: fall back to the English one.
+      if (lang === 'en') throw err;
+      setUiLang('en');
+      document.documentElement.lang = 'en';
+      demo = await loadDemo(demoBridge, 'en');
+    }
+  }
 
   // v0.36.0: Reduce-motion is gone (Initiative 26 constitution — the app is always alive). Clean up
   // the stale persisted key so a previously-on instance doesn't carry a dead flag forever.
@@ -156,10 +181,6 @@ async function boot(): Promise<void> {
   // only the WS session is deferred). Direct-boot paths (pet / agent-only / luna:menu=0 / ?menu=0)
   // activate immediately and behave exactly as before this version.
   const lobbyOn = menuEnabled({ search: location.search, storage: localStorage, agentOnly });
-  // v0.47.0: the replay's entrance guide sits over the lobby while the model loads behind it — so
-  // it mounts BEFORE the sink's await, not after. Its Enter is the visitor's first gesture, the one
-  // that also lets the page make a sound later.
-  if (demo && lobbyOn) mountGuide(document);
 
   // Boot gate: for the http voice backend, block the UI until it has warmed its model. Skippable, and
   // degrades fast (no block) if no sidecar is up. In lobby mode there is nothing to gate — warming
@@ -877,14 +898,22 @@ async function boot(): Promise<void> {
         pageBody: (id) =>
           id === 'diary' ? mountDiaryBook(document, demo?.fetch)
           : id === 'skills' ? mountSkillsPage(document, demo?.fetch)
-          : mountSettingsPage(document, refs),
+          : mountSettingsPage(document, refs, demo ? { fetchFn: demo.fetch, replay: true } : {}),
         ...(quitBridge ? { quit: () => quitBridge() } : {}),
       });
     };
     mountMenu();
     // v0.46.2: the replay's front door carries the one link out — to the engineering map, which the
     // showcase build places beside it. Lobby only; it disappears the moment she wakes.
-    if (demo) mountMapLink(document, root, './engineering/', 'Engineering map →');
+    if (demo) {
+      // v0.48.1: the map, and the same replay in the other language.
+      const other = new URLSearchParams(location.search);
+      other.set('lang', uiLang() === 'zh' ? 'en' : 'zh');
+      mountLobbyLinks(document, root, [
+        { href: './engineering/', label: t('demo.map') },
+        { href: `?${other.toString()}`, label: t('demo.switchLang') },
+      ]);
+    }
 
     // ← Menu lives in the chat header, and the disconnect is POLITE: mid-turn it waits for the
     // turn's end (returnGate), then closes the socket and she goes back down.

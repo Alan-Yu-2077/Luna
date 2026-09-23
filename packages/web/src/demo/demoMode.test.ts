@@ -25,19 +25,20 @@ describe('loadDemo', () => {
 
   test('loads script + manifest + settings from the base and compiles', async () => {
     const urls: string[] = [];
-    const bundle = await loadDemo({ base: './demo/' }, async (u) => {
+    const bundle = await loadDemo({ base: './demo/' }, 'zh', async (u) => {
       urls.push(u);
       if (u.endsWith('script.json')) return Response.json(script);
       if (u.endsWith('manifest.json')) return Response.json({ lines: [{ id: 'x', text: 'l', file: 'x.mp3', durationMs: 900 }] });
       return Response.json([]);
     });
-    expect(urls.sort()).toEqual(['./demo/data/settings.json', './demo/script.json', './demo/voice/manifest.json']);
+    // v0.48.1: the tape and her voice per language; the settings registry (the server's English) shared.
+    expect(urls.sort()).toEqual(['./demo/data/settings.json', './demo/zh/script.json', './demo/zh/voice/manifest.json']);
     expect(bundle.compiled.scenes[0]?.turns[0]?.run.endMs).toBe(700 + 25 + 900);
     expect(bundle.settings).toEqual([]);
   });
 
   test('a missing manifest or settings file degrades — silent lines, an empty panel — never a failed boot', async () => {
-    const bundle = await loadDemo({ base: '/d/' }, async (u) =>
+    const bundle = await loadDemo({ base: '/d/' }, 'en', async (u) =>
       u.endsWith('script.json') ? Response.json(script) : new Response('', { status: 404 }),
     );
     expect(bundle.settings).toEqual([]);
@@ -45,7 +46,7 @@ describe('loadDemo', () => {
   });
 
   test('a missing script is the one thing that fails', async () => {
-    await expect(loadDemo({ base: '/d/' }, async () => new Response('', { status: 404 }))).rejects.toThrow(/script/);
+    await expect(loadDemo({ base: '/d/' }, 'en', async () => new Response('', { status: 404 }))).rejects.toThrow(/script/);
   });
 });
 

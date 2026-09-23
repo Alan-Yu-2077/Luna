@@ -1,4 +1,5 @@
 import type { Setting } from '@luna/protocol';
+import type { UiLang } from '../ui/uiCopy';
 import { compileScript, type Compiled } from './compile';
 import { createDemoSpeech, durationLookup, type FetchLike, type SpeechFetcher } from './demoAudio';
 import { createDemoFetch } from './demoData';
@@ -54,11 +55,18 @@ export type DemoBundle = {
 
 // The three files the demo rides on. The script is required; a missing voice manifest or settings
 // snapshot degrades (silent lines / an empty server-settings panel) rather than blocking the boot.
-export async function loadDemo(bridge: DemoBridge, fetchFn: FetchLike = (u, i) => fetch(u, i)): Promise<DemoBundle> {
+// v0.48.1: the tape is per language — `demo/<lang>/` holds the script, her voice and what she wrote;
+// `demo/` itself holds what both languages share (the server's English, the covers).
+export async function loadDemo(
+  bridge: DemoBridge,
+  lang: UiLang = 'en',
+  fetchFn: FetchLike = (u, i) => fetch(u, i),
+): Promise<DemoBundle> {
   const { base } = bridge;
+  const langBase = `${base}${lang}/`;
   const [scriptRes, voiceRes, settingsRes] = await Promise.all([
-    fetchFn(`${base}script.json`),
-    fetchFn(`${base}voice/manifest.json`),
+    fetchFn(`${langBase}script.json`),
+    fetchFn(`${langBase}voice/manifest.json`),
     fetchFn(`${base}data/settings.json`),
   ]);
   if (!scriptRes.ok) throw new Error(`demo script unreachable: ${scriptRes.status}`);
@@ -70,8 +78,8 @@ export async function loadDemo(bridge: DemoBridge, fetchFn: FetchLike = (u, i) =
     base,
     compiled: compileScript(script, durationLookup(manifest)),
     settings,
-    speech: createDemoSpeech(manifest, base, fetchFn),
-    fetch: createDemoFetch(base, fetchFn, music),
+    speech: createDemoSpeech(manifest, langBase, fetchFn),
+    fetch: createDemoFetch({ lang: langBase, shared: base }, fetchFn, music),
     music,
     coverUrl: (hash) => `${base}music/${encodeURIComponent(hash)}.svg`,
     hasDream: script.dream !== undefined,

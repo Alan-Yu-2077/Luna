@@ -10,6 +10,8 @@
 // page is, and the promise), the curtain (time passes — a dark room and a clock), and the scene
 // picker on the pill. None of them touches the app's DOM tree beyond appending to it.
 
+import { t, type UiLang } from '../ui/uiCopy';
+
 export type DirectorRefs = {
   input: HTMLInputElement;
   sendBtn: HTMLButtonElement;
@@ -95,7 +97,6 @@ const STYLE = `
 .demo-guide h2 { margin: 0 0 4px; font-size: 22px; }
 .demo-guide .demo-guide-sub { margin: 0 0 16px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
 .demo-guide p { display: block; margin: 0 0 10px; font-size: 14px; line-height: 1.6; }
-.demo-guide p.demo-guide-zh { color: #4a566a; }
 .demo-guide .demo-guide-how { margin: 14px 0 0; padding: 12px 14px; background: var(--user-bubble); border-radius: 12px; font-size: 13px; line-height: 1.6; }
 .demo-guide .demo-guide-enter {
   display: block; margin: 18px auto 0; border: none; cursor: pointer; background: var(--sky); color: var(--sky-text);
@@ -103,6 +104,15 @@ const STYLE = `
   box-shadow: 0 3px 0 var(--sky-deep);
 }
 .demo-guide .demo-guide-enter:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--sky-deep); }
+.demo-guide .demo-guide-langs { display: flex; gap: 14px; justify-content: center; margin: 18px 0 4px; flex-wrap: wrap; }
+.demo-guide .demo-guide-lang {
+  flex: 1 1 180px; max-width: 240px; border: none; cursor: pointer; font: inherit; color: var(--ink);
+  background: var(--user-bubble); border-radius: 18px; padding: 20px 14px; box-shadow: 0 3px 0 rgba(90, 120, 160, 0.2);
+  transition: transform 0.15s ease;
+}
+.demo-guide .demo-guide-lang:hover { transform: translateY(-2px); }
+.demo-guide .demo-guide-lang strong { display: block; font-size: 22px; margin-bottom: 4px; }
+.demo-guide .demo-guide-lang span { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
 `;
 
 let styleMounted = false;
@@ -225,7 +235,7 @@ export function mountDirector(
     sceneStart(index, title) {
       disarm(); // a jump mid-typing must not leave a half line armed later
       refs.input.value = '';
-      label.textContent = `Scene ${index + 1}/${opts.sceneTitles.length} · ${title}`;
+      label.textContent = t('demo.scene', { n: index + 1, total: opts.sceneTitles.length, title });
       items.forEach((b, i) => b.classList.toggle('current', i === index));
       list.hidden = true;
       next.hidden = true;
@@ -234,7 +244,7 @@ export function mountDirector(
     },
 
     sceneEnd(_index, hasNext) {
-      next.textContent = hasNext ? 'Next scene →' : 'Replay ↻';
+      next.textContent = t(hasNext ? 'demo.next' : 'demo.replay');
       nextHandler = hasNext ? opts.onNext : () => doc.location.reload();
       next.hidden = false;
     },
@@ -265,85 +275,148 @@ export function mountDirector(
 }
 
 // v0.46.2: the way out of the replay — a muted corner link to the engineering map, shown only while
-// the lobby is up (the session is hers; the link belongs to the front door). Mounted at boot, before
-// any Talk, which is why it is not part of the director the session creates.
-export function mountMapLink(doc: Document, root: HTMLElement, href: string, label: string): () => void {
+// the lobby is up (the session is hers; the links belong to the front door). Mounted at boot, before
+// any Talk, which is why they are not part of the director the session creates.
+// v0.48.1: a second link beside it switches the replay to the other language.
+export function mountLobbyLinks(
+  doc: Document,
+  root: HTMLElement,
+  links: ReadonlyArray<{ href: string; label: string }>,
+): () => void {
   const style = doc.createElement('style');
   style.textContent = `
-.demo-map-link { display: none; position: fixed; right: 26px; bottom: 26px; z-index: 6;
-  font-size: 12px; letter-spacing: 0.04em; color: var(--muted); text-decoration: none; }
-.demo-map-link:hover { color: var(--sky-text); text-decoration: underline; }
-.menu-mode .demo-map-link { display: inline; }
+.demo-lobby-links { display: none; position: fixed; right: 26px; bottom: 26px; z-index: 6; gap: 16px; }
+.demo-lobby-links a { font-size: 12px; letter-spacing: 0.04em; color: var(--muted); text-decoration: none; }
+.demo-lobby-links a:hover { color: var(--sky-text); text-decoration: underline; }
+.menu-mode .demo-lobby-links { display: inline-flex; }
 `;
   doc.head.appendChild(style);
-  const a = doc.createElement('a');
-  a.className = 'demo-map-link';
-  a.href = href;
-  a.textContent = label;
-  root.appendChild(a);
+  const box = doc.createElement('nav');
+  box.className = 'demo-lobby-links';
+  for (const l of links) {
+    const a = doc.createElement('a');
+    a.href = l.href;
+    a.textContent = l.label;
+    box.appendChild(a);
+  }
+  root.appendChild(box);
   return () => {
-    a.remove();
+    box.remove();
     style.remove();
   };
 }
 
-// v0.47.0: the entrance guide — what this page is, the promise, and how to drive it. Shown over the
-// lobby while the model loads behind it; its Enter is the visitor's first gesture (which is also
-// what lets the page make a sound later). Bilingual: her words are English, the visitor may not be.
-export const GUIDE_COPY = {
-  title: 'Luna · a replay',
-  sub: 'real scenes · real front end · her real voice',
-  en1:
-    'What you are about to watch is a replay: daily-use scenes reproduced from real ones, played back ' +
-    'through Luna’s real front end and rendering engine. There is no AI running behind this page.',
-  en2:
-    'Nothing here is invented. Every bubble, tool card, unprompted message, quiet note and dream is a ' +
-    'shipped product capability, driven by the same code the app runs — with her own voice, pre-rendered.',
-  zh1: '你正在体验的，是基于真实场景与真实 Luna 能力复现的日常使用片段——由 Luna 真实的前端与渲染引擎回放，而不是一个正在运行的 AI。',
-  zh2: '这里的一切绝非虚构：每一个气泡、工具卡、主动开口、安静的小记和梦，都是产品真实具备的能力，由同一份代码驱动；声音是她自己的音色，预先渲染。',
-  how:
-    'Lines are typed for you — press ➤ (or Enter). When a scene ends, Next scene (or pick one from the pill). ' +
-    'Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her Diary, Skills and Dream.',
-  howZh: '台词会替你打好——按 ➤（或回车）。一幕结束后点 Next scene（也可在顶部药丸里选幕）。滚轮缩放、拖拽移动、双击复位；← Menu 里有她的日记、技能和梦。',
-  enter: 'Enter · 进入',
+// v0.47.0: the entrance guide — what this page is, the promise, and how to drive it. Its Enter is
+// the visitor's first gesture (which is also what lets the page make a sound later).
+// v0.48.1: it opens on a language choice — a Chinese speaker and an English speaker are sent to two
+// versions of the replay (her words, her voice, the interface), so the guide itself speaks one
+// language, not both side by side. The "how" line names the buttons the visitor will actually see.
+export const PICKER_COPY = {
+  title: 'Luna',
+  prompt: '选择语言 · Choose your language',
+  zh: { label: '中文', sub: '我说中文' },
+  en: { label: 'English', sub: 'I speak English' },
 } as const;
 
-export function mountGuide(doc: Document, onEnter?: () => void): () => void {
+export const GUIDE_COPY: Record<UiLang, { title: string; sub: string; p1: string; p2: string; how: string; enter: string }> = {
+  en: {
+    title: 'Luna · a replay',
+    sub: 'real scenes · real front end · her real voice',
+    p1:
+      'What you are about to watch is a replay: daily-use scenes reproduced from real ones, played back ' +
+      'through Luna’s real front end and rendering engine. There is no AI running behind this page.',
+    p2:
+      'Nothing here is invented. Every bubble, tool card, unprompted message, quiet note and dream is a ' +
+      'shipped product capability, driven by the same code the app runs — with her own voice, pre-rendered.',
+    how:
+      'Lines are typed for you — press ➤ (or Enter). When a scene ends, press Next scene (or pick a scene ' +
+      'from the pill at the top). Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her ' +
+      'Diary, Skills and Dream.',
+    enter: 'Enter',
+  },
+  zh: {
+    title: 'Luna · 回放',
+    sub: '真实场景 · 真实前端 · 她自己的声音',
+    p1: '接下来你看到的是一段回放：照着真实使用场景复现的日常片段，用 Luna 真正的前端和渲染引擎播出来。这个页面背后没有在运行的 AI。',
+    p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
+    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。',
+    enter: '进入',
+  },
+};
+
+export type GuideHandle = { language: Promise<UiLang>; dispose(): void };
+
+// `lang` null → the card opens on the language choice; a language (a shared `?lang=` link, Replay ↻)
+// → straight to the guide in it. `language` resolves the moment one is known.
+export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?: () => void }): GuideHandle {
   ensureStyle(doc);
   const guide = doc.createElement('div');
   guide.className = 'demo-guide';
   guide.setAttribute('role', 'dialog');
-  guide.setAttribute('aria-label', GUIDE_COPY.title);
   const card = doc.createElement('div');
   card.className = 'demo-guide-card';
-  const h = doc.createElement('h2');
-  h.textContent = GUIDE_COPY.title;
-  const sub = doc.createElement('p');
-  sub.className = 'demo-guide-sub';
-  sub.textContent = GUIDE_COPY.sub;
+  guide.appendChild(card);
+  doc.body.appendChild(guide);
+
   const p = (text: string, cls?: string): HTMLParagraphElement => {
     const el = doc.createElement('p');
     if (cls) el.className = cls;
     el.textContent = text;
     return el;
   };
-  const how = doc.createElement('div');
-  how.className = 'demo-guide-how';
-  how.append(p(GUIDE_COPY.how), p(GUIDE_COPY.howZh, 'demo-guide-zh'));
-  how.lastElementChild?.setAttribute('style', 'margin:0');
-  const enter = doc.createElement('button');
-  enter.type = 'button';
-  enter.className = 'demo-guide-enter';
-  enter.textContent = GUIDE_COPY.enter;
-  card.append(h, sub, p(GUIDE_COPY.en1), p(GUIDE_COPY.zh1, 'demo-guide-zh'), p(GUIDE_COPY.en2), p(GUIDE_COPY.zh2, 'demo-guide-zh'), how, enter);
-  guide.appendChild(card);
-  doc.body.appendChild(guide);
 
-  const leave = (): void => {
-    guide.classList.add('leaving');
-    setTimeout(() => guide.remove(), 600);
-    onEnter?.();
+  const showGuide = (lang: UiLang): void => {
+    const c = GUIDE_COPY[lang];
+    guide.setAttribute('aria-label', c.title);
+    card.replaceChildren();
+    const h = doc.createElement('h2');
+    h.textContent = c.title;
+    const how = doc.createElement('div');
+    how.className = 'demo-guide-how';
+    how.textContent = c.how;
+    const enter = doc.createElement('button');
+    enter.type = 'button';
+    enter.className = 'demo-guide-enter';
+    enter.textContent = c.enter;
+    enter.addEventListener('click', () => {
+      guide.classList.add('leaving');
+      setTimeout(() => guide.remove(), 600);
+      opts.onEnter?.();
+    });
+    card.append(h, p(c.sub, 'demo-guide-sub'), p(c.p1), p(c.p2), how, enter);
   };
-  enter.addEventListener('click', leave);
-  return () => guide.remove();
+
+  let resolve: (lang: UiLang) => void = () => {};
+  const language = new Promise<UiLang>((r) => {
+    resolve = r;
+  });
+
+  if (opts.lang) {
+    showGuide(opts.lang);
+    resolve(opts.lang);
+  } else {
+    guide.setAttribute('aria-label', PICKER_COPY.prompt);
+    const h = doc.createElement('h2');
+    h.textContent = PICKER_COPY.title;
+    const row = doc.createElement('div');
+    row.className = 'demo-guide-langs';
+    for (const lang of ['zh', 'en'] as const) {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = 'demo-guide-lang';
+      b.dataset['lang'] = lang;
+      const strong = doc.createElement('strong');
+      strong.textContent = PICKER_COPY[lang].label;
+      const sub = doc.createElement('span');
+      sub.textContent = PICKER_COPY[lang].sub;
+      b.append(strong, sub);
+      b.addEventListener('click', () => {
+        showGuide(lang);
+        resolve(lang);
+      });
+      row.appendChild(b);
+    }
+    card.append(h, p(PICKER_COPY.prompt, 'demo-guide-sub'), row);
+  }
+  return { language, dispose: () => guide.remove() };
 }
