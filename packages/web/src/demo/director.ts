@@ -297,14 +297,14 @@ export const GUIDE_COPY = {
     'What you are about to watch is a replay: daily-use scenes reproduced from real ones, played back ' +
     'through Luna’s real front end and rendering engine. There is no AI running behind this page.',
   en2:
-    'Nothing here is invented. Every bubble, tool card, unprompted message, quiet leaf and dream is a ' +
+    'Nothing here is invented. Every bubble, tool card, unprompted message, quiet note and dream is a ' +
     'shipped product capability, driven by the same code the app runs — with her own voice, pre-rendered.',
   zh1: '你正在体验的，是基于真实场景与真实 Luna 能力复现的日常使用片段——由 Luna 真实的前端与渲染引擎回放，而不是一个正在运行的 AI。',
-  zh2: '这里的一切绝非虚构：每一个气泡、工具卡、主动开口、安静的叶子和梦，都是产品真实具备的能力，由同一份代码驱动；声音是她自己的音色，预先渲染。',
+  zh2: '这里的一切绝非虚构：每一个气泡、工具卡、主动开口、安静的小记和梦，都是产品真实具备的能力，由同一份代码驱动；声音是她自己的音色，预先渲染。',
   how:
-    'Lines are typed for you — press Send. When a scene ends, Next scene (or pick one from the pill). ' +
+    'Lines are typed for you — press ➤ (or Enter). When a scene ends, Next scene (or pick one from the pill). ' +
     'Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her Diary, Skills and Dream.',
-  howZh: '台词会替你打好——按发送。一幕结束后点 Next scene（也可在顶部药丸里选幕）。滚轮缩放、拖拽移动、双击复位；← Menu 里有她的日记、技能和梦。',
+  howZh: '台词会替你打好——按 ➤（或回车）。一幕结束后点 Next scene（也可在顶部药丸里选幕）。滚轮缩放、拖拽移动、双击复位；← Menu 里有她的日记、技能和梦。',
   enter: 'Enter · 进入',
 } as const;
 

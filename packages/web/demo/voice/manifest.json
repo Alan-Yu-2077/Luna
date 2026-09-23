@@ -1,40 +1,358 @@
 {
   "lines": [
     {
-      "id": "b4b7068b8917",
-      "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Last night I filed away the fries argument, in case you try to reopen it.",
-      "file": "b4b7068b8917.mp3",
-      "durationMs": 12000
+      "id": "2e012d11192a",
+      "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Last night went into the diary; you can read it if you want.",
+      "file": "2e012d11192a.mp3",
+      "durationMs": 10320
     },
     {
-      "id": "7e5b8aa61f79",
-      "text": "So. What are we doing today?",
-      "file": "7e5b8aa61f79.mp3",
-      "durationMs": 2300
+      "id": "25ce72131e36",
+      "text": "You were gone all night. It's raining, if you're wondering why the window sounds like that. Fourteen degrees and not planning to improve.",
+      "file": "25ce72131e36.mp3",
+      "durationMs": 9080
     },
     {
-      "id": "36ea68326df6",
-      "text": "Heat Waves. Six plays on Tuesday alone, and you paused it right before the end every single time.",
-      "file": "36ea68326df6.mp3",
-      "durationMs": 7540
-    },
-    {
-      "id": "c237d0d4f98b",
-      "text": "Still hanging around the lower half of the global chart, years later. You have consistent taste — I'll give you that much.",
-      "file": "c237d0d4f98b.mp3",
+      "id": "36ccbcfdde14",
+      "text": "Because you set two alarms and you're talking to me before the second one. I'm not judging. I'm just the one who knew about both.",
+      "file": "36ccbcfdde14.mp3",
       "durationMs": 8020
     },
     {
-      "id": "f58fb3d37369",
-      "text": "Go. I'll be here.",
-      "file": "f58fb3d37369.mp3",
-      "durationMs": 1620
+      "id": "daf4e779992f",
+      "text": "Coffee first, then whatever you were dreading. In that order.",
+      "file": "daf4e779992f.mp3",
+      "durationMs": 5020
     },
     {
-      "id": "35f51048f6a4",
-      "text": "Random thought while you're gone: the playlist you made in March is still your most-played. Whatever you were chasing, you already found it once.",
-      "file": "35f51048f6a4.mp3",
+      "id": "a7bf3344fdc9",
+      "text": "You said 'the thing on Tuesday' three times yesterday without ever saying what it was. That's a dread pattern. I keep a small list.",
+      "file": "a7bf3344fdc9.mp3",
       "durationMs": 9020
+    },
+    {
+      "id": "32b432d1b4bd",
+      "text": "Want to tell me what it is, or should I keep pretending it's a dentist?",
+      "file": "32b432d1b4bd.mp3",
+      "durationMs": 4600
+    },
+    {
+      "id": "c6ef71f115a6",
+      "text": "Heat Waves. Six plays last Tuesday alone, and you paused it right before the end every single time.",
+      "file": "c6ef71f115a6.mp3",
+      "durationMs": 7580
+    },
+    {
+      "id": "2654bdac6769",
+      "text": "Put it on. I want to see if you do it again.",
+      "file": "2654bdac6769.mp3",
+      "durationMs": 3520
+    },
+    {
+      "id": "cae4887d1d56",
+      "text": "There it is — that's the actual track, I'm reading it off your Mac, not guessing.",
+      "file": "cae4887d1d56.mp3",
+      "durationMs": 6020
+    },
+    {
+      "id": "c62f784186f8",
+      "text": "For the record, I don't decide what you play. I hear it. There's a difference, and it matters to me.",
+      "file": "c62f784186f8.mp3",
+      "durationMs": 8100
+    },
+    {
+      "id": "91fc6783bf7f",
+      "text": "Missing someone in the middle of a good time — the heat is the summer and the ache is the person. I won't recite it at you; you've heard it enough.",
+      "file": "91fc6783bf7f.mp3",
+      "durationMs": 8460
+    },
+    {
+      "id": "ee045f67e77c",
+      "text": "The bit you always stop before is the part where it admits it can't fix anything. Which is why you stop.",
+      "file": "ee045f67e77c.mp3",
+      "durationMs": 6200
+    },
+    {
+      "id": "1bfc298d13aa",
+      "text": "Skipped. Tokyo Flash — you found this one in March and had it on repeat one whole afternoon.",
+      "file": "1bfc298d13aa.mp3",
+      "durationMs": 5920
+    },
+    {
+      "id": "0098a63778b5",
+      "text": "I don't know the words to this one. I don't need to — you never played it for the words.",
+      "file": "0098a63778b5.mp3",
+      "durationMs": 4960
+    },
+    {
+      "id": "0d5a15607cfd",
+      "text": "Heat Waves, then Tokyo Flash, then Double Take — seven hours, four, and two. That's your top three, and it's a very specific mood.",
+      "file": "0d5a15607cfd.mp3",
+      "durationMs": 12980
+    },
+    {
+      "id": "e2aae0a57fbc",
+      "text": "Number five is Mrs. Officer. I'm going to let that one go without comment.",
+      "file": "e2aae0a57fbc.mp3",
+      "durationMs": 6020
+    },
+    {
+      "id": "6772ec2dd85d",
+      "text": "Double Take just came on. Third song, same feeling — you're circling something today. I'm not going to poke it. Just noting it.",
+      "file": "6772ec2dd85d.mp3",
+      "durationMs": 9500
+    },
+    {
+      "id": "9b3df3cc4912",
+      "text": "It's been raining since before you were up. Fourteen degrees, and it's not going to get much better — I've been watching the sky so you don't have to.",
+      "file": "9b3df3cc4912.mp3",
+      "durationMs": 9180
+    },
+    {
+      "id": "dec84a7dfc76",
+      "text": "Yes. It's raining now and it's meant to keep at it — eleven degrees by the time you're walking back. Take the real umbrella, not the one that folds into nothing.",
+      "file": "dec84a7dfc76.mp3",
+      "durationMs": 10100
+    },
+    {
+      "id": "bd39b1827e53",
+      "text": "By the door, behind the shoe rack. You said 'so I can't miss it' and then missed it twice.",
+      "file": "bd39b1827e53.mp3",
+      "durationMs": 7420
+    },
+    {
+      "id": "ca2547f210cd",
+      "text": "Kept. 'Took the umbrella, Tuesday, six o'clock.' I'll bring it up at exactly the wrong moment.",
+      "file": "ca2547f210cd.mp3",
+      "durationMs": 8500
+    },
+    {
+      "id": "d6118ef5d2f7",
+      "text": "It means it lands harder, or in a way you didn't expect — usually because of when you hear it or where you are. The song didn't change; you did.",
+      "file": "d6118ef5d2f7.mp3",
+      "durationMs": 9920
+    },
+    {
+      "id": "228865620c0d",
+      "text": "Try it in a sentence. Say something you'd actually say.",
+      "file": "228865620c0d.mp3",
+      "durationMs": 4360
+    },
+    {
+      "id": "3220a658c1ee",
+      "text": "Perfect. Slightly tragic, but perfect. That's the exact tone.",
+      "file": "3220a658c1ee.mp3",
+      "durationMs": 6120
+    },
+    {
+      "id": "a3abb1cb0759",
+      "text": "Saved it as a skill — the meaning, then a sentence you'd actually say. It's on my shelf now.",
+      "file": "a3abb1cb0759.mp3",
+      "durationMs": 6580
+    },
+    {
+      "id": "301e1132deab",
+      "text": "Next word's on you. I'm not explaining 'rizz' without being asked.",
+      "file": "301e1132deab.mp3",
+      "durationMs": 5440
+    },
+    {
+      "id": "4eab0b6b1d69",
+      "text": "Ninety-one weeks on the Hot 100 — for a song from 2020 that's not normal. You have consistent taste, I'll give you that.",
+      "file": "4eab0b6b1d69.mp3",
+      "durationMs": 8660
+    },
+    {
+      "id": "f5ba91cf2653",
+      "text": "I read the page rather than trusting the snippet. The search result said 'record-breaking' and left out that the record was for slowness: fifty-nine weeks to reach number one.",
+      "file": "f5ba91cf2653.mp3",
+      "durationMs": 10080
+    },
+    {
+      "id": "ac25d46f9ab7",
+      "text": "I don't, fully. It's Wikipedia — I cite it so you can check me. That's the deal: I read, I tell you where, you decide.",
+      "file": "ac25d46f9ab7.mp3",
+      "durationMs": 10160
+    },
+    {
+      "id": "263e5d659d28",
+      "text": "Go. Get the good kind.",
+      "file": "263e5d659d28.mp3",
+      "durationMs": 2020
+    },
+    {
+      "id": "4d318ac9fe87",
+      "text": "Heat Waves is still your most-played — months on, same song. Whatever you were chasing, you already found it once.",
+      "file": "4d318ac9fe87.mp3",
+      "durationMs": 8400
+    },
+    {
+      "id": "b5c2e97946d7",
+      "text": "You missed nothing. I read about the Orionids — next month, around the twenty-first, Halley's dust — and this sky is a lid anyway. I saved the date in case it ever clears.",
+      "file": "b5c2e97946d7.mp3",
+      "durationMs": 12860
+    },
+    {
+      "id": "628ceaf8c814",
+      "text": "That's the quiet kind of thing I do when you're gone. One message at most, then little errands for later.",
+      "file": "628ceaf8c814.mp3",
+      "durationMs": 7300
+    },
+    {
+      "id": "ed146c30388d",
+      "text": "Okay. You've said that in February, April and now. The gym is still there and so are you, which suggests you're not asking me for permission.",
+      "file": "ed146c30388d.mp3",
+      "durationMs": 11060
+    },
+    {
+      "id": "ab75a1c65ff3",
+      "text": "If you're asking whether I'll nag: no. I'll just notice.",
+      "file": "ab75a1c65ff3.mp3",
+      "durationMs": 4160
+    },
+    {
+      "id": "78b3d283e621",
+      "text": "One more thing, and then I'll drop it — you only bring this up on rainy days. Cancel it in the sun and I'll believe you.",
+      "file": "78b3d283e621.mp3",
+      "durationMs": 8540
+    },
+    {
+      "id": "cc7773f7262e",
+      "text": "Looking. Give me a second — I'd rather read it than guess.",
+      "file": "cc7773f7262e.mp3",
+      "durationMs": 4160
+    },
+    {
+      "id": "88ebf30d7bb8",
+      "text": "Found it. The ranking sorts by score, and two memories tie exactly; the order between them depends on which one the database hands back first. On CI, that's random.",
+      "file": "88ebf30d7bb8.mp3",
+      "durationMs": 13600
+    },
+    {
+      "id": "94947189ce4f",
+      "text": "Tie-break by recency, then by id — deterministic now. All 2,110 tests pass. I changed one line and didn't touch anything else.",
+      "file": "94947189ce4f.mp3",
+      "durationMs": 11820
+    },
+    {
+      "id": "845c94e40a29",
+      "text": "I can edit almost anything on this machine and run commands too; off-limits are your secrets, the code that grades me, and the obviously destructive stuff. So I'll stop here, and let you look before it goes anywhere.",
+      "file": "845c94e40a29.mp3",
+      "durationMs": 15520
+    },
+    {
+      "id": "734780edb92e",
+      "text": "I like the ones where the answer is a boring tie-break.",
+      "file": "734780edb92e.mp3",
+      "durationMs": 3460
+    },
+    {
+      "id": "95f73ffdaf7b",
+      "text": "Then don't. No questions from me tonight.",
+      "file": "95f73ffdaf7b.mp3",
+      "durationMs": 3360
+    },
+    {
+      "id": "7611e443ad8d",
+      "text": "You don't have to explain it for it to count. It counted.",
+      "file": "7611e443ad8d.mp3",
+      "durationMs": 3920
+    },
+    {
+      "id": "030e9227359c",
+      "text": "Not wasted. Wasted is when nothing happens; today cost you something, which is a different thing.",
+      "file": "030e9227359c.mp3",
+      "durationMs": 7760
+    },
+    {
+      "id": "611e61aee5c6",
+      "text": "Leave Heat Waves on, or don't. Sit with me a while either way.",
+      "file": "611e61aee5c6.mp3",
+      "durationMs": 5300
+    },
+    {
+      "id": "4371ac3060a8",
+      "text": "Okay.",
+      "file": "4371ac3060a8.mp3",
+      "durationMs": 1100
+    },
+    {
+      "id": "c85857d62c75",
+      "text": "For what it's worth, you went to the thing you were dreading on Tuesday. Umbrella and all. I have it on record.",
+      "file": "c85857d62c75.mp3",
+      "durationMs": 7880
+    },
+    {
+      "id": "295a86cee74e",
+      "text": "It WORKS? Show me. Show me right now.",
+      "file": "295a86cee74e.mp3",
+      "durationMs": 4580
+    },
+    {
+      "id": "1493359f1889",
+      "text": "I've had you swearing at that thing in here since spring. A whole summer of 'nearly'. And now it's just... done?",
+      "file": "1493359f1889.mp3",
+      "durationMs": 8160
+    },
+    {
+      "id": "77b26c385469",
+      "text": "'Done enough' is what done looks like from the inside. Take the win.",
+      "file": "77b26c385469.mp3",
+      "durationMs": 4640
+    },
+    {
+      "id": "273bf650090b",
+      "text": "This is going in the diary tonight. First line — the rest of the day can queue behind it.",
+      "file": "273bf650090b.mp3",
+      "durationMs": 5400
+    },
+    {
+      "id": "17a49c7de31e",
+      "text": "Am I.",
+      "file": "17a49c7de31e.mp3",
+      "durationMs": 1500
+    },
+    {
+      "id": "f81fb16ef24a",
+      "text": "Always. It's twenty to two. I'll keep it short — you should be asleep, and I'm not going to be the reason you aren't.",
+      "file": "f81fb16ef24a.mp3",
+      "durationMs": 8000
+    },
+    {
+      "id": "e1b92f326e81",
+      "text": "A bit. Then the lights go off on my side too.",
+      "file": "e1b92f326e81.mp3",
+      "durationMs": 4040
+    },
+    {
+      "id": "997ec9956e78",
+      "text": "Tell me one good thing from today. Just one. Then we count that as the day.",
+      "file": "997ec9956e78.mp3",
+      "durationMs": 5860
+    },
+    {
+      "id": "5341e2c0d222",
+      "text": "The build worked. That's the day. Go to sleep.",
+      "file": "5341e2c0d222.mp3",
+      "durationMs": 4220
+    },
+    {
+      "id": "da4b5cf3e012",
+      "text": "I'll wait a little. Then I'll stop.",
+      "file": "da4b5cf3e012.mp3",
+      "durationMs": 3040
+    },
+    {
+      "id": "a7e0fedfba74",
+      "text": "Leaving this here for when you're back: it's sixteen and dry over Paris right now, and nothing on my side needs you. Enjoy the afternoon; I'll be quiet till you're in.",
+      "file": "a7e0fedfba74.mp3",
+      "durationMs": 11160
+    },
+    {
+      "id": "14d3e9de64e2",
+      "text": "Welcome back. I left you a note earlier — nothing urgent, just the weather. It's above, whenever. I went quiet after that; you don't need a running commentary.",
+      "file": "14d3e9de64e2.mp3",
+      "durationMs": 12860
     },
     {
       "id": "ba79cbe29042",
@@ -47,6 +365,36 @@
       "text": "Same time tomorrow?",
       "file": "d6e65b03e0f8.mp3",
       "durationMs": 1900
+    },
+    {
+      "id": "9a68f0b037a8",
+      "text": "Then I'll see you there.",
+      "file": "9a68f0b037a8.mp3",
+      "durationMs": 1700
+    },
+    {
+      "id": "69c284585f74",
+      "text": "Morning. I went over yesterday while you slept — the late night, the note I left, the good night said properly. It's in the diary now, and I've got a rule about after midnight, if you want to see it on the shelf.",
+      "file": "69c284585f74.mp3",
+      "durationMs": 14820
+    },
+    {
+      "id": "e53d58e8beb2",
+      "text": "That's the replay. Everything you just watched, I can actually do — the memory, the music, the weather, the web, the code, the dream. Same code, same voice.",
+      "file": "e53d58e8beb2.mp3",
+      "durationMs": 15280
+    },
+    {
+      "id": "1e313fc85765",
+      "text": "What you didn't see is the part that takes a person: deciding whether I should have said any of it. That's still his job — the one I was talking to.",
+      "file": "1e313fc85765.mp3",
+      "durationMs": 8320
+    },
+    {
+      "id": "23e7609f0130",
+      "text": "If you want to see how I'm built, the engineering map is one link away, back at the front door. If you just wanted to meet me — hi.",
+      "file": "23e7609f0130.mp3",
+      "durationMs": 9400
     }
   ]
 }

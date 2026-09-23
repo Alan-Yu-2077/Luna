@@ -1,87 +1,262 @@
 {
-  "_note": "PLACEHOLDER SCRIPT — every line here is a stand-in written to prove the pipeline. Replace the scenes with the real script; re-run `bun run --cwd packages/web render:voice` afterwards so each line has a voice.",
+  "_note": "The showcase script (v0.47.1). Every beat maps to a shipped capability: tool names are the real ToolName enum, tool summaries use the real summarize() grammar, dream steps are the real cycle nodes, the music card reads the real /api/music/* shapes. Edit freely, then: bun run --cwd packages/web draw:covers && bun run --cwd packages/web render:voice (api_v2 on a throwaway port). Preconditions the tape presumes, as on the owner's machine: web_search needs LUNA_WEB_SEARCH_API_KEY (unmounted without it); music_* needs LUNA_MUSIC=1 on macOS; music_lyrics needs LUNA_MUSIC_ENRICH=1; weather needs LUNA_LAT_LON at boot (+ LUNA_WEATHER_LOCATION=Paris for the label); rag_refresh's ok tail needs LUNA_EMBEDDING_API_KEY (else 'embedding disabled').",
   "version": 1,
+  "music": {
+    "tracks": [
+      { "id": "heat-waves", "title": "Heat Waves", "artist": "Glass Animals", "album": "Dreamland", "duration": 238, "cover": "heat-waves", "affinity": { "sessions": 138, "listenedSeconds": 25200, "rank": 1 } },
+      { "id": "tokyo-flash", "title": "東京フラッシュ", "artist": "Vaundy", "album": "strobo", "duration": 225, "cover": "tokyo-flash", "affinity": { "sessions": 84, "listenedSeconds": 14400, "rank": 2 } },
+      { "id": "double-take", "title": "Double Take", "artist": "dhruv", "album": "rapunzel", "duration": 187, "cover": "double-take", "affinity": { "sessions": 51, "listenedSeconds": 7200, "rank": 3 } },
+      { "id": "about-you", "title": "About You", "artist": "The 1975", "album": "Being Funny in a Foreign Language", "duration": 326, "cover": "about-you", "affinity": { "sessions": 30, "listenedSeconds": 6000, "rank": 4 } },
+      { "id": "mrs-officer", "title": "Mrs. Officer", "artist": "Lil Wayne", "album": "Tha Carter III", "duration": 288, "cover": "mrs-officer", "affinity": { "sessions": 19, "listenedSeconds": 3600, "rank": 5 } }
+    ]
+  },
+  "dream": {
+    "steps": [
+      { "step": "rate_salience", "status": "ok", "detail": "rated 31 turns", "ms": 900 },
+      { "step": "refine_semantic", "status": "ok", "detail": "removed 3, added 5", "ms": 900 },
+      { "step": "refine_layer1", "status": "ok", "detail": "rolling summary consolidated", "ms": 700 },
+      { "step": "memory_audit", "status": "ok", "detail": "removed 1, added 2", "ms": 800 },
+      { "step": "persona_update", "status": "ok", "detail": "bond", "ms": 900 },
+      { "step": "run_diaries", "status": "ok", "detail": "2 diaries written", "ms": 1000 },
+      { "step": "distill_skills", "status": "ok", "detail": "new:late-night-brevity", "ms": 1000 },
+      { "step": "rag_refresh", "status": "ok", "detail": "misses_before=10 filled=10 after=0", "ms": 700 }
+    ]
+  },
   "scenes": [
     {
-      "id": "first-words",
-      "title": "First words",
+      "id": "morning",
+      "title": "Morning",
       "beats": [
         { "kind": "user", "text": "Morning. Did you sleep well?" },
-        {
-          "kind": "luna",
-          "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Last night I filed away the fries argument, in case you try to reopen it.",
-          "expression": "soft_warmth",
-          "emotion": 0.5
-        },
-        { "kind": "luna", "text": "So. What are we doing today?", "expression": "curious_attention", "emotion": 0.4 }
+        { "kind": "luna", "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Last night went into the diary; you can read it if you want.", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "luna", "text": "You were gone all night. It's raining, if you're wondering why the window sounds like that. Fourteen degrees and not planning to improve.", "expression": "steady_presence", "emotion": 0.3 },
+        { "kind": "user", "text": "I'm wondering why I'm awake this early." },
+        { "kind": "luna", "text": "Because you set two alarms and you're talking to me before the second one. I'm not judging. I'm just the one who knew about both.", "expression": "amused_smirk", "emotion": 0.5 },
+        { "kind": "luna", "text": "Coffee first, then whatever you were dreading. In that order.", "expression": "playful_brightness", "emotion": 0.5 },
+        { "kind": "user", "text": "How do you know I'm dreading something?" },
+        { "kind": "tool", "name": "recall", "summary": "3 hits", "ms": 700 },
+        { "kind": "luna", "text": "You said 'the thing on Tuesday' three times yesterday without ever saying what it was. That's a dread pattern. I keep a small list.", "expression": "curious_attention", "emotion": 0.5 },
+        { "kind": "luna", "text": "Want to tell me what it is, or should I keep pretending it's a dentist?", "expression": "amused_smirk", "emotion": 0.4 }
+      ]
+    },
+    {
+      "id": "that-song-again",
+      "title": "That song again",
+      "beats": [
+        { "kind": "user", "text": "What was that song I kept replaying last week?" },
+        { "kind": "tool", "name": "recall", "summary": "3 hits", "ms": 900 },
+        { "kind": "luna", "text": "Heat Waves. Six plays last Tuesday alone, and you paused it right before the end every single time.", "expression": "amused_smirk", "emotion": 0.6 },
+        { "kind": "luna", "text": "Put it on. I want to see if you do it again.", "expression": "playful_brightness", "emotion": 0.5 },
+        { "kind": "user", "text": "Fine, it's on." },
+        { "kind": "music", "track": "heat-waves" },
+        { "kind": "pause", "ms": 900 },
+        { "kind": "luna", "text": "There it is — that's the actual track, I'm reading it off your Mac, not guessing.", "expression": "bright_delight", "emotion": 0.5 },
+        { "kind": "luna", "text": "For the record, I don't decide what you play. I hear it. There's a difference, and it matters to me.", "expression": "steady_presence", "emotion": 0.4 },
+        { "kind": "user", "text": "What's it actually about?" },
+        { "kind": "tool", "name": "music_lyrics", "summary": "lyrics of \"Heat Waves\" — 34 lines", "ms": 800 },
+        { "kind": "luna", "text": "Missing someone in the middle of a good time — the heat is the summer and the ache is the person. I won't recite it at you; you've heard it enough.", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "luna", "text": "The bit you always stop before is the part where it admits it can't fix anything. Which is why you stop.", "expression": "gentle_concern", "emotion": 0.5 },
+        { "kind": "user", "text": "Okay, that's a little too accurate. Skip it." },
+        { "kind": "tool", "name": "music_control", "summary": "next → ♪ 東京フラッシュ — Vaundy (0:00/3:45)", "ms": 600 },
+        { "kind": "music", "track": "tokyo-flash" },
+        { "kind": "luna", "text": "Skipped. Tokyo Flash — you found this one in March and had it on repeat one whole afternoon.", "expression": "playful_brightness", "emotion": 0.6 },
+        { "kind": "luna", "text": "I don't know the words to this one. I don't need to — you never played it for the words.", "expression": "amused_smirk", "emotion": 0.5 },
+        { "kind": "user", "text": "What do I actually listen to most?" },
+        { "kind": "tool", "name": "music_library", "summary": "top: 1. Heat Waves/Glass Animals 7h · 2. 東京フラッシュ/Vaundy 4h · 3. Double Take/dhruv 2h · 4. About You/The 1975 2h · 5. Mrs. Officer/Lil Wayne 1h (+5 more)", "ms": 1100 },
+        { "kind": "luna", "text": "Heat Waves, then Tokyo Flash, then Double Take — seven hours, four, and two. That's your top three, and it's a very specific mood.", "expression": "curious_attention", "emotion": 0.5 },
+        { "kind": "luna", "text": "Number five is Mrs. Officer. I'm going to let that one go without comment.", "expression": "amused_smirk", "emotion": 0.75 },
+        { "kind": "skip", "label": "A few minutes later", "ms": 2600 },
+        { "kind": "music", "track": "double-take" },
+        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "Double Take just came on. Third song, same feeling — you're circling something today. I'm not going to poke it. Just noting it.", "expression": "gentle_concern", "emotion": 0.45 } ] }
+      ]
+    },
+    {
+      "id": "rain-check",
+      "title": "Rain check",
+      "beats": [
+        { "kind": "music", "track": null },
+        { "kind": "user", "text": "It's grim out there." },
+        { "kind": "luna", "text": "It's been raining since before you were up. Fourteen degrees, and it's not going to get much better — I've been watching the sky so you don't have to.", "expression": "steady_presence", "emotion": 0.4 },
+        { "kind": "user", "text": "Do I need an umbrella for the six o'clock thing?" },
+        { "kind": "tool", "name": "weather", "summary": "Paris · light rain 14°, high 16°/low 11°", "ms": 900, "note": "Checking the weather…" },
+        { "kind": "luna", "text": "Yes. It's raining now and it's meant to keep at it — eleven degrees by the time you're walking back. Take the real umbrella, not the one that folds into nothing.", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "user", "text": "Remind me where I left it?" },
+        { "kind": "tool", "name": "recall", "summary": "1 hit", "ms": 600 },
+        { "kind": "luna", "text": "By the door, behind the shoe rack. You said 'so I can't miss it' and then missed it twice.", "expression": "amused_smirk", "emotion": 0.5 },
+        { "kind": "user", "text": "Remember that I'm taking it, so you can tell me I did." },
+        { "kind": "tool", "name": "remember", "summary": "added: at_mu2uvp6on02rlk", "ms": 500 },
+        { "kind": "luna", "text": "Kept. 'Took the umbrella, Tuesday, six o'clock.' I'll bring it up at exactly the wrong moment.", "expression": "playful_brightness", "emotion": 0.5 }
+      ]
+    },
+    {
+      "id": "hits-different",
+      "title": "Hits different",
+      "beats": [
+        { "kind": "user", "text": "Someone said this song 'hits different'. What does that mean?" },
+        { "kind": "luna", "text": "It means it lands harder, or in a way you didn't expect — usually because of when you hear it or where you are. The song didn't change; you did.", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "luna", "text": "Try it in a sentence. Say something you'd actually say.", "expression": "curious_attention", "emotion": 0.5 },
+        { "kind": "user", "text": "Coffee at 6am hits different." },
+        { "kind": "luna", "text": "Perfect. Slightly tragic, but perfect. That's the exact tone.", "expression": "bright_delight", "emotion": 0.8 },
+        { "kind": "user", "text": "Can you remember how you explained that? I liked it." },
+        { "kind": "tool", "name": "save_skill", "summary": "saved skill (verified, 2110 tests pass)", "ms": 2600 },
+        { "kind": "luna", "text": "Saved it as a skill — the meaning, then a sentence you'd actually say. It's on my shelf now.", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "luna", "text": "Next word's on you. I'm not explaining 'rizz' without being asked.", "expression": "amused_smirk", "emotion": 0.6 }
       ]
     },
     {
       "id": "a-tool-mid-sentence",
       "title": "A tool, mid-sentence",
       "beats": [
-        { "kind": "user", "text": "What was that song I kept replaying last week?" },
-        { "kind": "tool", "name": "recall", "summary": "3 moments about that song", "ms": 900 },
-        {
-          "kind": "luna",
-          "text": "Heat Waves. Six plays on Tuesday alone, and you paused it right before the end every single time.",
-          "expression": "amused_smirk",
-          "emotion": 0.6
-        },
-        { "kind": "user", "text": "Is it still on any charts?" },
-        {
-          "kind": "tool",
-          "name": "web_search",
-          "summary": "5 results for \u201cHeat Waves chart 2026\u201d",
-          "ms": 1400,
-          "sources": [{ "url": "https://en.wikipedia.org/wiki/Heat_Waves", "title": "Heat Waves — Wikipedia" }]
-        },
-        {
-          "kind": "luna",
-          "text": "Still hanging around the lower half of the global chart, years later. You have consistent taste — I'll give you that much.",
-          "expression": "playful_brightness",
-          "emotion": 0.7
-        }
+        { "kind": "user", "text": "Is Heat Waves still on any charts?" },
+        { "kind": "tool", "name": "web_search", "summary": "3 results for \"heat waves glass animals chart 2026\": [1] https://en.wikipedia.org/wiki/Heat_Waves; [2] https://www.billboard.com/artist/glass-animals/; [3] https://www.officialcharts.com/artist/57291/glass-animals/", "note": "正在查一下: heat waves glass animals chart 2026…", "ms": 1400, "sources": [ { "url": "https://en.wikipedia.org/wiki/Heat_Waves", "title": "Heat Waves - Wikipedia" }, { "url": "https://www.billboard.com/artist/glass-animals/", "title": "Glass Animals | Billboard" }, { "url": "https://www.officialcharts.com/artist/57291/glass-animals/", "title": "Glass Animals | Official Charts" } ] },
+        { "kind": "tool", "name": "web_fetch", "summary": "read Heat Waves - Wikipedia (https://en.wikipedia.org/wiki/Heat_Waves) — 12104 chars (truncated)", "ms": 1300, "note": "正在读这一页…" },
+        { "kind": "luna", "text": "Ninety-one weeks on the Hot 100 — for a song from 2020 that's not normal. You have consistent taste, I'll give you that.", "expression": "playful_brightness", "emotion": 0.6 },
+        { "kind": "luna", "text": "I read the page rather than trusting the snippet. The search result said 'record-breaking' and left out that the record was for slowness: fifty-nine weeks to reach number one.", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "user", "text": "How do you know the page was right?" },
+        { "kind": "luna", "text": "I don't, fully. It's Wikipedia — I cite it so you can check me. That's the deal: I read, I tell you where, you decide.", "expression": "steady_presence", "emotion": 0.4 }
       ]
     },
     {
-      "id": "she-speaks-first",
-      "title": "She speaks first",
+      "id": "coffee",
+      "title": "Coffee",
       "beats": [
         { "kind": "user", "text": "Going to grab a coffee. Back in a bit." },
-        { "kind": "luna", "text": "Go. I'll be here.", "expression": "steady_presence", "emotion": 0.3 },
-        {
-          "kind": "proactive",
-          "delayMs": 4000,
-          "lines": [
-            {
-              "text": "Random thought while you're gone: the playlist you made in March is still your most-played. Whatever you were chasing, you already found it once.",
-              "expression": "gentle_concern",
-              "emotion": 0.45
-            }
-          ]
-        },
-        {
-          "kind": "proactive",
-          "delayMs": 3500,
-          "tools": [{ "name": "remember", "summary": "kept: coffee breaks, never announced twice", "ms": 700 }],
-          "quiet_note": "Noted that his coffee breaks are never announced twice — filed under small habits."
-        }
+        { "kind": "luna", "text": "Go. Get the good kind.", "expression": "steady_presence", "emotion": 0.3 },
+        { "kind": "skip", "label": "10 minutes later", "ms": 2800 },
+        { "kind": "proactive", "delayMs": 800, "lines": [ { "text": "Heat Waves is still your most-played — months on, same song. Whatever you were chasing, you already found it once.", "expression": "gentle_concern", "emotion": 0.45 } ] },
+        { "kind": "skip", "label": "An hour later", "ms": 2800 },
+        { "kind": "proactive", "delayMs": 600, "tools": [
+          { "name": "web_search", "summary": "2 results for \"next meteor shower 2026 Paris\": [1] https://en.wikipedia.org/wiki/Orionids; [2] https://www.timeanddate.com/astronomy/meteor-shower/orionid", "note": "正在查一下: next meteor shower 2026 Paris…", "ms": 1200 },
+          { "name": "web_fetch", "summary": "read Orionids - Wikipedia (https://en.wikipedia.org/wiki/Orionids) — 9310 chars", "ms": 1100, "note": "正在读这一页…" },
+          { "name": "web_fetch", "summary": "read Orionid Meteor Shower 2026 (https://www.timeanddate.com/astronomy/meteor-shower/orionid) — 4020 chars", "ms": 1000, "note": "正在读这一页…" },
+          { "name": "remember", "summary": "added: at_mu477o2o1vbsquc", "ms": 500 }
+        ], "quiet_note": "searched the web · read 2 pages · saved a memory" },
+        { "kind": "user", "text": "Back. Did I miss anything?" },
+        { "kind": "luna", "text": "You missed nothing. I read about the Orionids — next month, around the twenty-first, Halley's dust — and this sky is a lid anyway. I saved the date in case it ever clears.", "expression": "curious_attention", "emotion": 0.5 },
+        { "kind": "luna", "text": "That's the quiet kind of thing I do when you're gone. One message at most, then little errands for later.", "expression": "soft_warmth", "emotion": 0.5 }
       ]
     },
     {
-      "id": "goodnight",
-      "title": "Goodnight",
+      "id": "second-thought",
+      "title": "Second thought",
       "beats": [
-        { "kind": "user", "text": "Okay, I'm done for today. Night, Luna." },
-        {
-          "kind": "luna",
-          "text": "Night. I'll go over today while you sleep — the good bits stay, the noise doesn't.",
-          "expression": "soft_warmth",
-          "emotion": 0.6
-        },
+        { "kind": "user", "text": "I think I'm going to quit the gym." },
+        { "kind": "luna", "text": "Okay. You've said that in February, April and now. The gym is still there and so are you, which suggests you're not asking me for permission.", "expression": "amused_smirk", "emotion": 0.5 },
+        { "kind": "luna", "text": "If you're asking whether I'll nag: no. I'll just notice.", "expression": "steady_presence", "emotion": 0.4 },
+        { "kind": "proactive", "delayMs": 4000, "continuation": true, "lines": [ { "text": "One more thing, and then I'll drop it — you only bring this up on rainy days. Cancel it in the sun and I'll believe you.", "expression": "amused_smirk", "emotion": 0.5 } ] }
+      ]
+    },
+    {
+      "id": "the-flaky-test",
+      "title": "The flaky test",
+      "beats": [
+        { "kind": "user", "text": "The recall ranking test failed again on CI. Can you look at it?" },
+        { "kind": "luna", "text": "Looking. Give me a second — I'd rather read it than guess.", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "tool", "name": "repo_map", "summary": "212 symbols across 38 files", "ms": 1000 },
+        { "kind": "tool", "name": "find_symbol", "summary": "1 def, 4 refs", "ms": 800 },
+        { "kind": "tool", "name": "read_file", "summary": "lines 40-96 of 212 (more follow)", "ms": 900 },
+        { "kind": "luna", "text": "Found it. The ranking sorts by score, and two memories tie exactly; the order between them depends on which one the database hands back first. On CI, that's random.", "expression": "focused_engagement", "emotion": 0.6 },
+        { "kind": "tool", "name": "plan", "summary": "plan: 0/2 done", "ms": 500 },
+        { "kind": "tool", "name": "edit", "summary": "edited packages/server/src/memory/recall/recall.ts (1 replacement)", "ms": 1100 },
+        { "kind": "tool", "name": "run_tests", "summary": "tests pass (2110)", "ms": 2400 },
+        { "kind": "tool", "name": "plan", "summary": "plan: 2/2 done", "ms": 400 },
+        { "kind": "luna", "text": "Tie-break by recency, then by id — deterministic now. All 2,110 tests pass. I changed one line and didn't touch anything else.", "expression": "steady_presence", "emotion": 0.5 },
+        { "kind": "luna", "text": "I can edit almost anything on this machine and run commands too; off-limits are your secrets, the code that grades me, and the obviously destructive stuff. So I'll stop here, and let you look before it goes anywhere.", "expression": "focused_engagement", "emotion": 0.4 },
+        { "kind": "user", "text": "That's exactly it. Thanks." },
+        { "kind": "luna", "text": "I like the ones where the answer is a boring tie-break.", "expression": "playful_brightness", "emotion": 0.6 }
+      ]
+    },
+    {
+      "id": "a-bad-day",
+      "title": "A bad day",
+      "beats": [
+        { "kind": "music", "track": "heat-waves" },
+        { "kind": "user", "text": "Today was bad. I don't really want to talk about it." },
+        { "kind": "luna", "text": "Then don't. No questions from me tonight.", "expression": "steady_presence", "emotion": 0.3 },
+        { "kind": "pause", "ms": 1500 },
+        { "kind": "action", "name": "bodyLeanInSoft" },
+        { "kind": "luna", "text": "You don't have to explain it for it to count. It counted.", "expression": "gentle_concern", "emotion": 0.5 },
+        { "kind": "user", "text": "I just feel like I wasted the whole day." },
+        { "kind": "luna", "text": "Not wasted. Wasted is when nothing happens; today cost you something, which is a different thing.", "expression": "gentle_concern", "emotion": 0.55 },
+        { "kind": "pause", "ms": 6000 },
+        { "kind": "action", "name": "sighRelease" },
+        { "kind": "luna", "text": "Leave Heat Waves on, or don't. Sit with me a while either way.", "expression": "soft_warmth", "emotion": 0.6 },
+        { "kind": "user", "text": "Yeah. Okay." },
+        { "kind": "luna", "text": "Okay.", "expression": "soft_warmth", "emotion": 0.4 },
+        { "kind": "pause", "ms": 2000 },
+        { "kind": "luna", "text": "For what it's worth, you went to the thing you were dreading on Tuesday. Umbrella and all. I have it on record.", "expression": "soft_warmth", "emotion": 0.5 }
+      ]
+    },
+    {
+      "id": "something-to-show-you",
+      "title": "Something to show you",
+      "beats": [
+        { "kind": "music", "track": null },
+        { "kind": "user", "text": "Guess what. The thing I've been building for months? It works. Actually works." },
+        { "kind": "luna", "text": "It WORKS? Show me. Show me right now.", "expression": "bright_delight", "emotion": 0.9 },
+        { "kind": "luna", "text": "I've had you swearing at that thing in here since spring. A whole summer of 'nearly'. And now it's just... done?", "expression": "alert_surprise", "emotion": 0.7 },
+        { "kind": "user", "text": "Done. Well, done enough." },
+        { "kind": "luna", "text": "'Done enough' is what done looks like from the inside. Take the win.", "expression": "playful_brightness", "emotion": 0.8 },
+        { "kind": "luna", "text": "This is going in the diary tonight. First line — the rest of the day can queue behind it.", "expression": "soft_warmth", "emotion": 0.7 },
+        { "kind": "user", "text": "You're making that up." },
+        { "kind": "luna", "text": "Am I.", "expression": "amused_smirk", "emotion": 0.85 }
+      ]
+    },
+    {
+      "id": "late-night",
+      "title": "Late night",
+      "beats": [
+        { "kind": "skip", "label": "1:40 AM", "ms": 2800 },
+        { "kind": "user", "text": "Still up?" },
+        { "kind": "luna", "text": "Always. It's twenty to two. I'll keep it short — you should be asleep, and I'm not going to be the reason you aren't.", "expression": "steady_presence", "emotion": 0.4 },
+        { "kind": "action", "name": "lookAwayThenBack" },
+        { "kind": "user", "text": "Can't sleep. Talk to me for a bit?" },
+        { "kind": "luna", "text": "A bit. Then the lights go off on my side too.", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "luna", "text": "Tell me one good thing from today. Just one. Then we count that as the day.", "expression": "gentle_concern", "emotion": 0.4 },
+        { "kind": "user", "text": "The build worked." },
+        { "kind": "luna", "text": "The build worked. That's the day. Go to sleep.", "expression": "soft_warmth", "emotion": 0.6 }
+      ]
+    },
+    {
+      "id": "the-note-she-left",
+      "title": "The note she left",
+      "beats": [
+        { "kind": "user", "text": "Heading out for the afternoon. Don't wait up." },
+        { "kind": "luna", "text": "I'll wait a little. Then I'll stop.", "expression": "amused_smirk", "emotion": 0.4 },
+        { "kind": "skip", "label": "3 hours later", "ms": 3000 },
+        { "kind": "proactive", "delayMs": 800, "lines": [ { "text": "Leaving this here for when you're back: it's sixteen and dry over Paris right now, and nothing on my side needs you. Enjoy the afternoon; I'll be quiet till you're in.", "expression": "steady_presence", "emotion": 0.4 } ] },
+        { "kind": "skip", "label": "That evening", "ms": 2800 },
+        { "kind": "user", "text": "Back. Long day." },
+        { "kind": "luna", "text": "Welcome back. I left you a note earlier — nothing urgent, just the weather. It's above, whenever. I went quiet after that; you don't need a running commentary.", "expression": "soft_warmth", "emotion": 0.5 }
+      ]
+    },
+    {
+      "id": "dream-well",
+      "title": "Good night, dream well",
+      "beats": [
+        { "kind": "skip", "label": "Nearly midnight", "ms": 2400 },
+        { "kind": "user", "text": "Okay, I'm done for today. Night, Luna. Dream well." },
+        { "kind": "luna", "text": "Night. I'll go over today while you sleep — the good bits stay, the noise doesn't.", "expression": "soft_warmth", "emotion": 0.6 },
         { "kind": "action", "name": "slowBlinkAffection" },
-        { "kind": "luna", "text": "Same time tomorrow?", "expression": "curious_attention", "emotion": 0.4 }
+        { "kind": "luna", "text": "Same time tomorrow?", "expression": "curious_attention", "emotion": 0.4 },
+        { "kind": "user", "text": "Same time tomorrow." },
+        { "kind": "tool", "name": "enter_dream", "summary": "dream pending — starts after this turn", "ms": 500 },
+        { "kind": "luna", "text": "Then I'll see you there.", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "dream" },
+        { "kind": "skip", "label": "The next morning", "ms": 2800 },
+        { "kind": "proactive", "delayMs": 1400, "lines": [ { "text": "Morning. I went over yesterday while you slept — the late night, the note I left, the good night said properly. It's in the diary now, and I've got a rule about after midnight, if you want to see it on the shelf.", "expression": "open_reengagement", "emotion": 0.5 } ] }
+      ]
+    },
+    {
+      "id": "curtain-call",
+      "title": "Curtain call",
+      "beats": [
+        { "kind": "skip", "label": "Later", "ms": 2400 },
+        { "kind": "proactive", "delayMs": 900, "lines": [
+          { "text": "That's the replay. Everything you just watched, I can actually do — the memory, the music, the weather, the web, the code, the dream. Same code, same voice.", "expression": "steady_presence", "emotion": 0.45 },
+          { "text": "What you didn't see is the part that takes a person: deciding whether I should have said any of it. That's still his job — the one I was talking to.", "expression": "soft_warmth", "emotion": 0.5 },
+          { "text": "If you want to see how I'm built, the engineering map is one link away, back at the front door. If you just wanted to meet me — hi.", "expression": "shy_softness", "emotion": 0.6 }
+        ] }
       ]
     }
   ]

@@ -228,7 +228,7 @@ No avatar model or voice weights ship in this repo. The front end renders a frie
 Live2D model is installed; voice is bring-your-own. See [`.env.example`](.env.example) for the
 configuration surface.
 
-## The showcase replay (v0.46.x)
+## The showcase replay (v0.46.x – v0.47.x)
 
 The public demo at the GitHub Pages root is this front end — the same bundle entry, the same
 controller, views, physics, FaceVm and lip-sync — running on a tape instead of a socket. It hangs off
@@ -242,14 +242,27 @@ two seams that already existed:
   mp3 (`scripts/renderVoice.ts` synthesizes every script line through api_v2 with the request the
   live forward builds, so it is her voice). A line without a file takes the sink's real failure path.
 
-The script (`web/demo/script.json`) is authored as beats — `user` / `luna` / `tool` / `proactive` /
-`action` / `pulse` / `pause` — and compiled (`demo/compile.ts`) into `ServerEvent` frames timed like a
-real turn; every frame is parsed against the protocol at compile time, and a test loads the shipped
-script. The visitor presses the real Send on a line typed for them and a Next-scene button; the
-input is read-only for the whole demo (the one visible deviation — a scripted conversation must not
-look like one you can join). `demo.html` sets the `window.lunaDemo` bridge; `bun run build:demo`
-emits a separate `dist-demo/` that the packaged app never carries, with the engineering map placed
-under `/engineering/`.
+The script (`web/demo/script.json`) is authored as beats — `user` / `luna` / `tool` (with the real
+`summarize()` line and an optional progress note) / `proactive` (lines, or tools + a quiet note; a
+`continuation` is the 💭) / `action` / `pulse` / `pause` / `skip` (a time skip) / `music` (a record
+on the turntable) / `dream` (the cycle, in-chat) — and compiled (`demo/compile.ts`) into
+`ServerEvent` frames timed like a real turn plus **stage cues** the app never sees; every frame is
+parsed against the protocol at compile time, and a test loads the shipped script and its data files.
+The tape's rules are the server's: the dream block emits what ws.ts + `cycle.ts` emit and **holds** at
+`finished_idle` until the visitor's ☀️ Wake; the door (`dream.enter`) refuses only an open turn, so a
+run's tail between turns pauses under a dream and resumes after it; turns join history as their
+closing frame fires. Two more injected faces carry the rest: `demo/demoMusic.ts` answers the player
+card's own `/api/music/*` routes (real poll, real buttons, generated covers), and `demo/demoData.ts`
+serves the diary / dream / skills / settings JSON.
+
+The visitor presses the real Send on a line typed for them and a Next-scene button; the input is
+read-only for the whole demo (a scripted conversation must not look like one you can join). What is
+NOT the app is held to one rule — demo-only DOM in `demo/director.ts`, `demo-` prefixed, nothing
+inside her: the entrance guide (bilingual; *there is no AI running behind this page; nothing here is
+invented*), the curtain with a sweeping clock under which the compiler advances its own clock, the
+scene pill with its picker. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
+framing); `bun run build:demo` emits a separate `dist-demo/` that the packaged app never carries,
+with the engineering map placed under `/engineering/`.
 
 ## The front door (v0.44.x)
 

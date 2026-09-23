@@ -1,17 +1,514 @@
 {
-  "_note": "PLACEHOLDER — one stand-in dream report. Replace with the owner's curated export.",
   "dreams": [
     {
-      "cycle_id": "dream-placeholder-0921",
-      "started_ms": 1789952400000,
-      "ended_ms": 1789952640000,
+      "cycle_id": "dream-49-mubs622o",
+      "started_ms": 1790027520000,
+      "ended_ms": 1790027753208,
       "aborted": false,
       "steps": [
-        { "step": "rate_salience", "status": "ok", "detail": "rated 14 turns", "ms": 41000 },
-        { "step": "write_diary", "status": "ok", "detail": "one day entry", "ms": 38000 },
-        { "step": "consolidate_facts", "status": "ok", "detail": "2 kept, 1 merged", "ms": 52000 },
-        { "step": "evolve_soul", "status": "ok", "detail": "a line about restraint", "ms": 47000 },
-        { "step": "distill_skills", "status": "skipped", "detail": "nothing new worth keeping", "ms": 9000 }
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 31 turns",
+          "ms": 36400
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 3, added 5",
+          "ms": 41200
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 9700
+        },
+        {
+          "step": "memory_audit",
+          "status": "ok",
+          "detail": "removed 1, added 2",
+          "ms": 29300
+        },
+        {
+          "step": "persona_update",
+          "status": "ok",
+          "detail": "bond",
+          "ms": 33500
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "2 diaries written",
+          "ms": 28600
+        },
+        {
+          "step": "distill_skills",
+          "status": "ok",
+          "detail": "new:late-night-brevity",
+          "ms": 49200
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=10 filled=10 after=0",
+          "ms": 5300
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-48-muabwmlc",
+      "started_ms": 1789939740000,
+      "ended_ms": 1789939871610,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 19 turns",
+          "ms": 22100
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 1, added 3",
+          "ms": 30700
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 9200
+        },
+        {
+          "step": "memory_audit",
+          "status": "skipped",
+          "detail": "memory consistent",
+          "ms": 13900
+        },
+        {
+          "step": "persona_update",
+          "status": "ok",
+          "detail": "self",
+          "ms": 24600
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "2 diaries written",
+          "ms": 20800
+        },
+        {
+          "step": "distill_skills",
+          "status": "skipped",
+          "detail": "nothing to distill",
+          "ms": 7100
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=5 filled=5 after=0",
+          "ms": 3200
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-48-mu8x02dc",
+      "started_ms": 1789854240000,
+      "ended_ms": 1789854300000,
+      "aborted": true,
+      "steps": []
+    },
+    {
+      "cycle_id": "dream-47-mu619hxc",
+      "started_ms": 1789680000000,
+      "ended_ms": 1789680149607,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 24 turns",
+          "ms": 27900
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 2, added 2",
+          "ms": 26200
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 8800
+        },
+        {
+          "step": "memory_audit",
+          "status": "ok",
+          "detail": "removed 0, added 1",
+          "ms": 18600
+        },
+        {
+          "step": "persona_update",
+          "status": "skipped",
+          "detail": "persona unchanged",
+          "ms": 4700
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "2 diaries written",
+          "ms": 21300
+        },
+        {
+          "step": "distill_skills",
+          "status": "ok",
+          "detail": "new:flaky-test-triage",
+          "ms": 38500
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=6 filled=6 after=0",
+          "ms": 3600
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-46-mu4lactc",
+      "started_ms": 1789592700000,
+      "ended_ms": 1789592871947,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 22 turns",
+          "ms": 25600
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 2, added 3",
+          "ms": 29100
+        },
+        {
+          "step": "refine_layer1",
+          "status": "skipped",
+          "detail": "nothing to fold",
+          "ms": 38
+        },
+        {
+          "step": "memory_audit",
+          "status": "ok",
+          "detail": "removed 0, added 1",
+          "ms": 17900
+        },
+        {
+          "step": "persona_update",
+          "status": "ok",
+          "detail": "self",
+          "ms": 27400
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "2 diaries written",
+          "ms": 23100
+        },
+        {
+          "step": "distill_skills",
+          "status": "ok",
+          "detail": "new:coffee-break-etiquette",
+          "ms": 44800
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=7 filled=7 after=0",
+          "ms": 4000
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-45-mu37qnuo",
+      "started_ms": 1789509480000,
+      "ended_ms": 1789509618312,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 27 turns",
+          "ms": 31500
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 4, added 4",
+          "ms": 33800
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 9600
+        },
+        {
+          "step": "memory_audit",
+          "status": "ok",
+          "detail": "removed 1, added 1",
+          "ms": 21700
+        },
+        {
+          "step": "persona_update",
+          "status": "skipped",
+          "detail": "persona unchanged",
+          "ms": 6100
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "2 diaries written",
+          "ms": 24900
+        },
+        {
+          "step": "distill_skills",
+          "status": "skipped",
+          "detail": "nothing to distill",
+          "ms": 6600
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=7 filled=7 after=0",
+          "ms": 4100
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-44-mu1qz880",
+      "started_ms": 1789420860000,
+      "ended_ms": 1789420942710,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 9 turns",
+          "ms": 10800
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 1, added 2",
+          "ms": 17200
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 6900
+        },
+        {
+          "step": "memory_audit",
+          "status": "skipped",
+          "detail": "memory consistent",
+          "ms": 13600
+        },
+        {
+          "step": "persona_update",
+          "status": "skipped",
+          "detail": "persona unchanged",
+          "ms": 5200
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "2 diaries written",
+          "ms": 22400
+        },
+        {
+          "step": "distill_skills",
+          "status": "skipped",
+          "detail": "nothing to distill",
+          "ms": 3700
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=4 filled=4 after=0",
+          "ms": 2900
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-43-mu0b58ao",
+      "started_ms": 1789333800000,
+      "ended_ms": 1789333873139,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 12 turns",
+          "ms": 14300
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 0, added 2",
+          "ms": 19900
+        },
+        {
+          "step": "refine_layer1",
+          "status": "skipped",
+          "detail": "nothing to fold",
+          "ms": 31
+        },
+        {
+          "step": "memory_audit",
+          "status": "skipped",
+          "detail": "memory consistent",
+          "ms": 12700
+        },
+        {
+          "step": "persona_update",
+          "status": "skipped",
+          "detail": "persona unchanged",
+          "ms": 3800
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "1 diaries written",
+          "ms": 13800
+        },
+        {
+          "step": "distill_skills",
+          "status": "skipped",
+          "detail": "nothing to distill",
+          "ms": 5900
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=4 filled=4 after=0",
+          "ms": 2700
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-42-mtw1r400",
+      "started_ms": 1789076160000,
+      "ended_ms": 1789076262811,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 16 turns",
+          "ms": 18700
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 1, added 1",
+          "ms": 21600
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 7400
+        },
+        {
+          "step": "memory_audit",
+          "status": "skipped",
+          "detail": "memory consistent",
+          "ms": 13100
+        },
+        {
+          "step": "persona_update",
+          "status": "ok",
+          "detail": "bond",
+          "ms": 19800
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "1 diaries written",
+          "ms": 15600
+        },
+        {
+          "step": "distill_skills",
+          "status": "skipped",
+          "detail": "nothing to distill",
+          "ms": 4200
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=3 filled=3 after=0",
+          "ms": 2400
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-41-mtt64eg0",
+      "started_ms": 1788902100000,
+      "ended_ms": 1788902229509,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 21 turns",
+          "ms": 24200
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 2, added 3",
+          "ms": 27300
+        },
+        {
+          "step": "refine_layer1",
+          "status": "ok",
+          "detail": "rolling summary consolidated",
+          "ms": 8100
+        },
+        {
+          "step": "memory_audit",
+          "status": "ok",
+          "detail": "removed 1, added 0",
+          "ms": 16400
+        },
+        {
+          "step": "persona_update",
+          "status": "skipped",
+          "detail": "persona unchanged",
+          "ms": 4100
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "1 diaries written",
+          "ms": 14900
+        },
+        {
+          "step": "distill_skills",
+          "status": "ok",
+          "detail": "new:track-change-restraint",
+          "ms": 31200
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=5 filled=5 after=0",
+          "ms": 3300
+        }
       ]
     }
   ]

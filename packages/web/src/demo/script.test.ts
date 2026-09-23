@@ -71,3 +71,27 @@ describe('demo/script.json — dream and music blocks', () => {
     expect(c.dream === null).toBe(script.dream === undefined);
   });
 });
+
+// ── v0.47.1 — the message tool's humanity caps, applied to the shipped tape ─────────────────────
+// The real `message` tool refuses text over 280 chars, over 5 sentences, or with a clause over 150
+// chars (packages/server/src/persona/humanity.ts). A line the server would reject is not "a real
+// capability" — so the tape may not carry one.
+
+const SENTENCE = /[。！？!?]+|\n+/;
+const CLAUSE = /[，,；;：:。！？!?]+|\n+/;
+const parts = (text: string, re: RegExp): string[] => text.split(re).map((s) => s.trim()).filter((s) => s !== '');
+
+describe('demo/script.json — every spoken line passes the message tool’s caps', () => {
+  test('≤ 280 chars, ≤ 5 sentences, longest clause ≤ 150 chars', () => {
+    const offenders = spokenLines(script).flatMap((text) => {
+      const why: string[] = [];
+      if (text.length > 280) why.push(`${text.length} chars`);
+      const sentences = parts(text, SENTENCE).length;
+      if (sentences > 5) why.push(`${sentences} sentences`);
+      const longest = Math.max(...parts(text, CLAUSE).map((c) => c.length));
+      if (longest > 150) why.push(`clause ${longest} chars`);
+      return why.length ? [`${text.slice(0, 50)}… — ${why.join(', ')}`] : [];
+    });
+    expect(offenders).toEqual([]);
+  });
+});

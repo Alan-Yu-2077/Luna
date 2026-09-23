@@ -1,6 +1,6 @@
 import type { ClientEvent, HistoryTurn, ServerEvent, Setting } from '@luna/protocol';
 import type { WsStatus } from '../wsClient';
-import type { Compiled, CompiledScene, Run, SinkCall, StageCue } from './compile';
+import { DEMO_LAST_DREAM_MS, type Compiled, type CompiledScene, type Cue, type Run, type SinkCall, type StageCue } from './compile';
 
 // v0.46.0 — the tape player, wearing the socket client's clothes. It has the same three-method
 // surface `app.ts` drives (`connect` / `send` / `close`) and feeds its frames into the SAME
@@ -10,6 +10,10 @@ import type { Compiled, CompiledScene, Run, SinkCall, StageCue } from './compile
 //
 // v0.47.0 — the dream door (`dream.enter` / `dream.wake`, the frames the real server sends), stage
 // cues for the director, and `jumpTo` for the scene picker.
+// v0.47.1 — a finished dream HOLDS: the real cycle leaves her in `finished_idle` until dream.wake,
+// so the tape stops at the `await` cue and the visitor's ☀️ Wake is what wakes her. And the door
+// refuses only what the server refuses — an OPEN turn — not a run whose tail (a curtain, a waking
+// still to come) is playing between turns: that tail pauses under the dream and resumes on Wake.
 
 export type Scheduler = {
   set: (fn: () => void, ms: number) => unknown;
@@ -53,6 +57,8 @@ export type TapeClient = {
   sceneIndex(): number;
 };
 
+const WAKE_FRAME: ServerEvent = { type: 'dream.status', is_dreaming: false, current_step: null, last_dream_ms: DEMO_LAST_DREAM_MS };
+
 export function createTapeClient(deps: TapeDeps): TapeClient {
   const sched = deps.scheduler ?? realScheduler;
   const clock = deps.clock ?? (() => Date.now());
@@ -71,8 +77,16 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
   let elapsed = 0; // of the current run, across a close()/connect() pause
   let live = false;
   let timers: unknown[] = [];
-  // The phase a dream interrupted, to come back to when she wakes.
-  let dreamReturn: TapePhase | null = null;
+  // A dream in progress: the phase it interrupted (the menu door) or null when it is a beat inside
+  // the scene's own run; `holdAt` = the tape time of the `await` cue once the cycle has finished.
+  let dream: { returnTo: TapePhase | null; holdAt: number | null } | null = null;
+  // A turn is on the wire — the server's `activeTurn`, which is what makes it answer dream.enter
+  // with turn_in_progress. Set on Send itself (the server's check-and-set is synchronous with it)
+  // and by the proactive frames; cleared by the turn's closing frame.
+  let turnOpen = false;
+  // How many of the run's turns are already in history: each is recorded as its closing frame
+  // fires, so a run paused in its tail (← Menu under the curtain) still replays what was seen.
+  let recorded = 0;
 
   const clearTimers = (): void => {
     for (const h of timers) sched.clear(h);
@@ -84,20 +98,22 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
     return s;
   };
 
-  const fire = (cue: Run['cues'][number]): void => {
-    if (cue.kind === 'frame') deps.onEvent(cue.frame);
-    else if (cue.kind === 'sink') deps.onSink(cue.call);
-    else deps.onStage(cue.stage);
-  };
-
   const armCurrent = (): void => {
     phase = 'armed';
     deps.onArm(scene().turns[turnIdx]?.userText ?? '');
   };
 
+  const recordTurn = (): void => {
+    const t = run?.turns[recorded];
+    if (!t) return;
+    recorded += 1;
+    history.push({ ...t, t_ms: clock() });
+  };
+
   const endRun = (): void => {
     clearTimers();
-    if (run) for (const t of run.turns) history.push({ ...t, t_ms: clock() });
+    turnOpen = false;
+    while (run && recorded < run.turns.length) recordTurn();
     run = null;
     const s = scene();
     const next = turnIdx + 1;
@@ -110,10 +126,34 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
     }
   };
 
-  const scheduleFrom = (offset: number): void => {
+  // The cycle is over; she sleeps on until the visitor wakes her. Timers stop here.
+  const hold = (at: number): void => {
+    clearTimers();
+    if (!dream) dream = { returnTo: null, holdAt: at };
+    else dream.holdAt = at;
+    phase = 'dream';
+  };
+
+  const fire = (cue: Cue): void => {
+    if (cue.kind === 'frame') {
+      const t = cue.frame.type;
+      if (t === 'turn.started' || t === 'proactive.started') turnOpen = true;
+      else if (t === 'turn.result' || t === 'proactive.finished' || t === 'error') turnOpen = false;
+      // The compiler records a turn for every reply and every SPOKEN waking (a quiet note is no turn).
+      if (t === 'turn.result' || (cue.frame.type === 'proactive.finished' && cue.frame.spoke)) recordTurn();
+      deps.onEvent(cue.frame);
+    } else if (cue.kind === 'sink') deps.onSink(cue.call);
+    else if (cue.stage.kind === 'await') hold(cue.at);
+    else deps.onStage(cue.stage);
+  };
+
+  // Schedule the run's cues from `offset` (tape ms). Resuming from a hold (`heldAt`), everything
+  // at the hold's own instant has already fired — the finished_idle status, the await itself — and
+  // must not fire again, or she would be put straight back to sleep after waking.
+  const scheduleFrom = (offset: number, heldAt: number | null = null): void => {
     if (!run) return;
     for (const cue of run.cues) {
-      if (cue.at < offset) continue;
+      if (heldAt !== null ? cue.at <= heldAt : cue.at < offset) continue;
       timers.push(sched.set(() => fire(cue), cue.at - offset));
     }
     timers.push(sched.set(endRun, Math.max(0, run.endMs - offset)));
@@ -122,8 +162,16 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
   const playRun = (r: Run): void => {
     phase = 'running';
     run = r;
+    recorded = 0;
     elapsed = 0;
     runStartedAt = sched.now();
+    // An empty run (a scene that opens on a user beat has an empty prelude) ends NOW, not on a
+    // zero-delay timer: the menu's Dream door sends dream.enter in the same tick as connect(), and
+    // a prelude still "running" on a pending timer would refuse it — she would never dream.
+    if (r.cues.length === 0 && r.endMs === 0) {
+      endRun();
+      return;
+    }
     scheduleFrom(0);
   };
 
@@ -135,23 +183,42 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
   };
 
   // The dream door. Only between turns — mid-turn the real server answers turn_in_progress, and so
-  // does the tape by ignoring it. What she was doing (an armed beat, an ended scene) resumes after.
+  // does the tape by ignoring it. What she was doing (an armed beat, an ended scene, a run's tail
+  // between turns) resumes after the visitor wakes her.
   const enterDream = (): void => {
-    const dream = deps.compiled.dream;
-    if (!dream || phase === 'dream' || phase === 'running') return;
-    dreamReturn = phase;
+    const block = deps.compiled.dream;
+    if (!block || phase === 'dream' || turnOpen) return;
+    if (phase === 'running') elapsed += sched.now() - runStartedAt; // the tail pauses here
+    dream = { returnTo: phase, holdAt: null };
     clearTimers();
     phase = 'dream';
-    for (const cue of dream.cues) timers.push(sched.set(() => fire(cue), cue.at));
-    timers.push(sched.set(() => wake(false), dream.endMs));
+    for (const cue of block.cues) timers.push(sched.set(() => fire(cue), cue.at));
   };
-  const wake = (early: boolean): void => {
-    if (phase !== 'dream') return;
+
+  // dream.wake — from the overlay's ☀️ Wake, or a close() under a dream. The waking status frame
+  // is ours to send here, as ws.ts sends it on dream.wake. A scene-run dream resumes its remaining
+  // cues from the hold; a menu-door dream returns to what she was doing.
+  const wake = (): void => {
+    if (phase !== 'dream' || !dream) return;
     clearTimers();
-    if (early) deps.onEvent({ type: 'dream.status', is_dreaming: false, current_step: null, last_dream_ms: null });
-    phase = dreamReturn ?? 'idle';
-    dreamReturn = null;
+    deps.onEvent(WAKE_FRAME);
+    const d = dream;
+    dream = null;
+    if (d.returnTo === null) {
+      // A beat inside the scene's run: continue from the hold (or, woken early, from now).
+      const from = d.holdAt ?? elapsed + (sched.now() - runStartedAt);
+      phase = 'running';
+      elapsed = from;
+      runStartedAt = sched.now();
+      scheduleFrom(from, d.holdAt);
+      return;
+    }
+    phase = d.returnTo;
     if (phase === 'armed') armCurrent();
+    else if (phase === 'running' && run) {
+      runStartedAt = sched.now();
+      scheduleFrom(elapsed);
+    }
   };
 
   return {
@@ -179,6 +246,7 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
         if (phase !== 'armed' || !live) return;
         deps.onSent();
         const turn = scene().turns[turnIdx];
+        turnOpen = true;
         if (turn) playRun(turn.run);
         return;
       }
@@ -187,7 +255,7 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
         return;
       }
       if (e.type === 'dream.wake') {
-        wake(true);
+        wake();
         return;
       }
       if (e.type === 'settings.set') {
@@ -204,7 +272,13 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
     close() {
       live = false;
       // A dream cannot be paused — she wakes (the socket closing under a real dream is the same).
-      if (phase === 'dream') wake(true);
+      // A scene-run dream then pauses like any run: past its hold, so it is not re-entered.
+      if (phase === 'dream' && dream) {
+        const wasBeat = dream.returnTo === null;
+        const holdAt = dream.holdAt;
+        wake();
+        if (wasBeat && holdAt !== null) elapsed = holdAt + 1;
+      }
       if (phase === 'running' && run) elapsed += sched.now() - runStartedAt;
       clearTimers();
       deps.onStatus?.('closed');
@@ -220,10 +294,14 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
     // turns are not recorded — history is what was actually seen through to the end.
     jumpTo(index) {
       if (index < 0 || index >= scenes.length || !live) return;
-      if (phase === 'dream') wake(true);
+      if (phase === 'dream') {
+        clearTimers();
+        deps.onEvent(WAKE_FRAME);
+        dream = null;
+      }
       clearTimers();
       run = null;
-      dreamReturn = null;
+      turnOpen = false;
       startScene(index);
     },
 

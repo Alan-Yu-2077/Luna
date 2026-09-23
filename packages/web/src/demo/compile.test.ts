@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { ServerEvent } from '@luna/protocol';
-import { compileScene, compileScript, dreamFrames, estimateSpeechMs, moreInTurn, PACING, type Cue } from './compile';
+import { compileScene, compileScript, dreamCues, estimateSpeechMs, moreInTurn, PACING, type Cue } from './compile';
 import { DemoScript, type Scene } from './script';
 
 // v0.46.0 — the script compiler. What it pins: every frame is a valid ServerEvent (the wsClient
@@ -296,14 +296,17 @@ describe('dream — the block and the beat', () => {
     ],
   };
 
-  test('dreamFrames: one status on entry (no step), a step per node, one status on exit naming finished_idle', () => {
-    const { frames, endMs } = dreamFrames(block, 100);
-    expect(frames.map((f) => f.frame.type)).toEqual(['dream.status', 'dream.step', 'dream.step', 'dream.step', 'dream.status']);
-    const first = frames[0]!.frame;
-    const last = frames[frames.length - 1]!.frame;
-    expect(first.type === 'dream.status' ? [first.is_dreaming, first.current_step] : null).toEqual([true, null]);
-    expect(last.type === 'dream.status' ? [last.is_dreaming, last.current_step] : null).toEqual([false, 'finished_idle']);
-    expect(frames[1]!.at).toBe(100 + PACING.dreamLeadMs);
+  test('dreamCues: status on entry naming the first node, a step per node, finished_idle STILL dreaming, then a hold for Wake', () => {
+    const { cues, endMs } = dreamCues(block, 100);
+    const fs = frames(cues);
+    expect(fs.map((f) => f.type)).toEqual(['dream.status', 'dream.step', 'dream.step', 'dream.step', 'dream.status']);
+    const first = fs[0]!;
+    const last = fs[fs.length - 1]!;
+    expect(first.type === 'dream.status' ? [first.is_dreaming, first.current_step] : null).toEqual([true, 'rate_salience']);
+    // ws.ts/cycle.ts end a cycle with is_dreaming: true + finished_idle; only dream.wake clears it.
+    expect(last.type === 'dream.status' ? [last.is_dreaming, last.current_step] : null).toEqual([true, 'finished_idle']);
+    expect(cues[cues.length - 1]).toEqual({ at: endMs, kind: 'stage', stage: { kind: 'await', what: 'wake' } });
+    expect(cues[1]!.at).toBe(100 + PACING.dreamLeadMs);
     expect(endMs).toBe(100 + PACING.dreamLeadMs + (400 + 250) + (0 + 250) + (300 + 250));
   });
 
@@ -313,10 +316,12 @@ describe('dream — the block and the beat', () => {
       () => 800,
       block,
     );
-    const fs = frames(compiled.turns[0]!.run.cues).map((f) => f.type);
+    const cues = compiled.turns[0]!.run.cues;
+    const fs = frames(cues).map((f) => f.type);
     expect(fs.indexOf('turn.result')).toBeLessThan(fs.indexOf('dream.status'));
     expect(fs.slice(-5)).toEqual(['dream.status', 'dream.step', 'dream.step', 'dream.step', 'dream.status']);
-    expect(compiled.turns[0]!.run.endMs).toBeGreaterThan(compiled.turns[0]!.run.cues[compiled.turns[0]!.run.cues.length - 1]!.at);
+    expect(cues[cues.length - 1]!.kind).toBe('stage'); // the hold for Wake is the run's last cue
+    expect(compiled.turns[0]!.run.endMs).toBeGreaterThanOrEqual(cues[cues.length - 1]!.at);
   });
 
   test('a dream beat without a block is refused by the schema, and by the compiler', () => {
@@ -327,12 +332,13 @@ describe('dream — the block and the beat', () => {
 
   test('compileScript carries the menu-door run only when the block exists', () => {
     const withDream = DemoScript.parse({ version: 1, dream: block, scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'user', text: 'u' }] }] });
-    expect(compileScript(withDream).dream?.cues.map((c) => c.kind === 'frame' && c.frame.type)).toEqual([
+    expect(compileScript(withDream).dream?.cues.map((c) => (c.kind === 'frame' ? c.frame.type : c.kind))).toEqual([
       'dream.status',
       'dream.step',
       'dream.step',
       'dream.step',
       'dream.status',
+      'stage',
     ]);
     const without = DemoScript.parse({ version: 1, scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'user', text: 'u' }] }] });
     expect(compileScript(without).dream).toBeNull();

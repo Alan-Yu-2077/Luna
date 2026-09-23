@@ -22,7 +22,8 @@ code-agent capability — embodied as a Live2D avatar with lip-synced custom voi
 [![Engineering Map — the agent harness, mapped](https://img.shields.io/badge/%E2%9A%99_Engineering_Map-the_agent_harness%2C_mapped-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
 
 <sub>The demo is the real front end and rendering engine on a scripted tape — her actual voice, pre-rendered.
-The one visible difference from the app: you press Send on lines that are typed for you.</sub>
+What differs from the app sits around her, not in her: the lines are typed for you (you only press ➤),
+a scene pill carries Next, and a curtain marks each skip in time.</sub>
 
 <sub>This repository is the <b>engineering, published as a reference</b> — not a distributed product.<br/>
 There are no installers: Luna is one person's companion, and the instance that matters lives on one

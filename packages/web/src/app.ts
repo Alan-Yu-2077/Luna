@@ -145,6 +145,10 @@ async function boot(): Promise<void> {
   // only the WS session is deferred). Direct-boot paths (pet / agent-only / luna:menu=0 / ?menu=0)
   // activate immediately and behave exactly as before this version.
   const lobbyOn = menuEnabled({ search: location.search, storage: localStorage, agentOnly });
+  // v0.47.0: the replay's entrance guide sits over the lobby while the model loads behind it — so
+  // it mounts BEFORE the sink's await, not after. Its Enter is the visitor's first gesture, the one
+  // that also lets the page make a sound later.
+  if (demo && lobbyOn) mountGuide(document);
 
   // Boot gate: for the http voice backend, block the UI until it has warmed its model. Skippable, and
   // degrades fast (no block) if no sidecar is up. In lobby mode there is nothing to gate — warming
@@ -300,7 +304,7 @@ async function boot(): Promise<void> {
   const mountPlayer = (): void => {
     if (playerMounted || isPet || agentOnly) return;
     playerMounted = true;
-    mountPlayerCard(document, demo ? { fetchFn: demo.fetch } : {});
+    mountPlayerCard(document, demo ? { fetchFn: demo.fetch, artworkUrl: demo.coverUrl } : {});
   };
   const activateSession = (): void => {
     mountPlayer();
@@ -418,7 +422,8 @@ async function boot(): Promise<void> {
         // the card polls through the demo fetch.
         onStage: (cue) => {
           if (cue.kind === 'skip') director?.skip(cue.label, cue.ms);
-          else bundle.music?.set(cue.track);
+          else if (cue.kind === 'music') bundle.music?.set(cue.track);
+          // 'await' never reaches here — the tape holds on it itself (a finished dream waits for Wake).
         },
       });
       client = tape;
@@ -846,12 +851,7 @@ async function boot(): Promise<void> {
     mountMenu();
     // v0.46.2: the replay's front door carries the one link out — to the engineering map, which the
     // showcase build places beside it. Lobby only; it disappears the moment she wakes.
-    if (demo) {
-      mountMapLink(document, root, './engineering/', 'Engineering map →');
-      // v0.47.0: the entrance guide sits over the lobby while the model loads behind it. Its
-      // Enter is the visitor's first gesture — the one that also lets the page make a sound later.
-      mountGuide(document);
-    }
+    if (demo) mountMapLink(document, root, './engineering/', 'Engineering map →');
 
     // ← Menu lives in the chat header, and the disconnect is POLITE: mid-turn it waits for the
     // turn's end (returnGate), then closes the socket and she goes back down.

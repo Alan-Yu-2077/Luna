@@ -45,6 +45,9 @@ export type DemoBundle = {
   // v0.47.0: the turntable's shelf (null when the script names no tracks), whether the menu's
   // Dream door has a dream to play, and the scene titles the picker lists.
   music: MusicStore | null;
+  // The card loads its cover as a CSS background — a real browser fetch the injected `fetch`
+  // never sees — so it takes this URL builder instead of the sidecar's artwork route.
+  coverUrl: (hash: string) => string;
   hasDream: boolean;
   titles: string[];
 };
@@ -70,6 +73,7 @@ export async function loadDemo(bridge: DemoBridge, fetchFn: FetchLike = (u, i) =
     speech: createDemoSpeech(manifest, base, fetchFn),
     fetch: createDemoFetch(base, fetchFn, music),
     music,
+    coverUrl: (hash) => `${base}music/${encodeURIComponent(hash)}.svg`,
     hasDream: script.dream !== undefined,
     titles: script.scenes.map((s) => s.title),
   };

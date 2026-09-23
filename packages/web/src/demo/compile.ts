@@ -30,7 +30,12 @@ export type SinkCall =
   | { kind: 'action'; name: string; intensity?: number }
   | { kind: 'pulse'; pose: Record<string, number>; ms: number };
 
-export type StageCue = { kind: 'skip'; label: string; ms: number } | { kind: 'music'; track: string | null };
+// `await` = the tape holds here until the visitor acts — a finished dream waits for ☀️ Wake, exactly
+// as the real server leaves her in `finished_idle` until dream.wake arrives.
+export type StageCue =
+  | { kind: 'skip'; label: string; ms: number }
+  | { kind: 'music'; track: string | null }
+  | { kind: 'await'; what: 'wake' };
 
 export type Cue =
   | { at: number; kind: 'frame'; frame: ServerEvent }
@@ -72,25 +77,38 @@ class Ids {
   }
 }
 
-// The frames a dream emits, as ws.ts + dream/cycle.ts emit them: one `dream.status` on entry (no
-// current step yet), one `dream.step` per node, one `dream.status` on exit naming `finished_idle`.
-export function dreamFrames(block: DreamBlock, start: number): { frames: Array<{ at: number; frame: ServerEvent }>; endMs: number } {
-  const frames: Array<{ at: number; frame: ServerEvent }> = [];
+// v0.47.1: the real server never sends `last_dream_ms: null` on a dream frame — it carries the stamp
+// of the cycle before. On the tape that is the night before the scripted dream; a constant keeps
+// the compiler pure.
+export const DEMO_LAST_DREAM_MS = 1789939871610;
+
+// The frames a dream emits, as ws.ts + dream/cycle.ts emit them: `dream.status` on entry with the
+// first node as the current step, one `dream.step` per node, then `dream.status` STILL dreaming
+// with `finished_idle` — the cycle is over but she sleeps on until dream.wake. The tape holds
+// there (an `await` cue); the wake itself (`is_dreaming: false`) is emitted when the visitor
+// presses ☀️ Wake, as the server does when it receives dream.wake.
+export function dreamCues(block: DreamBlock, start: number): { cues: Cue[]; endMs: number } {
+  const cues: Cue[] = [];
   let t = start;
-  frames.push({ at: t, frame: { type: 'dream.status', is_dreaming: true, current_step: null, last_dream_ms: null } });
+  const frame = (at: number, f: ServerEvent): void => {
+    ServerEvent.parse(f);
+    cues.push({ at, kind: 'frame', frame: f });
+  };
+  const first = block.steps[0]?.step ?? null;
+  frame(t, { type: 'dream.status', is_dreaming: true, current_step: first, last_dream_ms: DEMO_LAST_DREAM_MS });
   t += PACING.dreamLeadMs;
   for (const step of block.steps) {
-    frames.push({ at: t, frame: { type: 'dream.step', step: step.step, status: step.status, detail: step.detail } });
+    frame(t, { type: 'dream.step', step: step.step, status: step.status, detail: step.detail });
     t += step.ms + PACING.dreamStepGapMs;
   }
-  frames.push({ at: t, frame: { type: 'dream.status', is_dreaming: false, current_step: 'finished_idle', last_dream_ms: null } });
-  for (const f of frames) ServerEvent.parse(f.frame);
-  return { frames, endMs: t };
+  frame(t, { type: 'dream.status', is_dreaming: true, current_step: 'finished_idle', last_dream_ms: DEMO_LAST_DREAM_MS });
+  cues.push({ at: t, kind: 'stage', stage: { kind: 'await', what: 'wake' } });
+  return { cues, endMs: t };
 }
 
 export function compileDreamRun(block: DreamBlock): Run {
-  const { frames, endMs } = dreamFrames(block, 0);
-  return { cues: frames.map((f) => ({ at: f.at, kind: 'frame', frame: f.frame })), endMs, turns: [] };
+  const { cues, endMs } = dreamCues(block, 0);
+  return { cues, endMs, turns: [] };
 }
 
 class RunBuilder {
@@ -236,8 +254,9 @@ class RunBuilder {
       case 'dream': {
         if (!this.dream) throw new Error('a dream beat needs the script-level dream block');
         this.settle();
-        const { frames, endMs } = dreamFrames(this.dream, this.t);
-        for (const f of frames) this.cues.push({ at: f.at, kind: 'frame', frame: f.frame });
+        const { cues, endMs } = dreamCues(this.dream, this.t);
+        this.cues.push(...cues);
+        // Time on the tape stops at the hold; what follows is measured from the wake.
         this.t = endMs + PACING.gapMs;
         return;
       }
