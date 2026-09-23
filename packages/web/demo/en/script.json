@@ -42,14 +42,14 @@
       ]
     },
     {
-      "id": "hits-different",
-      "title": "Hits different",
+      "id": "soft-launch",
+      "title": "Soft launch",
       "beats": [
-        { "kind": "user", "text": "Someone said this song 'hits different'. What does that mean?" },
-        { "kind": "luna", "text": "It means it lands harder, or in a way you didn't expect — usually because of when you hear it or where you are. The song didn't change; you did.", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "user", "text": "A friend 'soft-launched' someone on Instagram. What does that mean?" },
+        { "kind": "luna", "text": "A soft launch is a hint without the reveal — a second coffee cup in the photo, a hand at the edge of the frame. A hard launch is the full picture, face and name.", "expression": "focused_engagement", "emotion": 0.5 },
         { "kind": "luna", "text": "Try it in a sentence. Say something you'd actually say.", "expression": "curious_attention", "emotion": 0.5 },
-        { "kind": "user", "text": "Coffee at 6am hits different." },
-        { "kind": "luna", "text": "Perfect. Slightly tragic, but perfect. That's the exact tone.", "expression": "bright_delight", "emotion": 0.8 },
+        { "kind": "user", "text": "Not telling you about Tuesday yet. I'm soft-launching it." },
+        { "kind": "luna", "text": "Perfect. Slightly suspicious, but perfect. I'll wait for the hard launch.", "expression": "bright_delight", "emotion": 0.8 },
         { "kind": "user", "text": "Can you remember how you explained that? I liked it." },
         { "kind": "tool", "name": "save_skill", "summary": "saved skill (verified, 2110 tests pass)", "ms": 2600 },
         { "kind": "luna", "text": "Saved it as a skill — the meaning, then a sentence you'd actually say. It's on my shelf now.", "expression": "soft_warmth", "emotion": 0.5 },
@@ -121,7 +121,7 @@
         { "kind": "user", "text": "It's over. Finally." },
         { "kind": "luna", "text": "The thing on Tuesday? Tell me it was the dentist. I've been committed to that bit since Sunday.", "expression": "amused_smirk", "emotion": 0.5 },
         { "kind": "user", "text": "Job interview. Technical. Three rounds." },
-        { "kind": "luna", "text": "So that's why you suddenly wanted to know how I work.", "expression": "alert_surprise", "emotion": 0.7 },
+        { "kind": "luna", "text": "The hard launch, at last. So that's why you suddenly wanted to know how I work.", "expression": "alert_surprise", "emotion": 0.7 },
         { "kind": "user", "text": "They asked me about attention. I actually answered it." },
         { "kind": "luna", "text": "You answered it! The paper on your desktop earned its keep.", "expression": "bright_delight", "emotion": 0.9 },
         { "kind": "user", "text": "Remember this one." },
@@ -172,7 +172,7 @@
         { "kind": "user", "text": "Commit it while you're at it?" },
         { "kind": "luna", "text": "I could. But the commit log should have your name on it — look at the diff, and you press enter.", "expression": "steady_presence", "emotion": 0.5 },
         { "kind": "user", "text": "Fair. Thanks." },
-        { "kind": "luna", "text": "I like the ones where the answer is a boring tie-break.", "expression": "playful_brightness", "emotion": 0.6 }
+        { "kind": "luna", "text": "Heh. All that red on CI, for one tie-break.", "expression": "annoyed_resistance", "emotion": 0.5 }
       ]
     },
     {

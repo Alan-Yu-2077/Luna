@@ -58,6 +58,7 @@ const STYLE = `
   position: absolute; top: calc(100% + 8px); left: 0; min-width: 240px; margin: 0; padding: 6px;
   list-style: none; background: #fff; color: var(--ink); border-radius: 14px;
   box-shadow: 0 6px 24px rgba(90, 120, 160, 0.22); text-align: left;
+  max-height: calc(100vh - 64px); overflow-y: auto; overscroll-behavior: contain;
 }
 .demo-scenes[hidden] { display: none; }
 .demo-scenes button {
@@ -191,6 +192,71 @@ body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none
 .demo-guide .demo-guide-badge {
   position: absolute; top: -10px; right: 14px; font-style: normal; font-size: 11px; font-weight: 600;
   letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--sky-text); color: #fff;
+}
+.demo-guide .demo-guide-phone { margin: 14px 0 0; font-size: 12px; color: var(--muted); text-align: center; }
+
+.demo-rotate {
+  position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; align-items: center;
+  justify-content: flex-start; gap: 12px; padding: 28px 24px; text-align: center; color: #e8edf5;
+  overflow-y: auto; overscroll-behavior: contain;
+  background: radial-gradient(120% 90% at 50% 18%, #33445e 0%, #1a2230 72%);
+}
+.demo-rotate.on { display: flex; }
+/* Centred while it fits; when it doesn't (a split-screen pane, a big text size), it scrolls from the top
+   instead of spilling its buttons off both edges. */
+.demo-rotate > :first-child { margin-top: auto; }
+.demo-rotate > :last-child { margin-bottom: auto; }
+.demo-rotate svg { width: 88px; height: 88px; color: #fff; animation: demo-rotate-turn 2.6s ease-in-out infinite; }
+@keyframes demo-rotate-turn { 0%, 18% { transform: rotate(0deg); } 42%, 78% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+.demo-rotate h2 { margin: 6px 0 0; font-size: 20px; line-height: 1.35; }
+.demo-rotate p { margin: 0; max-width: 340px; font-size: 13.5px; line-height: 1.65; color: #c5d0de; }
+.demo-rotate .en { display: block; font-size: 0.86em; color: #8fa6bf; }
+.demo-rotate .demo-rotate-best { font-weight: 600; color: #fff; }
+.demo-rotate .demo-rotate-ios { font-size: 12px; color: #8fa6bf; }
+.demo-rotate .demo-rotate-full {
+  margin-top: 6px; border: none; cursor: pointer; background: var(--sky); color: var(--sky-text); font: inherit;
+  font-size: 15px; font-weight: 600; padding: 10px 24px; border-radius: 999px; box-shadow: 0 3px 0 var(--sky-deep);
+}
+.demo-rotate .demo-rotate-anyway {
+  border: none; background: none; cursor: pointer; font: inherit; font-size: 13px; color: #8fa6bf; text-decoration: underline;
+}
+
+/* v0.49.2: a phone held sideways is ~360-430px tall. The app's own 100vh is the LARGE viewport on iOS
+   (the toolbar hides the input); in the replay the page is sized to what is actually visible. */
+@supports (height: 100dvh) {
+  .luna-app { height: 100dvh; }
+  .demo-guide .demo-guide-card { max-height: calc(100dvh - 48px); }
+  .demo-scenes { max-height: calc(100dvh - 64px); }
+}
+/* The app stacks her above the chat under 720px wide — right for a phone held upright, wrong for one
+   turned sideways (667 × ~330 on an iPhone SE leaves the chat a few dozen pixels). Sideways is what the
+   gate asks for, so sideways gets the desk layout back. */
+@media (max-width: 720px) and (orientation: landscape) {
+  .stage { flex-direction: row; gap: 12px; padding: 0 12px; }
+  .chat-panel { flex: 0 0 42%; order: 0; margin: 8px 0; }
+  .model-stage { flex: 1 1 0; order: 0; }
+}
+@media (max-height: 500px) {
+  .demo-guide { padding: 10px; }
+  .demo-guide .demo-guide-card { padding: 16px 22px 14px; max-height: calc(100dvh - 20px); }
+  .demo-guide h2 { font-size: 18px; }
+  .demo-guide .demo-guide-sub { margin-bottom: 8px; }
+  .demo-guide p { font-size: 12.5px; line-height: 1.5; margin-bottom: 6px; }
+  .demo-guide .demo-guide-how { margin-top: 8px; padding: 8px 12px; font-size: 12px; line-height: 1.5; }
+  .demo-guide .demo-guide-enter { margin-top: 10px; padding: 8px 26px; }
+  .demo-guide .demo-guide-langs { margin: 10px 0 2px; }
+  .demo-guide .demo-guide-lang { padding: 12px; }
+  .demo-guide .demo-guide-phone { margin-top: 8px; }
+  .demo-desk .demo-desk-window { max-height: calc(100dvh - 20px); overflow: auto; }
+  .demo-desk .demo-desk-body { padding: 12px; gap: 8px; }
+  .demo-desk .demo-desk-page { max-height: calc(100dvh - 140px); padding: 14px 20px; }
+  .demo-desk .doc-title { font-size: 20px; margin-bottom: 8px; }
+  .demo-desk .doc-aff { margin-bottom: 10px; }
+  .demo-play { gap: 10px; }
+  .demo-play .demo-play-app { width: 76px; height: 76px; border-radius: 22px; }
+  .demo-play .demo-play-app svg { width: 44px; height: 44px; }
+  .demo-rotate { gap: 8px; padding: 16px 20px; }
+  .demo-rotate svg { width: 64px; height: 64px; }
 }
 `;
 
@@ -582,7 +648,10 @@ export const PICKER_COPY = {
   en: { label: 'English', sub: 'I speak English', badge: 'Recommended' },
 } as const;
 
-export const GUIDE_COPY: Record<UiLang, { title: string; sub: string; p1: string; p2: string; how: string; enter: string }> = {
+export const GUIDE_COPY: Record<
+  UiLang,
+  { title: string; sub: string; p1: string; p2: string; how: string; howPhone: string; enter: string }
+> = {
   en: {
     title: 'Luna · a replay',
     sub: 'real scenes · real front end · her real voice',
@@ -596,6 +665,10 @@ export const GUIDE_COPY: Record<UiLang, { title: string; sub: string; p1: string
       'Lines are typed for you — press ➤ (or Enter). When a scene ends, press Next scene (or pick a scene ' +
       'from the pill at the top). Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her ' +
       'Diary, Skills and Dream.',
+    // A phone has no wheel and no reliable double-click on the stage — only the drag is promised there.
+    howPhone:
+      'Lines are typed for you — tap ➤. When a scene ends, tap Next scene (or pick a scene from the pill at ' +
+      'the top). Drag to move her. ← Menu opens her Diary, Skills and Dream.',
     enter: 'Enter',
   },
   zh: {
@@ -604,6 +677,7 @@ export const GUIDE_COPY: Record<UiLang, { title: string; sub: string; p1: string
     p1: '接下来你看到的是一段回放：照着真实使用场景复现的日常片段，用 Luna 真正的前端和渲染引擎播出来。这个页面背后没有在运行的 AI。',
     p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
     how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。',
+    howPhone: '台词会替你打好，点 ➤ 发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。拖动可以挪她的位置。「← 菜单」里有她的日记、技能和梦。',
     enter: '进入',
   },
 };
@@ -611,8 +685,12 @@ export const GUIDE_COPY: Record<UiLang, { title: string; sub: string; p1: string
 export type GuideHandle = { language: Promise<UiLang>; dispose(): void };
 
 // `lang` null → the card opens on the language choice; a language (a shared `?lang=` link, Replay ↻)
-// → straight to the guide in it. `language` resolves the moment one is known.
-export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?: () => void }): GuideHandle {
+// → straight to the guide in it. `language` resolves the moment one is known. `phone` (v0.49.2) swaps
+// in the touch instructions and says, once, that a computer is the best seat.
+export function mountGuide(
+  doc: Document,
+  opts: { lang: UiLang | null; phone?: boolean; onEnter?: () => void },
+): GuideHandle {
   ensureStyle(doc);
   const guide = doc.createElement('div');
   guide.className = 'demo-guide';
@@ -637,7 +715,7 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
     h.textContent = c.title;
     const how = doc.createElement('div');
     how.className = 'demo-guide-how';
-    how.textContent = c.how;
+    how.textContent = opts.phone ? c.howPhone : c.how;
     const enter = doc.createElement('button');
     enter.type = 'button';
     enter.className = 'demo-guide-enter';
@@ -648,6 +726,7 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
       opts.onEnter?.();
     });
     card.append(h, p(c.sub, 'demo-guide-sub'), p(c.p1), p(c.p2), how, enter);
+    if (opts.phone) card.append(p(PHONE_COPY.hint[lang], 'demo-guide-phone'));
   };
 
   let resolve: (lang: UiLang) => void = () => {};
@@ -689,6 +768,146 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
       row.appendChild(b);
     }
     card.append(h, p(PICKER_COPY.prompt, 'demo-guide-sub'), row);
+    if (opts.phone) card.append(p(`${PHONE_COPY.hint.zh} · ${PHONE_COPY.hint.en}`, 'demo-guide-phone'));
   }
   return { language, dispose: () => guide.remove() };
+}
+
+// v0.49.2 — phones. Held upright, a phone fits neither the chat panel nor her, so it is asked to turn
+// sideways and told the computer is the best seat. The gate can come up before the language is known,
+// so until `setLang` it speaks both. Where the browser allows it (Android Chrome), one tap goes
+// fullscreen and locks landscape; iOS allows neither, so it gets the one instruction that matters there.
+// "Continue as is" is honoured for the rest of the tab.
+export const PHONE_COPY = {
+  title: { zh: '请把手机横过来看', en: 'Turn your phone sideways' },
+  body: {
+    zh: '这段回放是照电脑屏幕排的：左边是聊天，右边是她。横过来才放得下。',
+    en: 'This replay is laid out for a computer screen — the chat on the left, her on the right. Sideways, it fits.',
+  },
+  best: { zh: '电脑端体验最佳', en: 'Best on a computer' },
+  ios: { zh: '转不过来？在控制中心关掉竖排方向锁定。', en: 'Won’t rotate? Turn off Portrait Orientation Lock in Control Center.' },
+  // WeChat's own browser rotates only when its landscape setting is on; the rotation lock is not the cause.
+  wechat: {
+    zh: '在微信里转不过来？点右上角「···」用浏览器打开，或在 我 → 设置 → 通用 里打开横屏模式。',
+    en: 'In WeChat? Tap ··· (top right) → Open in browser, or turn on landscape in Me → Settings → General.',
+  },
+  full: { zh: '全屏横屏观看', en: 'Go fullscreen, sideways' },
+  anyway: { zh: '就这样看', en: 'Continue as is' },
+  hint: { zh: '手机也能看，电脑端体验最佳', en: 'Works on a phone — best on a computer' },
+} as const;
+
+const PHONE_SVG =
+  '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="6" width="24" height="52" rx="5" fill="none" ' +
+  'stroke="currentColor" stroke-width="3"/><circle cx="32" cy="51" r="2.2" fill="currentColor"/></svg>';
+
+const PORTRAIT_OK_KEY = 'luna:demo-portrait-ok';
+
+export type RotateGate = { setLang(lang: UiLang): void; dispose(): void };
+
+// The Screen Orientation lock is not in every browser (nor in TypeScript's DOM lib everywhere): read it
+// as a value, not a method we assume.
+function landscapeLock(win: Window): (() => Promise<void>) | null {
+  const orientation: unknown = Reflect.get(win.screen, 'orientation');
+  if (typeof orientation !== 'object' || orientation === null) return null;
+  const lock: unknown = Reflect.get(orientation, 'lock');
+  if (typeof lock !== 'function') return null;
+  return () => Promise.resolve(lock.call(orientation, 'landscape'));
+}
+
+export function mountRotateGate(
+  doc: Document,
+  win: Window,
+  opts: { ios: boolean; wechat: boolean; lang: UiLang | null },
+): RotateGate {
+  ensureStyle(doc);
+  const gate = doc.createElement('div');
+  gate.className = 'demo-rotate';
+  gate.setAttribute('role', 'dialog');
+  doc.body.appendChild(gate);
+
+  let lang = opts.lang;
+  let dismissed = false;
+  try {
+    dismissed = win.sessionStorage.getItem(PORTRAIT_OK_KEY) === '1';
+  } catch {
+    /* storage unavailable — the gate simply asks again */
+  }
+  const portrait = win.matchMedia('(orientation: portrait)');
+  const lock = typeof doc.documentElement.requestFullscreen === 'function' ? landscapeLock(win) : null;
+
+  type Key = keyof typeof PHONE_COPY;
+  const say = (key: Key, tag: 'h2' | 'p' | 'span', cls?: string): HTMLElement => {
+    const el = doc.createElement(tag);
+    if (cls) el.className = cls;
+    if (lang) {
+      el.textContent = PHONE_COPY[key][lang];
+    } else {
+      const en = doc.createElement('span');
+      en.className = 'en';
+      en.textContent = PHONE_COPY[key].en;
+      el.append(PHONE_COPY[key].zh, en);
+    }
+    return el;
+  };
+  const sync = (): void => {
+    gate.classList.toggle('on', portrait.matches && !dismissed);
+  };
+  const render = (): void => {
+    gate.setAttribute('aria-label', lang ? PHONE_COPY.title[lang] : `${PHONE_COPY.title.zh} · ${PHONE_COPY.title.en}`);
+    const icon = doc.createElement('div');
+    icon.innerHTML = PHONE_SVG;
+    const parts: HTMLElement[] = [icon, say('title', 'h2'), say('body', 'p'), say('best', 'p', 'demo-rotate-best')];
+    if (lock) {
+      const full = doc.createElement('button');
+      full.type = 'button';
+      full.className = 'demo-rotate-full';
+      full.textContent = lang ? PHONE_COPY.full[lang] : `${PHONE_COPY.full.zh} · ${PHONE_COPY.full.en}`;
+      full.addEventListener('click', () => {
+        void doc.documentElement
+          .requestFullscreen()
+          .then(lock)
+          .catch(() => {
+            /* the browser declined — turning the phone by hand still works */
+          });
+      });
+      parts.push(full);
+    }
+    if (opts.wechat) parts.push(say('wechat', 'p', 'demo-rotate-ios'));
+    else if (opts.ios) parts.push(say('ios', 'p', 'demo-rotate-ios'));
+    const anyway = doc.createElement('button');
+    anyway.type = 'button';
+    anyway.className = 'demo-rotate-anyway';
+    anyway.textContent = lang ? PHONE_COPY.anyway[lang] : `${PHONE_COPY.anyway.zh} · ${PHONE_COPY.anyway.en}`;
+    anyway.addEventListener('click', () => {
+      dismissed = true;
+      try {
+        win.sessionStorage.setItem(PORTRAIT_OK_KEY, '1');
+      } catch {
+        /* storage unavailable — honoured for this page only */
+      }
+      sync();
+    });
+    parts.push(anyway);
+    gate.replaceChildren(...parts);
+  };
+
+  // The media query's own change event is not fired everywhere (older Safari, some emulators); a
+  // resize or an orientationchange re-reads it too.
+  portrait.addEventListener('change', sync);
+  win.addEventListener('resize', sync);
+  win.addEventListener('orientationchange', sync);
+  render();
+  sync();
+  return {
+    setLang(next) {
+      lang = next;
+      render();
+    },
+    dispose() {
+      portrait.removeEventListener('change', sync);
+      win.removeEventListener('resize', sync);
+      win.removeEventListener('orientationchange', sync);
+      gate.remove();
+    },
+  };
 }

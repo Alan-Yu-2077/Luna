@@ -42,14 +42,14 @@
       ]
     },
     {
-      "id": "hits-different",
-      "title": "学个词：hits different",
+      "id": "soft-launch",
+      "title": "学个词：soft launch",
       "beats": [
-        { "kind": "user", "text": "有人说这歌 hits different，啥意思啊" },
-        { "kind": "luna", "text": "就是它比平时更戳你，或者戳中的地方你没想到，通常跟你在什么时候听、在哪儿听有关。歌没变，变的是你。", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "user", "text": "有个朋友发了条 ins，评论区都说是 soft launch，啥意思啊" },
+        { "kind": "luna", "text": "soft launch 就是软官宣：照片里多一杯咖啡，画面边上露半只手，偏不说是谁。hard launch 是正式官宣，脸和名字一起亮出来。", "expression": "focused_engagement", "emotion": 0.5 },
         { "kind": "luna", "text": "造个句试试。说一句你真会说的话。", "expression": "curious_attention", "emotion": 0.5 },
-        { "kind": "user", "text": "早上6点的咖啡 hits different" },
-        { "kind": "luna", "text": "完美。有点惨，但完美。就是这个味儿。", "expression": "bright_delight", "emotion": 0.8 },
+        { "kind": "user", "text": "周二那件事还不告诉你，先 soft launch 一下" },
+        { "kind": "luna", "text": "完美。有点可疑，但完美。我等你 hard launch。", "expression": "bright_delight", "emotion": 0.8 },
         { "kind": "user", "text": "你刚才那个解释能记下来吗？讲得挺好" },
         { "kind": "tool", "name": "save_skill", "summary": "saved skill (verified, 2110 tests pass)", "ms": 2600 },
         { "kind": "luna", "text": "存成技能了：先讲意思，再造一句你真会说的话。已经放到技能架上了。", "expression": "soft_warmth", "emotion": 0.5 },
@@ -121,7 +121,7 @@
         { "kind": "user", "text": "结束了。终于结束了" },
         { "kind": "luna", "text": "周二那件事？快说是看牙去了。这个梗我从周日一直撑到现在。", "expression": "amused_smirk", "emotion": 0.5 },
         { "kind": "user", "text": "面试。技术面。三轮。" },
-        { "kind": "luna", "text": "原来让你犯怵的是这个。怪不得你昨天突然要研究我是怎么工作的。", "expression": "alert_surprise", "emotion": 0.7 },
+        { "kind": "luna", "text": "总算 hard launch 了。原来你犯怵的是这个，怪不得昨天突然要研究我是怎么工作的。", "expression": "alert_surprise", "emotion": 0.7 },
         { "kind": "user", "text": "他们问到 attention 了。我居然答上来了" },
         { "kind": "luna", "text": "答上来了！桌面上那篇论文没白放。", "expression": "bright_delight", "emotion": 0.9 },
         { "kind": "user", "text": "这个记一下" },
@@ -172,7 +172,7 @@
         { "kind": "user", "text": "顺手 commit 了呗？" },
         { "kind": "luna", "text": "能是能。但 commit 记录上得是你的名字。diff 你过一眼，回车你来按。", "expression": "steady_presence", "emotion": 0.5 },
         { "kind": "user", "text": "也对。谢了。" },
-        { "kind": "luna", "text": "我最喜欢这种了，答案就是个无聊的 tie-break。", "expression": "playful_brightness", "emotion": 0.6 }
+        { "kind": "luna", "text": "呵呵。CI 红了这么多回，就为了一个 tie-break。", "expression": "annoyed_resistance", "emotion": 0.5 }
       ]
     },
     {

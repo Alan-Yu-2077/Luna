@@ -4,10 +4,16 @@
 // demo/<lang>/voice/manifest.json with its duration (the compiler paces each run by it). Idempotent:
 // a line whose file already exists is skipped; a line the script no longer says is removed.
 // v0.48.1: one voice directory per language, so a render of one can never sweep the other's files.
-// The request is still the app's own: text_lang comes from luna.env (`auto`), so a Chinese line is
-// voiced exactly as the app would voice her speaking Chinese.
+// v0.49.2: the Chinese tape is voiced with text_lang `zh` (GPT-SoVITS "中英混合": English runs stay
+// English, every other run is read as Chinese). luna.env's `auto` hands each run to a language detector
+// that cannot tell hanzi from kanji — it voiced parts of 14 of the 73 Chinese lines as Japanese. The
+// English tape keeps luna.env's value. The live app still sends `auto`: the same weakness is there when
+// she speaks Chinese (a known limitation under the freeze, see DEVELOPMENT.md v0.49.2).
 //
 //   bun scripts/renderVoice.ts --lang en|zh [--url http://127.0.0.1:9881] [--env <path to luna.env>]
+//                              [--text-lang <api_v2 text_lang>] [--force]
+//
+// --force re-renders every line, not only the ones without a file (after a change to the request).
 //
 // The voice reference (LUNA_TTS_REF_AUDIO / PROMPT_TEXT / PROMPT_LANG / TEXT_LANG) is read from the
 // owner's luna.env — read, never copied into the repo. Run against a throwaway api_v2 port, not the
@@ -57,7 +63,10 @@ function readEnvFile(path: string): Record<string, string> {
   return out;
 }
 
-const env = readTtsEnv({ ...readEnvFile(envPath), LUNA_TTS_URL: url });
+const force = process.argv.includes('--force');
+const fileEnv = readEnvFile(envPath);
+const textLang = arg('--text-lang', lang === 'zh' ? 'zh' : (fileEnv['LUNA_TTS_TEXT_LANG'] ?? 'auto'));
+const env = readTtsEnv({ ...fileEnv, LUNA_TTS_URL: url, LUNA_TTS_TEXT_LANG: textLang });
 
 function lineId(text: string): string {
   return new Bun.CryptoHasher('sha1').update(lineKey(text)).digest('hex').slice(0, 12);
@@ -101,7 +110,7 @@ async function main(): Promise<void> {
     const file = `${id}.mp3`;
     const mp3Path = join(voiceDir, file);
     const prior = known.get(id);
-    if (prior && existsSync(mp3Path)) {
+    if (!force && prior && existsSync(mp3Path)) {
       lines.push({ ...prior, text });
       continue;
     }
@@ -127,7 +136,7 @@ async function main(): Promise<void> {
   writeFileSync(manifestPath, `${JSON.stringify(VoiceManifest.parse({ lines }), null, 2)}\n`);
   const total = lines.reduce((s, l) => s + l.durationMs, 0);
   process.stdout.write(
-    `manifest: ${lines.length} lines, ${rendered} rendered, ${removed} orphan(s) removed, ${(total / 1000).toFixed(1)}s of voice\n`,
+    `manifest (text_lang ${textLang}): ${lines.length} lines, ${rendered} rendered, ${removed} orphan(s) removed, ${(total / 1000).toFixed(1)}s of voice\n`,
   );
 }
 

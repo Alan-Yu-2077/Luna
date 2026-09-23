@@ -2,7 +2,8 @@ import { MessageDelivery, type ServerEvent } from '@luna/protocol';
 import { createController } from './controller';
 import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
 import { createTapeClient } from './demo/tapeClient';
-import { mountDirector, mountGuide, mountLobbyLinks, type Director } from './demo/director';
+import { mountDirector, mountGuide, mountLobbyLinks, mountRotateGate, type Director } from './demo/director';
+import { looksLikeIos, looksLikePhone, looksLikeWeChat, mountPhoneViewport, probeDevice } from './demo/phone';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -133,8 +134,19 @@ async function boot(): Promise<void> {
     // goes straight to the guide in that language.
     const urlLang = parseUiLang(new URLSearchParams(location.search).get('lang'));
     const chosen = readDemoChoice();
-    const guide = mountGuide(document, { lang: chosen && urlLang ? urlLang : null });
+    const known = chosen && urlLang ? urlLang : null;
+    // v0.49.2: a phone is asked to turn sideways (and told a computer is the best seat) — a gate
+    // over everything that holds while the phone is upright, before and during the show.
+    const phone = looksLikePhone(probeDevice(window));
+    // demo/bridge.js already fitted a sideways phone at load; this handles turning it afterwards.
+    if (phone) mountPhoneViewport(document, window);
+    const ua = navigator.userAgent;
+    const rotate = phone
+      ? mountRotateGate(document, window, { ios: looksLikeIos(ua), wechat: looksLikeWeChat(ua), lang: known })
+      : null;
+    const guide = mountGuide(document, { lang: known, phone });
     const lang = await guide.language;
+    rotate?.setLang(lang);
     storeDemoChoice();
     if (lang !== urlLang) {
       const params = new URLSearchParams(location.search);

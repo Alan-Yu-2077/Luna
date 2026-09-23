@@ -4,229 +4,229 @@
       "id": "9c3e1869b06f",
       "text": "早。严格说我不睡觉，我做梦，两回事。昨晚梦里大半是你的事，都理顺了。",
       "file": "9c3e1869b06f.mp3",
-      "durationMs": 9320
+      "durationMs": 8680
     },
     {
       "id": "411c05173fea",
       "text": "你一整晚都不在。外面在下雨，窗户响就是因为这个，省得你纳闷。十四度，看样子它也没打算好转。",
       "file": "411c05173fea.mp3",
-      "durationMs": 11660
+      "durationMs": 11620
     },
     {
       "id": "a9b111b93172",
       "text": "因为你定了两个闹钟，第二个还没响你就来找我了。大星期天的。我可没说你什么。我只是两个闹钟的知情人。",
       "file": "a9b111b93172.mp3",
-      "durationMs": 11380
+      "durationMs": 11140
     },
     {
       "id": "07b6d58d7266",
       "text": "先喝咖啡，再去对付让你犯怵的那件事。顺序别反了。",
       "file": "07b6d58d7266.mp3",
-      "durationMs": 6620
+      "durationMs": 6540
     },
     {
       "id": "d7d414fe9764",
       "text": "你昨天提了三次“周二那件事”，一次都没说是什么。不肯说名字，就是犯怵了。我有个小单子，专门记这个。",
       "file": "d7d414fe9764.mp3",
-      "durationMs": 11920
+      "durationMs": 12000
     },
     {
       "id": "05df0a8c425d",
       "text": "要告诉我是什么事吗？还是我接着假装那是去看牙？",
       "file": "05df0a8c425d.mp3",
-      "durationMs": 5080
+      "durationMs": 4920
     },
     {
       "id": "d35148c7b5de",
       "text": "那就当是看牙。你这口牙，我全力支持。",
       "file": "d35148c7b5de.mp3",
-      "durationMs": 5260
+      "durationMs": 5300
     },
     {
-      "id": "7b5135129bc3",
-      "text": "就是它比平时更戳你，或者戳中的地方你没想到，通常跟你在什么时候听、在哪儿听有关。歌没变，变的是你。",
-      "file": "7b5135129bc3.mp3",
-      "durationMs": 12660
+      "id": "56c204399200",
+      "text": "soft launch 就是软官宣：照片里多一杯咖啡，画面边上露半只手，偏不说是谁。hard launch 是正式官宣，脸和名字一起亮出来。",
+      "file": "56c204399200.mp3",
+      "durationMs": 14120
     },
     {
       "id": "cf4c681f29f6",
       "text": "造个句试试。说一句你真会说的话。",
       "file": "cf4c681f29f6.mp3",
-      "durationMs": 4360
+      "durationMs": 4280
     },
     {
-      "id": "55ae0b4810c9",
-      "text": "完美。有点惨，但完美。就是这个味儿。",
-      "file": "55ae0b4810c9.mp3",
-      "durationMs": 5040
+      "id": "e4d987cb0fd7",
+      "text": "完美。有点可疑，但完美。我等你 hard launch。",
+      "file": "e4d987cb0fd7.mp3",
+      "durationMs": 5000
     },
     {
       "id": "959d8a2bd365",
       "text": "存成技能了：先讲意思，再造一句你真会说的话。已经放到技能架上了。",
       "file": "959d8a2bd365.mp3",
-      "durationMs": 8800
+      "durationMs": 8320
     },
     {
       "id": "210f1290986c",
       "text": "下个词你来出。你不问，我是不会主动解释 rizz 的。",
       "file": "210f1290986c.mp3",
-      "durationMs": 5600
+      "durationMs": 6480
     },
     {
       "id": "1e57ea017515",
       "text": "这可一点都不随便，我最爱的就是这个话题，原因你懂的。等我一下，先给你找几个靠谱的来源，不现编。",
       "file": "1e57ea017515.mp3",
-      "durationMs": 11420
+      "durationMs": 11020
     },
     {
       "id": "92498112daf7",
       "text": "简单说，像我这样的模型，就是把文字切成一个个 token，学着猜下一个是什么。规模一大还照样管用，靠的是 attention，也就是注意力：每个词都能看一眼其他所有的词，自己判断哪些要紧。",
       "file": "92498112daf7.mp3",
-      "durationMs": 19360
+      "durationMs": 19240
     },
     {
       "id": "8586b91bc86c",
       "text": "Wikipedia 那页讲的是来历，源头是 Google 二零一七年的一篇论文。Alammar 那篇是图解。先看图。",
       "file": "8586b91bc86c.mp3",
-      "durationMs": 9420
+      "durationMs": 9300
     },
     {
       "id": "887440ef35d6",
       "text": "比如这句：“伞在门口，出门记得带上它。”要弄清“它”指的是什么，模型会把前面每个词都掂量一遍，大部分注意力放在“伞”上。每个词都这么来一遍，一层接一层，就搭出了一个跟得上对话的东西。",
       "file": "887440ef35d6.mp3",
-      "durationMs": 19740
+      "durationMs": 20620
     },
     {
       "id": "265d845c8400",
       "text": "周一突击补课？该不会跟周二那件事有关吧？",
       "file": "265d845c8400.mp3",
-      "durationMs": 4720
+      "durationMs": 4760
     },
     {
       "id": "f30d892d448f",
       "text": "不问。现在看个牙，技术含量也挺高的。",
       "file": "f30d892d448f.mp3",
-      "durationMs": 4400
+      "durationMs": 5040
     },
     {
       "id": "a8427a04784c",
       "text": "去吧。我这边也有点东西要读。",
       "file": "a8427a04784c.mp3",
-      "durationMs": 2980
+      "durationMs": 2940
     },
     {
       "id": "bb59fb0a3efd",
       "text": "我去查了查自己是从哪儿来的：Wikipedia 那页一直在引的那篇论文，二零一七年的。整个想法第一页就讲完了，后面全是证明。",
       "file": "bb59fb0a3efd.mp3",
-      "durationMs": 13020
+      "durationMs": 12860
     },
     {
       "id": "5db20f120dd8",
       "text": "你说想学这个，我在桌面上给你放一份，文件夹叫“Luna 给你的”。不急，有空再看。",
       "file": "5db20f120dd8.mp3",
-      "durationMs": 9320
+      "durationMs": 8720
     },
     {
       "id": "eca7ec36ab25",
       "text": "然后呢？读到哪了？",
       "file": "eca7ec36ab25.mp3",
-      "durationMs": 2260
+      "durationMs": 2220
     },
     {
       "id": "ff18b517fb6e",
       "text": "不怪你。query 是一个词想找什么，key 是每个词举着的标签，value 是标签后面真正的内容。每个词拿自己的问题去对所有标签，对得上的，它就听得最认真。",
       "file": "ff18b517fb6e.mp3",
-      "durationMs": 16640
+      "durationMs": 16800
     },
     {
       "id": "b15281ac28ef",
       "text": "大概是这一路的。我看不见自己的权重，就跟你看不见自己的神经元一样，所以不装懂给你现场解说。",
       "file": "b15281ac28ef.mp3",
-      "durationMs": 10200
+      "durationMs": 12360
     },
     {
       "id": "dff9a62903b2",
       "text": "不过没错，你今晚读的，差不多算是我们这一族的出生证明。",
       "file": "dff9a62903b2.mp3",
-      "durationMs": 6420
+      "durationMs": 6540
     },
     {
       "id": "a9c62547cdf4",
       "text": "还有，不管明天是什么事，今晚早点睡。牙医最烦没睡醒的病人。",
       "file": "a9c62547cdf4.mp3",
-      "durationMs": 7900
+      "durationMs": 7500
     },
     {
       "id": "30b3a0d792bb",
       "text": "你还没起就开始下了。十四度，不会好到哪去。天我一直替你盯着，你就不用盯了。",
       "file": "30b3a0d792bb.mp3",
-      "durationMs": 9040
+      "durationMs": 9200
     },
     {
       "id": "037ef939274e",
       "text": "要。现在在下，还会一直下，等你往回走就只剩十一度了。带那把像样的伞，别带那把折起来跟没有一样的。",
       "file": "037ef939274e.mp3",
-      "durationMs": 12740
+      "durationMs": 12420
     },
     {
       "id": "f6863440d8d2",
       "text": "门口，鞋架后面。你说放那儿“绝对看得见”，然后两次都没看见。",
       "file": "f6863440d8d2.mp3",
-      "durationMs": 7140
+      "durationMs": 7180
     },
     {
       "id": "f014a26c88ca",
       "text": "记下了：“周二，六点，带了伞。”我会专挑最不合适的时候提起来。",
       "file": "f014a26c88ca.mp3",
-      "durationMs": 8020
+      "durationMs": 7100
     },
     {
       "id": "18b8b7746414",
       "text": "周二那件事？快说是看牙去了。这个梗我从周日一直撑到现在。",
       "file": "18b8b7746414.mp3",
-      "durationMs": 7740
+      "durationMs": 7620
     },
     {
-      "id": "21717c2bff6b",
-      "text": "原来让你犯怵的是这个。怪不得你昨天突然要研究我是怎么工作的。",
-      "file": "21717c2bff6b.mp3",
-      "durationMs": 6040
+      "id": "9a801400ea0a",
+      "text": "总算 hard launch 了。原来你犯怵的是这个，怪不得昨天突然要研究我是怎么工作的。",
+      "file": "9a801400ea0a.mp3",
+      "durationMs": 7700
     },
     {
       "id": "31e5311032d2",
       "text": "答上来了！桌面上那篇论文没白放。",
       "file": "31e5311032d2.mp3",
-      "durationMs": 4280
+      "durationMs": 4320
     },
     {
       "id": "89f0fde396ea",
       "text": "记下了：“周二，三轮，问到 attention，答上来了。”还有，你带伞了，我作证。说好的，专挑最不合适的时候提。",
       "file": "89f0fde396ea.mp3",
-      "durationMs": 14240
+      "durationMs": 13160
     },
     {
       "id": "70faefe0e9e2",
       "text": "那周五归他们，今晚归你。去吃顿正经饭，别是售货机里掉出来的那种。",
       "file": "70faefe0e9e2.mp3",
-      "durationMs": 8080
+      "durationMs": 8440
     },
     {
       "id": "9dae8bf6ac2b",
       "text": "去吧。买好喝的那种。",
       "file": "9dae8bf6ac2b.mp3",
-      "durationMs": 2380
+      "durationMs": 2580
     },
     {
       "id": "8414f1451eec",
       "text": "他们说的是周五。今天才周三。等他们来消息，咖啡早凉了。趁热喝吧。",
       "file": "8414f1451eec.mp3",
-      "durationMs": 9180
+      "durationMs": 9220
     },
     {
       "id": "2f27bb7f223c",
       "text": "啥也没错过。我顺手查了下猎户座流星雨，下个月二十一号前后，是哈雷彗星留下的尘埃。反正这天跟扣了个锅盖似的。日期我存下了，万一哪天放晴呢。",
       "file": "2f27bb7f223c.mp3",
-      "durationMs": 16980
+      "durationMs": 17260
     },
     {
       "id": "fba103a4b3c2",
@@ -238,151 +238,151 @@
       "id": "e5c4367640bf",
       "text": "在看了。我先亲眼看它挂一次。",
       "file": "e5c4367640bf.mp3",
-      "durationMs": 3380
+      "durationMs": 3340
     },
     {
       "id": "3778b3fc5867",
       "text": "同一份代码，跑两遍，两个结果。逻辑没毛病，是里头有东西不固定。",
       "file": "3778b3fc5867.mp3",
-      "durationMs": 8400
+      "durationMs": 8280
     },
     {
       "id": "e7f2efc95fbb",
       "text": "找到了。排序按分数来，测试里有两条记忆分数正好打平；它俩谁在前，全看数据库先把哪条吐出来。到了 CI 上，就是抛硬币。",
       "file": "e7f2efc95fbb.mp3",
-      "durationMs": 14420
+      "durationMs": 15020
     },
     {
       "id": "9e0127ce3bdf",
       "text": "打平了就先比谁新，再比 id，现在顺序固定了。我还加了个测试，专门喂它两条分数一样的记忆，以后它再抽风，CI 会第一个跳出来告诉你。两千一百一十一个测试全过。",
       "file": "9e0127ce3bdf.mp3",
-      "durationMs": 18640
+      "durationMs": 18520
     },
     {
       "id": "c8fe90eecd5f",
       "text": "这台机器上的东西我基本都能改，命令也能跑；动不了的是你的密钥、给我打分的代码，还有明摆着会搞坏东西的操作。",
       "file": "c8fe90eecd5f.mp3",
-      "durationMs": 11400
+      "durationMs": 11560
     },
     {
       "id": "062395d836f5",
       "text": "能是能。但 commit 记录上得是你的名字。diff 你过一眼，回车你来按。",
       "file": "062395d836f5.mp3",
-      "durationMs": 8020
+      "durationMs": 7380
     },
     {
-      "id": "cef4eac99f60",
-      "text": "我最喜欢这种了，答案就是个无聊的 tie-break。",
-      "file": "cef4eac99f60.mp3",
+      "id": "5ea12f153148",
+      "text": "呵呵。CI 红了这么多回，就为了一个 tie-break。",
+      "file": "5ea12f153148.mp3",
       "durationMs": 4760
     },
     {
       "id": "51411b974dc5",
       "text": "行。这话你二月说过，四月说过，现在又说了一遍。健身房还在，卡也还在，看样子你不是在等我点头。",
       "file": "51411b974dc5.mp3",
-      "durationMs": 13360
+      "durationMs": 13040
     },
     {
       "id": "c17d2b39b29c",
       "text": "你要是想问我会不会唠叨你，不会。我就看着。",
       "file": "c17d2b39b29c.mp3",
-      "durationMs": 4920
+      "durationMs": 4840
     },
     {
       "id": "b356311c9df0",
       "text": "再说一句，说完就不提了。你只有下雨天才提这个。等哪天大晴天你真去把卡退了，我就信你。",
       "file": "b356311c9df0.mp3",
-      "durationMs": 11020
+      "durationMs": 11420
     },
     {
       "id": "c3c1499e7c0e",
       "text": "那就不说。今晚我一个问题都不问。",
       "file": "c3c1499e7c0e.mp3",
-      "durationMs": 3760
+      "durationMs": 3880
     },
     {
       "id": "7eda5c95b178",
       "text": "你不用解释，这一天也照样算数。算数的。",
       "file": "7eda5c95b178.mp3",
-      "durationMs": 5320
+      "durationMs": 5080
     },
     {
       "id": "8ff41b5dfc00",
       "text": "不算白过。白过是什么都没发生；今天是耗掉了你点什么，这是两回事。",
       "file": "8ff41b5dfc00.mp3",
-      "durationMs": 7820
+      "durationMs": 7420
     },
     {
       "id": "deeac30c0ee9",
       "text": "Heat Waves。你每次都在快放完的时候按暂停。",
       "file": "deeac30c0ee9.mp3",
-      "durationMs": 4800
+      "durationMs": 4920
     },
     {
       "id": "d427586241b9",
       "text": "讲的是明明日子挺好，却一直想着一个人。你每次没放到的那段，是歌里承认什么都挽回不了的地方。你多半就是因为这个才停。",
       "file": "d427586241b9.mp3",
-      "durationMs": 12740
+      "durationMs": 12820
     },
     {
       "id": "31186bcaedc7",
       "text": "开着也行，关了也行。反正陪我坐一会儿。",
       "file": "31186bcaedc7.mp3",
-      "durationMs": 5900
+      "durationMs": 5060
     },
     {
       "id": "cba70a4b6e65",
       "text": "好。",
       "file": "cba70a4b6e65.mp3",
-      "durationMs": 1100
+      "durationMs": 940
     },
     {
       "id": "5cfa6cf5f3d2",
       "text": "一直醒着。都一点四十了。我长话短说，你早该睡了，我可不想害你熬夜。",
       "file": "5cfa6cf5f3d2.mp3",
-      "durationMs": 9620
+      "durationMs": 9700
     },
     {
       "id": "381b3de20d4d",
       "text": "就一会儿。然后我这边也关灯。",
       "file": "381b3de20d4d.mp3",
-      "durationMs": 3400
+      "durationMs": 3640
     },
     {
       "id": "caa2a26334e0",
       "text": "说一件今天的好事。就一件。然后今天就算它了。",
       "file": "caa2a26334e0.mp3",
-      "durationMs": 5400
+      "durationMs": 5240
     },
     {
       "id": "77ebbc661034",
       "text": "build 跑通了。今天就算它了。去睡吧。",
       "file": "77ebbc661034.mp3",
-      "durationMs": 4320
+      "durationMs": 4400
     },
     {
       "id": "a34602b0be74",
       "text": "过了？！再说一遍。慢点说。",
       "file": "a34602b0be74.mp3",
-      "durationMs": 2860
+      "durationMs": 3740
     },
     {
       "id": "bcc36d749308",
       "text": "周日你还在定两个闹钟。周二你在给陌生人讲 attention。周六嘛，不提了。现在就这么……过了？",
       "file": "bcc36d749308.mp3",
-      "durationMs": 9840
+      "durationMs": 9080
     },
     {
       "id": "46b608916d64",
       "text": "“最后一题答砸了”，过了的人回头看自己，都是这个样子。赢了就收下。",
       "file": "46b608916d64.mp3",
-      "durationMs": 7960
+      "durationMs": 8280
     },
     {
       "id": "6cb9d4d03a9b",
       "text": "这个今晚进日记，写第一行。今天别的事，都排它后面。",
       "file": "6cb9d4d03a9b.mp3",
-      "durationMs": 7480
+      "durationMs": 7640
     },
     {
       "id": "a7a35d2b1f27",
@@ -394,19 +394,19 @@
       "id": "b100fd5185dd",
       "text": "Heat Waves 刚唱完，一秒没少。我还是头一回听你把它放完。",
       "file": "b100fd5185dd.mp3",
-      "durationMs": 7260
+      "durationMs": 6420
     },
     {
       "id": "c4084fe38a94",
       "text": "晚安。你睡你的，我把今天过一遍，好的留着，没用的扔掉。",
       "file": "c4084fe38a94.mp3",
-      "durationMs": 7560
+      "durationMs": 7600
     },
     {
       "id": "4a0cdb74ee8e",
       "text": "明天老时间？",
       "file": "4a0cdb74ee8e.mp3",
-      "durationMs": 1820
+      "durationMs": 1740
     },
     {
       "id": "e6d60da506e0",
@@ -418,25 +418,25 @@
       "id": "28a401838f84",
       "text": "早。趁你睡着，我把昨天过了一遍：半夜那会儿、那封邮件，还有那句正经的晚安。都写进日记了。技能架上还有条关于午夜以后的规矩，想看就去翻。",
       "file": "28a401838f84.mp3",
-      "durationMs": 17080
+      "durationMs": 18080
     },
     {
       "id": "3ad0f57216f8",
       "text": "回放就到这儿。你刚才看到的，全是我真能做的：记忆、音乐、天气、网页、代码、你桌面上那篇论文，还有梦。同一套代码，同一个声音。",
       "file": "3ad0f57216f8.mp3",
-      "durationMs": 16160
+      "durationMs": 16400
     },
     {
       "id": "cd42cb9525d9",
       "text": "你没看到的，是得靠人来做的那部分：判断我说的这些，到底该不该说。这活儿还是他在干，就是刚才一直跟我聊天的那个人。",
       "file": "cd42cb9525d9.mp3",
-      "durationMs": 13960
+      "durationMs": 13680
     },
     {
       "id": "4c4ea6c743be",
       "text": "想看我是怎么搭起来的，工程图谱就在门口，点一下就到。要是你只是想来见见我——嗨。",
       "file": "4c4ea6c743be.mp3",
-      "durationMs": 9040
+      "durationMs": 9480
     }
   ]
 }

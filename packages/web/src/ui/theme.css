@@ -1224,24 +1224,32 @@ body.pet { background: none; }
 .menu-version { position: absolute; left: clamp(48px, 7vw, 110px); bottom: 26px;
   font-size: 11px; color: var(--muted); letter-spacing: 0.08em; user-select: none; }
 
-/* v0.45.4: the player card「小唱机」 (Initiative 32, candidate A) — session page only, top-left,
-   below the status badge. Signature values locked at the 2026-08-08 player-lab pick: tonearm
-   -38° ↔ -5° over 0.55s, 3.6s/turn linear spin (animation-play-state stops it), rise entrance
-   0.9s, exit 0.6s. The menu keeps its pure sleep mood: hidden there outright. */
+/* v0.45.4: the player card「小唱机」 (Initiative 32, candidate A) — session page only. Signature
+   values locked at the 2026-08-08 player-lab pick: tonearm -38° ↔ -5° over 0.55s, 3.6s/turn linear
+   spin (animation-play-state stops it), rise entrance 0.9s, exit 0.6s. The menu keeps its pure sleep
+   mood: hidden there outright.
+   v0.49.2 (owner): top-right under the ⚙ button at 1.2× — top-left it sat on the chat panel. Scaled
+   by transform, not by resizing, so the tonearm geometry pinned in playerCard.test.ts is untouched;
+   on a narrow or short window it keeps its own size, or it would sit on her. */
 .player-card {
-  position: fixed; top: 44px; left: 14px; z-index: 6;
+  position: fixed; top: 56px; right: 14px; z-index: 6; transform-origin: top right;
   display: flex; align-items: center; gap: 10px;
   width: 252px; padding: 10px 12px 10px 10px;
   background: var(--panel); border-radius: 16px;
   box-shadow: 0 4px 0 var(--lavender-deep), 0 10px 24px rgba(60, 80, 120, 0.18);
   font-family: var(--font);
-  opacity: 0; transform: translateY(14px) scale(0.96);
+  opacity: 0; transform: translateY(14px) scale(1.15);
   transition: opacity 0.9s cubic-bezier(0.22, 1.2, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1.2, 0.36, 1);
 }
-.player-card.in { opacity: 1; transform: translateY(0) scale(1); }
+.player-card.in { opacity: 1; transform: translateY(0) scale(1.2); }
 .player-card.leaving {
-  opacity: 0; transform: translateY(10px) scale(0.94);
+  opacity: 0; transform: translateY(10px) scale(1.13);
   transition: opacity 0.6s ease, transform 0.6s ease;
+}
+@media (max-width: 900px), (max-height: 500px) {
+  .player-card { transform: translateY(14px) scale(0.96); }
+  .player-card.in { transform: translateY(0) scale(1); }
+  .player-card.leaving { transform: translateY(10px) scale(0.94); }
 }
 .player-card.stale { filter: grayscale(0.7) opacity(0.8); }
 .menu-mode .player-card { display: none; }
