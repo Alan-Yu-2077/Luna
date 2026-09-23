@@ -2,8 +2,8 @@ import { MessageDelivery, type ServerEvent } from '@luna/protocol';
 import { createController } from './controller';
 import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
 import { createTapeClient } from './demo/tapeClient';
-import { mountDirector, mountGuide, mountLobbyLinks, mountRotateGate, type Director } from './demo/director';
-import { looksLikeIos, looksLikePhone, looksLikeWeChat, mountPhoneViewport, probeDevice } from './demo/phone';
+import { mountDesktopOnly, mountDirector, mountGuide, mountLobbyLinks, type Director } from './demo/director';
+import { looksLikePhone, probeDevice } from './demo/phone';
 import { mountNotesStack } from './demo/notesStack';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
@@ -136,18 +136,14 @@ async function boot(): Promise<void> {
     const urlLang = parseUiLang(new URLSearchParams(location.search).get('lang'));
     const chosen = readDemoChoice();
     const known = chosen && urlLang ? urlLang : null;
-    // v0.49.2: a phone is asked to turn sideways (and told a computer is the best seat) — a gate
-    // over everything that holds while the phone is upright, before and during the show.
-    const phone = looksLikePhone(probeDevice(window));
-    // demo/bridge.js already fitted a sideways phone at load; this handles turning it afterwards.
-    if (phone) mountPhoneViewport(document, window);
-    const ua = navigator.userAgent;
-    const rotate = phone
-      ? mountRotateGate(document, window, { ios: looksLikeIos(ua), wechat: looksLikeWeChat(ua), lang: known })
-      : null;
-    const guide = mountGuide(document, { lang: known, phone });
+    // v0.50.1 (owner): no phone version — a phone is asked to open the replay on a computer, and nothing
+    // behind the card loads (no tape, no model, no voice).
+    if (looksLikePhone(probeDevice(window))) {
+      mountDesktopOnly(document, window);
+      return;
+    }
+    const guide = mountGuide(document, { lang: known });
     const lang = await guide.language;
-    rotate?.setLang(lang);
     storeDemoChoice();
     if (lang !== urlLang) {
       const params = new URLSearchParams(location.search);
@@ -447,7 +443,10 @@ async function boot(): Promise<void> {
       // demo's only DOM: it types the armed beat into the real input and owns the Next button.
       const bundle = demo;
       // v0.50.0: the engineering notes, one stack for the whole show; a scene without notes gets no button.
-      const notesStack = bundle.notes ? mountNotesStack(document, { notes: bundle.notes, lang: uiLang() }) : null;
+      // Frozen means silent too: a last line still playing stops with her face.
+      const notesStack = bundle.notes
+        ? mountNotesStack(document, { notes: bundle.notes, lang: uiLang(), onFreeze: (on) => on && audio.stop() })
+        : null;
       director ??= mountDirector(document, refs, {
         sceneTitles: bundle.titles,
         onNext: () => tape.nextScene(),

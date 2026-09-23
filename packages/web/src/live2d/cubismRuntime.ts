@@ -43,9 +43,7 @@ export async function createLive2DRuntime(host: HTMLElement): Promise<Live2DRunt
     backgroundAlpha: 0,
     antialias: true,
     autoDensity: true,
-    // v0.49.2: capped at 2 — a 3× phone showing the replay's desk layout scaled down would otherwise
-    // fill a canvas ~4× the pixels it can display. A 1×/2× screen (every desktop) is unchanged.
-    resolution: Math.min(globalThis.devicePixelRatio || 1, 2),
+    resolution: globalThis.devicePixelRatio || 1,
   });
   host.appendChild(app.view as unknown as HTMLCanvasElement);
   return { app, Live2DModel };

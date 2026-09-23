@@ -64,7 +64,8 @@ describe.skipIf(!existsSync(notesPath))('demo/notes.json', () => {
     expect(bad).toEqual([]);
   });
 
-  test('every quote is a line the scene really says, in each language', () => {
+  // A quote may be an excerpt, but a verbatim one: contiguous text of a line the scene really says.
+  test('every quote is (part of) a line the scene really says, in each language', () => {
     const bad: string[] = [];
     for (const [id, scene] of Object.entries(notes().scenes)) {
       const en = linesOf('en', id);
@@ -72,8 +73,8 @@ describe.skipIf(!existsSync(notesPath))('demo/notes.json', () => {
       for (const sheet of scene.sheets) {
         for (const b of sheet.blocks) {
           if (b.type !== 'quote') continue;
-          if (!en.has(b.text.en)) bad.push(`${id} en: ${b.text.en}`);
-          if (!zh.has(b.text.zh)) bad.push(`${id} zh: ${b.text.zh}`);
+          if (![...en].some((l) => l.includes(b.text.en))) bad.push(`${id} en: ${b.text.en}`);
+          if (![...zh].some((l) => l.includes(b.text.zh))) bad.push(`${id} zh: ${b.text.zh}`);
         }
       }
     }

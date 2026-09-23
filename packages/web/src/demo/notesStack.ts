@@ -20,17 +20,17 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
   --n-red: #b2352c; --n-shadow: rgba(34, 49, 74, 0.2);
   --n-hand: 'Caveat', 'Ma Shan Zheng', 'Kaiti SC', 'STKaiti', cursive;
   --n-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  position: fixed; top: 26px; right: 30px; bottom: 26px; z-index: 960; width: min(600px, 48vw);
+  position: fixed; top: 26px; right: 30px; bottom: 26px; z-index: 960; width: min(700px, 56vw);
   color: var(--n-ink); font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   opacity: 0; transform: translateX(28px) rotate(1.2deg); pointer-events: none;
   transition: opacity 0.32s ease, transform 0.42s cubic-bezier(0.22, 0.9, 0.3, 1);
 }
 .demo-notes.on { opacity: 1; transform: none; pointer-events: auto; }
 /* The page behind is frozen: on a narrow window the notes may take nearly all of it. */
-@media (max-width: 1100px) { .demo-notes { width: min(600px, calc(100vw - 60px)); right: 20px; } }
+@media (max-width: 1100px) { .demo-notes { width: min(640px, calc(100vw - 60px)); right: 20px; } }
 .demo-notes-pile { position: absolute; inset: 0; }
 .demo-sheet {
-  position: absolute; inset: 0; overflow: hidden auto; padding: 34px 34px 64px 76px;
+  position: absolute; inset: 0; overflow: hidden auto; padding: 30px 32px 58px 76px;
   background-color: var(--n-paper);
   background-image: linear-gradient(var(--n-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--n-grid) 1px, transparent 1px),
@@ -66,10 +66,11 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
 .demo-notes-foot .hint { margin-left: auto; font-size: 17px; color: var(--n-pencil-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 .demo-sheet .eyebrow { margin: 0 0 4px; font-family: var(--n-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--n-red); }
-.demo-sheet .hook { margin: 0 0 14px; font-family: var(--n-hand); font-size: 34px; line-height: 1.12; color: var(--n-ink); }
-.demo-sheet h3 { margin: 0 0 12px; font-family: var(--n-hand); font-size: 30px; line-height: 1.1; font-weight: 600; color: var(--n-ink); }
+.demo-sheet .hook { margin: 0 0 12px; font-family: var(--n-hand); font-size: 32px; line-height: 1.1; color: var(--n-ink); }
+.demo-sheet h3 { margin: 0 0 10px; font-family: var(--n-hand); font-size: 28px; line-height: 1.1; font-weight: 600; color: var(--n-ink); }
+.demo-sheet h3 small { font-size: 0.62em; font-weight: 500; color: var(--n-pencil); }
 .demo-sheet h3 i { font-style: normal; font-family: var(--n-mono); font-size: 10px; color: var(--n-red); letter-spacing: 0.14em; margin-right: 10px; vertical-align: middle; }
-.demo-sheet p { margin: 0 0 12px; font-size: 15px; line-height: 1.8; color: var(--n-ink-2); }
+.demo-sheet p { margin: 0 0 11px; font-size: 14.5px; line-height: 1.72; color: var(--n-ink-2); }
 .demo-sheet code { font-family: var(--n-mono); font-size: 0.86em; background: rgba(120, 152, 186, 0.14); padding: 1px 4px; border-radius: 3px; }
 .demo-sheet b { color: var(--n-ink); }
 .demo-sheet .quote {
@@ -83,7 +84,7 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
 .demo-sheet .aside::before { content: '✎ '; }
 .demo-sheet ol.steps { margin: 0 0 14px; padding: 0; list-style: none; counter-reset: s; }
 .demo-sheet ol.steps li {
-  position: relative; padding-left: 30px; margin: 0 0 7px; font-size: 14.5px; line-height: 1.65; color: var(--n-ink-2); counter-increment: s;
+  position: relative; padding-left: 30px; margin: 0 0 6px; font-size: 14px; line-height: 1.6; color: var(--n-ink-2); counter-increment: s;
 }
 .demo-sheet ol.steps li::before {
   content: counter(s); position: absolute; left: 0; top: -3px; font-family: var(--n-hand); font-size: 24px; color: var(--n-red);
@@ -102,11 +103,11 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
 .demo-sheet .code-loc a { margin-left: auto; color: var(--n-pencil); text-decoration: none; border-bottom: 1px dashed var(--n-pencil-2); }
 .demo-sheet .code-loc a:hover { color: var(--n-red); }
 .demo-sheet pre {
-  margin: 0 0 8px; padding: 11px 13px; overflow-x: auto; font-family: var(--n-mono); font-size: 11.5px; line-height: 1.7;
+  margin: 0 0 6px; padding: 9px 12px; overflow-x: auto; font-family: var(--n-mono); font-size: 11px; line-height: 1.58;
   color: var(--n-ink-2); background: var(--n-paper); border: 1px solid var(--n-grid-strong); border-left: 3px solid var(--n-rule);
   cursor: text; white-space: pre-wrap; overflow-wrap: anywhere;
 }
-.demo-sheet .code-note { margin: 0 0 14px; font-size: 13px; line-height: 1.6; color: var(--n-pencil); }
+.demo-sheet .code-note { margin: 0 0 12px; font-size: 13px; line-height: 1.55; color: var(--n-pencil); }
 
 .demo-code-btn {
   position: absolute; left: 50%; bottom: 34px; z-index: 6; transform: translateX(-50%) rotate(-1.5deg);
@@ -131,7 +132,7 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
   82% { transform: translateX(-50%) rotate(-2.4deg) scale(1.04); }
   88% { transform: translateX(-50%) rotate(-1.5deg); }
 }
-@media (prefers-reduced-motion: reduce) { .demo-code-btn { animation: none; } .demo-sheet, .demo-notes { transition-duration: 0.01s; } }
+@media (prefers-reduced-motion: reduce) { .demo-code-btn { animation: none; } .demo-sheet, .demo-sheet.lift, .demo-notes { transition-duration: 0.01s; } }
 `;
 
 export const CLIP_SVG =
@@ -176,7 +177,10 @@ function sharedTicker(): Pausable | null {
 
 export type NotesStack = { open(sceneId: string, eyebrow: string): boolean; close(): void; isOpen(): boolean; dispose(): void };
 
-export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: UiLang }): NotesStack {
+export function mountNotesStack(
+  doc: Document,
+  opts: { notes: DemoNotes; lang: UiLang; onFreeze?: (frozen: boolean) => void },
+): NotesStack {
   ensureStyle(doc);
   const { notes, lang } = opts;
   const scrim = doc.createElement('div');
@@ -218,6 +222,17 @@ export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: U
   let order: number[] = []; // order[0] is the sheet on top
   let busy = false;
   let open = false;
+  let shown: { scene: SceneNotes; eyebrow: string } | null = null;
+  let resizeTimer = 0;
+  let flipTimer = 0;
+  const animTimers: number[] = [];
+  const later = (fn: () => void, ms: number): void => {
+    animTimers.push(window.setTimeout(fn, ms));
+  };
+  const cancelAnimations = (): void => {
+    for (const id of animTimers.splice(0)) clearTimeout(id);
+    busy = false;
+  };
   let lastFocus: HTMLElement | null = null;
 
   // A lifted sheet keeps its own pose and stays above the pile until it is tucked back in.
@@ -246,10 +261,10 @@ export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: U
     el.style.transform = LIFTED;
     order = [...order.slice(1), top];
     layout();
-    setTimeout(() => {
+    later(() => {
       el.classList.remove('lift');
       layout();
-      setTimeout(() => {
+      later(() => {
         busy = false;
       }, 200);
     }, 260);
@@ -264,14 +279,15 @@ export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: U
     busy = true;
     order = [last, ...order.slice(0, -1)];
     el.classList.add('lift');
+    el.style.zIndex = '45';
     el.style.transition = 'none';
     el.style.transform = LIFTED;
     layout();
     void el.offsetWidth;
     el.style.transition = '';
     el.classList.remove('lift');
-    el.style.transform = DEPTH_POSE[0] ?? '';
-    setTimeout(() => {
+    layout(); // it is order[0] now: top pose, depth 0, readable and clickable
+    later(() => {
       busy = false;
     }, 360);
   };
@@ -302,41 +318,94 @@ export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: U
     }
   };
 
-  const build = (scene: SceneNotes, eyebrow: string): void => {
-    pile.replaceChildren();
-    sheets = scene.sheets.map((sheet, i) => {
-      const el = doc.createElement('section');
-      el.className = 'demo-sheet';
-      const head =
-        i === 0
-          ? `<p class="eyebrow">${inlineHtml(eyebrow)}</p><p class="hook">${inlineHtml(say(scene.hook, lang))}</p>` +
-            `<h3><i>01</i>${inlineHtml(say(sheet.title, lang))}</h3>`
-          : `<h3><i>${String(i + 1).padStart(2, '0')}</i>${inlineHtml(say(sheet.title, lang))}</h3>`;
-      el.innerHTML = head + sheet.blocks.map(block).join('');
-      el.addEventListener('click', (e) => {
-        if (el.dataset['depth'] !== '0') return;
-        const target = e.target;
-        if (target instanceof Element && target.closest('a, pre, button')) return;
-        if ((doc.getSelection()?.toString() ?? '') !== '') return;
-        forward();
-      });
-      return el;
+  const newPage = (): HTMLElement => {
+    const el = doc.createElement('section');
+    el.className = 'demo-sheet';
+    el.dataset['depth'] = '0';
+    // A single click turns the page; a double click selects a word instead, so the turn waits a beat
+    // and a second click cancels it.
+    el.addEventListener('click', (e) => {
+      if (el.dataset['depth'] !== '0') return;
+      const target = e.target;
+      if (target instanceof Element && target.closest('a, pre, code, button')) return;
+      clearTimeout(flipTimer);
+      if (e.detail > 1) return;
+      flipTimer = window.setTimeout(() => {
+        if ((doc.getSelection()?.toString() ?? '') === '') forward();
+      }, 220);
     });
-    pile.append(...sheets);
-    order = sheets.map((_, i) => i);
+    pile.appendChild(el);
+    return el;
+  };
+  const overflows = (el: HTMLElement): boolean => el.scrollHeight > el.clientHeight + 1;
+
+  // One sheet of notes is one sheet of paper when it fits. When it doesn't — a small window, a phone —
+  // it is paginated at block boundaries into continuation sheets, measured on the real page, so a
+  // sheet never needs scrolling unless a single block is taller than the paper.
+  // `keep` is the reading position to restore (sheet index, first block on the page) after a rebuild.
+  const build = (scene: SceneNotes, eyebrow: string, keep?: [number, number]): void => {
+    cancelAnimations();
+    clearTimeout(flipTimer);
+    pile.replaceChildren();
+    sheets = [];
+    scene.sheets.forEach((sheet, i) => {
+      const n = String(i + 1).padStart(2, '0');
+      const title = inlineHtml(say(sheet.title, lang));
+      const head = (cont: boolean): string =>
+        `<header>${
+          i === 0 && !cont
+            ? `<p class="eyebrow">${inlineHtml(eyebrow)}</p><p class="hook">${inlineHtml(say(scene.hook, lang))}</p>`
+            : ''
+        }<h3><i>${n}</i>${title}${cont ? ` <small>${escapeHtml(t('demo.notesCont'))}</small>` : ''}</h3></header>`;
+      let page = newPage();
+      page.innerHTML = head(false);
+      page.dataset['src'] = `${i}:0`;
+      sheets.push(page);
+      sheet.blocks.forEach((b, k) => {
+        page.insertAdjacentHTML('beforeend', `<div class="nb">${block(b)}</div>`);
+        if (overflows(page) && page.children.length > 2) {
+          page.lastElementChild?.remove();
+          page = newPage();
+          page.innerHTML = head(true);
+          page.dataset['src'] = `${i}:${k}`;
+          page.insertAdjacentHTML('beforeend', `<div class="nb">${block(b)}</div>`);
+          sheets.push(page);
+        }
+      });
+    });
+    // Back to where the reader was: the last page that starts at or before their place.
+    let start = 0;
+    if (keep) {
+      sheets.forEach((pg, idx) => {
+        const [si, bi] = (pg.dataset['src'] ?? '0:0').split(':').map(Number);
+        if (si !== undefined && bi !== undefined && (si < keep[0] || (si === keep[0] && bi <= keep[1]))) start = idx;
+      });
+    }
+    order = sheets.map((_, i) => (i + start) % sheets.length);
     layout();
   };
+  const place = (): [number, number] | undefined => {
+    const src = sheets[order[0] ?? 0]?.dataset['src'];
+    if (!src) return undefined;
+    const [si, bi] = src.split(':').map(Number);
+    return si !== undefined && bi !== undefined ? [si, bi] : undefined;
+  };
 
+  // Captured on the document and stopped there while the notes are open: the app has its own keys
+  // underneath — Esc in chat means "back to the menu", which would end the show out from under the
+  // notes.
   const onKey = (e: KeyboardEvent): void => {
     if (!open) return;
     if (e.key === 'Escape') handle.close();
-    else if (e.key === 'ArrowRight' || e.key === ' ') {
-      e.preventDefault();
-      forward();
-    } else if (e.key === 'ArrowLeft') backward();
+    else if (e.key === 'ArrowRight' || e.key === ' ') forward();
+    else if (e.key === 'ArrowLeft') backward();
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   let tickerWasRunning = false;
+  let madeInert: Element[] = [];
   const freeze = (on: boolean): void => {
     doc.documentElement.classList.toggle('demo-frozen', on);
     const ticker = sharedTicker();
@@ -346,25 +415,42 @@ export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: U
     } else if (tickerWasRunning) {
       ticker?.start();
     }
-    const app = doc.querySelector('.luna-app');
-    if (app) {
-      if (on) app.setAttribute('inert', '');
-      else app.removeAttribute('inert');
+    // Inert is the whole page but the notes — the app and the director's hidden overlays alike, so Tab
+    // cannot walk out of the dialog into a curtain or a drawn desk nobody can see.
+    if (on) {
+      madeInert = [...doc.body.children].filter((el) => el !== scrim && el !== root && !el.hasAttribute('inert'));
+      for (const el of madeInert) el.setAttribute('inert', '');
+    } else {
+      for (const el of madeInert) el.removeAttribute('inert');
+      madeInert = [];
     }
+    opts.onFreeze?.(on);
   };
+
+  // Pagination is measured, so a new window size (or the handwriting font arriving late) re-paginates.
+  const repaginate = (): void => {
+    if (open && shown) build(shown.scene, shown.eyebrow, place());
+  };
+  const onResize = (): void => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(repaginate, 180);
+  };
+  window.addEventListener('resize', onResize);
 
   next.addEventListener('click', forward);
   prev.addEventListener('click', backward);
   close.addEventListener('click', () => handle.close());
   scrim.addEventListener('click', () => handle.close());
-  doc.addEventListener('keydown', onKey);
+  doc.addEventListener('keydown', onKey, true);
 
   const handle: NotesStack = {
     open(sceneId, eyebrow) {
       const scene = notes.scenes[sceneId];
       if (!scene) return false;
       lastFocus = doc.activeElement instanceof HTMLElement ? doc.activeElement : null;
+      shown = { scene, eyebrow };
       build(scene, eyebrow);
+      if (doc.fonts.status !== 'loaded') void doc.fonts.ready.then(repaginate);
       root.setAttribute('aria-label', say(scene.hook, lang));
       freeze(true);
       scrim.classList.add('on');
@@ -384,7 +470,8 @@ export function mountNotesStack(doc: Document, opts: { notes: DemoNotes; lang: U
     isOpen: () => open,
     dispose() {
       handle.close();
-      doc.removeEventListener('keydown', onKey);
+      doc.removeEventListener('keydown', onKey, true);
+      window.removeEventListener('resize', onResize);
       scrim.remove();
       root.remove();
     },
