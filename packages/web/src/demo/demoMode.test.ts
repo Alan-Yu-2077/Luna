@@ -32,9 +32,23 @@ describe('loadDemo', () => {
       return Response.json([]);
     });
     // v0.48.1: the tape and her voice per language; the settings registry (the server's English) shared.
-    expect(urls.sort()).toEqual(['./demo/data/settings.json', './demo/zh/script.json', './demo/zh/voice/manifest.json']);
+    // v0.50.0: the engineering notes are shared too — one file carries both languages.
+    expect(urls.sort()).toEqual([
+      './demo/data/settings.json',
+      './demo/notes.json',
+      './demo/zh/script.json',
+      './demo/zh/voice/manifest.json',
+    ]);
     expect(bundle.compiled.scenes[0]?.turns[0]?.run.endMs).toBe(700 + 25 + 900);
     expect(bundle.settings).toEqual([]);
+  });
+
+  test('a broken notes file never blocks the boot — the replay just has no notes', async () => {
+    const bundle = await loadDemo({ base: '/d/' }, 'en', async (u) =>
+      u.endsWith('script.json') ? Response.json(script) : u.endsWith('notes.json') ? new Response('{not json') : new Response('', { status: 404 }),
+    );
+    expect(bundle.notes).toBeNull();
+    expect(bundle.ids).toEqual(['a']);
   });
 
   test('a missing manifest or settings file degrades — silent lines, an empty panel — never a failed boot', async () => {
@@ -42,6 +56,7 @@ describe('loadDemo', () => {
       u.endsWith('script.json') ? Response.json(script) : new Response('', { status: 404 }),
     );
     expect(bundle.settings).toEqual([]);
+    expect(bundle.notes).toBeNull(); // no notes file: the replay plays on without the button
     await expect(bundle.speech('l')).rejects.toMatchObject({ status: 404 });
   });
 

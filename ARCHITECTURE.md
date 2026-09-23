@@ -278,7 +278,9 @@ drawn desk with the folder she left and the first page of the paper in it (a rea
 body text); the next scripted line waits behind either; on a phone, a gate that asks for it to be turned
 sideways (a computer is the best seat), and — sideways — the desk layout scaled down whole, its viewport
 set by `demo/bridge.js` before the first layout (`demo/phone.ts` holds the rules; a test holds the two
-together). `demo.html` sets the `window.lunaDemo` bridge (including her portrait
+together); and after each scene, the engineering notes — a note clipped to the stage opens a pile of
+notebook sheets over the frozen page, one bilingual `demo/notes.json` whose every code block a test holds
+to its file and line. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
 framing); `bun run build:demo` emits a separate `dist-demo/` that the packaged app never carries,
 with the engineering map placed under `/engineering/`.
 

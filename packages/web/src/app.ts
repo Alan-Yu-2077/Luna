@@ -4,6 +4,7 @@ import { loadDemo, readDemoBridge, type DemoBundle } from './demo/demoMode';
 import { createTapeClient } from './demo/tapeClient';
 import { mountDirector, mountGuide, mountLobbyLinks, mountRotateGate, type Director } from './demo/director';
 import { looksLikeIos, looksLikePhone, looksLikeWeChat, mountPhoneViewport, probeDevice } from './demo/phone';
+import { mountNotesStack } from './demo/notesStack';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -445,10 +446,21 @@ async function boot(): Promise<void> {
       // v0.46.0: the tape, fed into the SAME onEvent the socket would feed. The director is the
       // demo's only DOM: it types the armed beat into the real input and owns the Next button.
       const bundle = demo;
+      // v0.50.0: the engineering notes, one stack for the whole show; a scene without notes gets no button.
+      const notesStack = bundle.notes ? mountNotesStack(document, { notes: bundle.notes, lang: uiLang() }) : null;
       director ??= mountDirector(document, refs, {
         sceneTitles: bundle.titles,
         onNext: () => tape.nextScene(),
         onJump: (i) => tape.jumpTo(i),
+        hasNotes: (i) => {
+          const id = bundle.ids[i];
+          return id !== undefined && bundle.notes?.scenes[id] !== undefined;
+        },
+        onNotes: (i) => {
+          const id = bundle.ids[i];
+          const title = bundle.titles[i] ?? '';
+          if (id) notesStack?.open(id, t('demo.notesEyebrow', { n: i + 1, title }));
+        },
       });
       const tape = createTapeClient({
         compiled: bundle.compiled,

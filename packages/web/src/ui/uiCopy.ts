@@ -244,6 +244,13 @@ const UI_COPY = {
   'demo.openFileHint': { en: 'Open the file', zh: '打开这个文件' },
   'demo.readOriginal': { en: 'Read the full paper on arXiv ↗', zh: '在 arXiv 上读全文 ↗' },
   'demo.backToLuna': { en: 'Back to Luna →', zh: '回到 Luna →' },
+  // v0.50.0: the engineering notes after each scene.
+  'demo.codeNotes': { en: "Click this to view what's going on in code", zh: '点这里，看看代码里发生了什么' },
+  'demo.notesEyebrow': { en: 'Scene {n} · {title} · in the code', zh: '第 {n} 幕 · {title} · 代码里' },
+  'demo.notesHint': { en: 'click the sheet to turn it', zh: '点一下纸，翻到下一张' },
+  'demo.notesNext': { en: 'Next sheet', zh: '下一张' },
+  'demo.notesPrev': { en: 'Previous sheet', zh: '上一张' },
+  'demo.notesClose': { en: 'Close the notes', zh: '合上笔记' },
   'demo.personaNote': {
     en: "Her persona file lives on the owner's machine — the replay doesn't carry it. In the app, this is where he edits the fixed core and reads what she has grown.",
     zh: '她的人格文件在主人的机器上，回放里不带。在 app 里，这一栏是主人改 Fixed 底色、看她自己长出来的 Evolving 的地方。',

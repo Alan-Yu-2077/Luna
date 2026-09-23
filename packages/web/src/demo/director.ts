@@ -12,6 +12,7 @@
 
 import { t, type UiLang } from '../ui/uiCopy';
 import type { StageCue } from './compile';
+import { CLIP_SVG } from './notesStack';
 
 export type DirectorRefs = {
   input: HTMLInputElement;
@@ -273,7 +274,14 @@ function ensureStyle(doc: Document): void {
 export function mountDirector(
   doc: Document,
   refs: DirectorRefs,
-  opts: { sceneTitles: string[]; onNext: () => void; onJump: (index: number) => void },
+  opts: {
+    sceneTitles: string[];
+    onNext: () => void;
+    onJump: (index: number) => void;
+    // v0.50.0: the engineering notes — the button appears when a scene has played out and has notes.
+    hasNotes?: (index: number) => boolean;
+    onNotes?: (index: number) => void;
+  },
 ): Director {
   ensureStyle(doc);
 
@@ -307,6 +315,21 @@ export function mountDirector(
   next.hidden = true;
   pill.append(label, next, list);
   refs.modelStage.appendChild(pill);
+
+  // v0.50.0: a note paper-clipped to the stage once a scene is over — the door to the engineering notes.
+  const codeBtn = doc.createElement('button');
+  codeBtn.type = 'button';
+  codeBtn.className = 'demo-code-btn';
+  codeBtn.hidden = true;
+  codeBtn.innerHTML = CLIP_SVG;
+  const codeLabel = doc.createElement('span');
+  codeLabel.textContent = t('demo.codeNotes');
+  codeBtn.appendChild(codeLabel);
+  let codeIndex = -1;
+  codeBtn.addEventListener('click', () => {
+    if (codeIndex >= 0) opts.onNotes?.(codeIndex);
+  });
+  refs.modelStage.appendChild(codeBtn);
 
   const curtain = doc.createElement('div');
   curtain.className = 'demo-curtain';
@@ -551,13 +574,17 @@ export function mountDirector(
       list.hidden = true;
       next.hidden = true;
       nextHandler = null;
+      codeBtn.hidden = true;
+      codeIndex = -1;
       pill.classList.add('on');
     },
 
-    sceneEnd(_index, hasNext) {
+    sceneEnd(index, hasNext) {
       next.textContent = t(hasNext ? 'demo.next' : 'demo.replay');
       nextHandler = hasNext ? opts.onNext : () => doc.location.reload();
       next.hidden = false;
+      codeIndex = index;
+      codeBtn.hidden = !(opts.hasNotes?.(index) ?? false);
     },
 
     // The curtain: dark room, a clock sweeping, a line saying how long. The tape's clock has
@@ -596,6 +623,7 @@ export function mountDirector(
       refs.input.removeEventListener('keydown', guard, true);
       next.removeEventListener('click', onNextClick);
       pill.remove();
+      codeBtn.remove();
       curtain.remove();
       refs.input.readOnly = false;
       refs.sendBtn.disabled = false;
@@ -664,11 +692,13 @@ export const GUIDE_COPY: Record<
     how:
       'Lines are typed for you — press ➤ (or Enter). When a scene ends, press Next scene (or pick a scene ' +
       'from the pill at the top). Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her ' +
-      'Diary, Skills and Dream.',
+      'Diary, Skills and Dream. After each scene, the note clipped to the stage opens the engineering notes: ' +
+      'why she did that, and the code behind it.',
     // A phone has no wheel and no reliable double-click on the stage — only the drag is promised there.
     howPhone:
       'Lines are typed for you — tap ➤. When a scene ends, tap Next scene (or pick a scene from the pill at ' +
-      'the top). Drag to move her. ← Menu opens her Diary, Skills and Dream.',
+      'the top). Drag to move her. ← Menu opens her Diary, Skills and Dream. After each scene, the note ' +
+      'clipped to the stage opens the engineering notes.',
     enter: 'Enter',
   },
   zh: {
@@ -676,8 +706,8 @@ export const GUIDE_COPY: Record<
     sub: '真实场景 · 真实前端 · 她自己的声音',
     p1: '接下来你看到的是一段回放：照着真实使用场景复现的日常片段，用 Luna 真正的前端和渲染引擎播出来。这个页面背后没有在运行的 AI。',
     p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
-    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。',
-    howPhone: '台词会替你打好，点 ➤ 发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。拖动可以挪她的位置。「← 菜单」里有她的日记、技能和梦。',
+    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，舞台上别着的那张便签会打开工程笔记：她为什么这么做，背后是哪段代码。',
+    howPhone: '台词会替你打好，点 ➤ 发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。拖动可以挪她的位置。「← 菜单」里有她的日记、技能和梦。每一幕演完，舞台上的便签会打开工程笔记。',
     enter: '进入',
   },
 };

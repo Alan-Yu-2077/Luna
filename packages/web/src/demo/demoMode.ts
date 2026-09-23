@@ -5,6 +5,7 @@ import { createDemoSpeech, durationLookup, type FetchLike, type SpeechFetcher } 
 import { createDemoFetch } from './demoData';
 import { createMusicStore, type MusicStore } from './demoMusic';
 import { DemoScript, DemoSettings, VoiceManifest } from './script';
+import { DemoNotes } from './notes';
 
 // v0.46.0 — is this boot the showcase replay? `window.lunaDemo` is a bridge in the same family as
 // `lunaConfig` / `lunaSetup` / `lunaPet`: an optional global the hosting page sets before app.ts
@@ -51,6 +52,10 @@ export type DemoBundle = {
   coverUrl: (hash: string) => string;
   hasDream: boolean;
   titles: string[];
+  // v0.50.0: scene ids (the notes are keyed by them) and the engineering notes — null when the file is
+  // missing or malformed: the replay plays on, without the button.
+  ids: string[];
+  notes: DemoNotes | null;
 };
 
 // The three files the demo rides on. The script is required; a missing voice manifest or settings
@@ -64,16 +69,18 @@ export async function loadDemo(
 ): Promise<DemoBundle> {
   const { base } = bridge;
   const langBase = `${base}${lang}/`;
-  const [scriptRes, voiceRes, settingsRes] = await Promise.all([
+  const [scriptRes, voiceRes, settingsRes, notesRes] = await Promise.all([
     fetchFn(`${langBase}script.json`),
     fetchFn(`${langBase}voice/manifest.json`),
     fetchFn(`${base}data/settings.json`),
+    fetchFn(`${base}notes.json`),
   ]);
   if (!scriptRes.ok) throw new Error(`demo script unreachable: ${scriptRes.status}`);
   const script = DemoScript.parse(await scriptRes.json());
   const manifest = voiceRes.ok ? VoiceManifest.parse(await voiceRes.json()) : { lines: [] };
   const settings = settingsRes.ok ? DemoSettings.parse(await settingsRes.json()) : [];
   const music = script.music ? createMusicStore(script.music.tracks) : null;
+  const notesParsed = notesRes.ok ? DemoNotes.safeParse(await notesRes.json().catch(() => null)) : null;
   return {
     base,
     compiled: compileScript(script, durationLookup(manifest)),
@@ -84,5 +91,7 @@ export async function loadDemo(
     coverUrl: (hash) => `${base}music/${encodeURIComponent(hash)}.svg`,
     hasDream: script.dream !== undefined,
     titles: script.scenes.map((s) => s.title),
+    ids: script.scenes.map((s) => s.id),
+    notes: notesParsed?.success ? notesParsed.data : null,
   };
 }
