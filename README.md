@@ -24,7 +24,9 @@ code-agent capability — embodied as a Live2D avatar with lip-synced custom voi
 <sub>The demo is the real front end and rendering engine on a scripted tape — her actual voice, pre-rendered,
 in English or in Chinese (the same scenes; pick at the door).
 What differs from the app sits around her, not in her: the lines are typed for you (you only press ➤),
-a scene pill carries Next, and a curtain marks each skip in time.</sub>
+a scene pill carries Next, and a curtain marks each skip in time.
+After each scene, a note clipped to the stage opens the <b>engineering notes</b> — why she said that, and the
+mechanism and source behind it, every snippet pinned to a commit. Open it on a computer; it is not built for phones.</sub>
 
 <sub>This repository is the <b>engineering, published as a reference</b> — not a distributed product.<br/>
 There are no installers: Luna is one person's companion, and the instance that matters lives on one
