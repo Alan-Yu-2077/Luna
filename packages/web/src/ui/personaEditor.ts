@@ -1,4 +1,5 @@
 import { SoulData } from '@luna/protocol';
+import { t } from './uiCopy';
 
 // v0.44.6 — the persona editor. Two halves with a hard wall between them: the FIXED core is the
 // owner's to write (loaded from /api/data/soul, saved through the audited updateFixedCore — and
@@ -32,7 +33,7 @@ export function mountPersonaSection(doc: Document, fetchFn: typeof fetch = fetch
 
   const intro = doc.createElement('p');
   intro.className = 'settings-page-note';
-  intro.textContent = 'Fixed 是你定的底色,她改不了;Evolving 是她自己长出来的,你看,但在这里不改。';
+  intro.textContent = t('persona.intro');
   host.appendChild(intro);
 
   let savedFixed = '';
@@ -53,15 +54,15 @@ export function mountPersonaSection(doc: Document, fetchFn: typeof fetch = fetch
   const previewBtn = doc.createElement('button');
   previewBtn.type = 'button';
   previewBtn.className = 'module-btn';
-  previewBtn.textContent = 'Preview diff';
+  previewBtn.textContent = t('persona.preview');
   const saveBtn = doc.createElement('button');
   saveBtn.type = 'button';
   saveBtn.className = 'module-btn primary';
-  saveBtn.textContent = 'Save fixed core';
+  saveBtn.textContent = t('persona.save');
   foot.append(previewBtn, saveBtn, verdict);
 
   const evolvingHead = doc.createElement('h4');
-  evolvingHead.textContent = 'Evolving — 她自己长的';
+  evolvingHead.textContent = t('persona.evolving');
   const evolving = doc.createElement('pre');
   evolving.className = 'persona-evolving';
   evolving.textContent = '…';
@@ -76,7 +77,7 @@ export function mountPersonaSection(doc: Document, fetchFn: typeof fetch = fetch
       diffView.appendChild(p);
     }
     diffView.hidden = false;
-    verdict.textContent = hasChanges(diff) ? '' : '没有改动。';
+    verdict.textContent = hasChanges(diff) ? '' : t('persona.noChange');
   };
   previewBtn.addEventListener('click', renderDiff);
 
@@ -85,17 +86,17 @@ export function mountPersonaSection(doc: Document, fetchFn: typeof fetch = fetch
     // The empty-write refusal is doubled: here, and again server-side — blanking her core must
     // never be one fat-finger away.
     if (text.trim() === '') {
-      verdict.textContent = '不能存成空的。';
+      verdict.textContent = t('persona.empty');
       verdict.dataset['state'] = 'bad';
       return;
     }
     if (!hasChanges(diffLines(savedFixed, text))) {
-      verdict.textContent = '没有改动。';
+      verdict.textContent = t('persona.noChange');
       verdict.dataset['state'] = 'bad';
       return;
     }
     renderDiff(); // the preview is part of the save, not an optional courtesy
-    verdict.textContent = '保存中…';
+    verdict.textContent = t('persona.saving');
     verdict.dataset['state'] = 'busy';
     void fetchFn('/api/data/soul/fixed', {
       method: 'POST',
@@ -106,12 +107,12 @@ export function mountPersonaSection(doc: Document, fetchFn: typeof fetch = fetch
         if (!r.ok) throw new Error('save failed');
         const soul = SoulData.parse(await r.json());
         savedFixed = soul.fixed_text;
-        verdict.textContent = '已保存。她下次开口就带着它。';
+        verdict.textContent = t('persona.saved');
         verdict.dataset['state'] = 'ok';
         diffView.hidden = true;
       })
       .catch(() => {
-        verdict.textContent = '保存失败——她的后端没有在跑?';
+        verdict.textContent = t('persona.saveFailed');
         verdict.dataset['state'] = 'bad';
       });
   });
@@ -128,11 +129,11 @@ export function mountPersonaSection(doc: Document, fetchFn: typeof fetch = fetch
       const parts: string[] = [];
       if (soul.evolving_self.trim() !== '') parts.push(`— self —\n${soul.evolving_self}`);
       if (soul.evolving_bond.trim() !== '') parts.push(`— bond —\n${soul.evolving_bond}`);
-      evolving.textContent = parts.length > 0 ? parts.join('\n\n') : '(她还没写下什么。)';
+      evolving.textContent = parts.length > 0 ? parts.join('\n\n') : t('persona.nothingYet');
     })
     .catch(() => {
       editor.value = '';
-      evolving.textContent = '现在取不到——她的后端没有在跑。';
+      evolving.textContent = t('persona.unreachable');
     });
 
   return host;

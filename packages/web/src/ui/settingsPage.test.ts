@@ -45,6 +45,8 @@ describe('the settings IA — every control accounted for, none twice (v0.44.5)'
         'luna:speech-performance',
         'luna:idle-profile',
         'luna:costume',
+        // v0.48.0: the interface language, adopted into System.
+        'luna:ui-lang',
       ].sort(),
     );
   });

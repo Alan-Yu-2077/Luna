@@ -1,4 +1,10 @@
-import { DataDiaries, DataDreams, type DiaryEntry, type DreamRecord, type DreamStep } from '@luna/protocol';
+import { DataDiaries, DataDreams, type DiaryEntry, type DreamRecord } from '@luna/protocol';
+import { DREAM_BROKE, translateStep } from './dreamWords';
+import { t, uiLang, type UiLang } from './uiCopy';
+
+// v0.48.0: the dream translation layer moved to dreamWords.ts (the live chips speak it too);
+// re-exported so the book's callers and tests keep one import.
+export { DREAM_BROKE, translateStep };
 
 // v0.44.3 — the diary book. What she writes by day and what she digests by night are the same
 // evening's two faces, so they share one book (D7): a two-page spread, calendar left, content
@@ -88,74 +94,11 @@ export function nextLitDay(litDays: readonly string[], current: string, delta: 1
   return litDays[next] ?? current;
 }
 
-// ── the dream translation layer (M10) ────────────────────────────────────────────────────────
-// `steps[]` is a consolidation pipeline, not prose. The book renders "what she did that night" —
-// stating actions and counts only, never ascribing feelings: anything more would be writing her
-// diary for her. The exact wording below is a first draft for the owner to review (README OQ1).
+// ── the dream narrative ──────────────────────────────────────────────────────────────────────
 
-const num = (detail: string, pattern: RegExp): string | null => pattern.exec(detail)?.[1] ?? null;
-
-export function translateStep(s: DreamStep): string {
-  if (s.status === 'skipped') {
-    if (s.step === 'refine_layer1') return '略过——没什么要折叠的。';
-    return `略过了${stepNoun(s.step)}。`;
-  }
-  switch (s.step) {
-    case 'rate_salience': {
-      const n = num(s.detail, /rated (\d+)/);
-      return n ? `回看了 ${n} 个瞬间。` : '回看了这段日子。';
-    }
-    case 'refine_semantic': {
-      const removed = num(s.detail, /removed (\d+)/);
-      const added = num(s.detail, /added (\d+)/);
-      if (removed !== null && added !== null) return `放下了 ${removed} 件事，记住了 ${added} 件。`;
-      return '整理了心里的事。';
-    }
-    case 'memory_audit': {
-      const removed = num(s.detail, /removed (\d+)/);
-      const added = num(s.detail, /added (\d+)/);
-      if (removed !== null && added !== null) return `整理了记忆的抽屉（−${removed} / +${added}）。`;
-      return '整理了记忆的抽屉。';
-    }
-    case 'refine_layer1':
-      return '把散着的对话折叠归档了。';
-    case 'persona_update':
-      return `对自己的认识动了动（${s.detail || 'self'}）。`;
-    case 'run_diaries': {
-      const n = num(s.detail, /(\d+) diar/);
-      return n ? `写下了 ${n} 篇日记。` : '写了日记。';
-    }
-    case 'distill_skills': {
-      const name = /new:([\w-]+)/.exec(s.detail)?.[1];
-      return name ? `学会了一件新事：${name}。` : '沉淀了一项技能。';
-    }
-    case 'rag_refresh':
-      return '翻新了回忆的书签。';
-    default:
-      // A step this table has never met renders RAW rather than crashing or vanishing — a future
-      // dream stage shows up as itself until someone writes it a line.
-      return `${s.step}: ${s.detail || s.status}`;
-  }
-}
-
-function stepNoun(step: string): string {
-  switch (step) {
-    case 'rate_salience':
-      return '回看';
-    case 'run_diaries':
-      return '写日记';
-    case 'distill_skills':
-      return '技能沉淀';
-    default:
-      return step;
-  }
-}
-
-export const DREAM_BROKE = '这个梦断掉了。';
-
-export function dreamNarrative(record: DreamRecord): { broken: boolean; lines: string[] } {
-  if (record.aborted || record.steps.length === 0) return { broken: true, lines: [DREAM_BROKE] };
-  return { broken: false, lines: record.steps.map(translateStep) };
+export function dreamNarrative(record: DreamRecord, lang: UiLang = uiLang()): { broken: boolean; lines: string[] } {
+  if (record.aborted || record.steps.length === 0) return { broken: true, lines: [DREAM_BROKE[lang]] };
+  return { broken: false, lines: record.steps.map((st) => translateStep(st, lang)) };
 }
 
 // ── the page-turn queue ──────────────────────────────────────────────────────────────────────
@@ -192,10 +135,21 @@ export function createTurnQueue(runTurn: (to: string, done: () => void) => void)
 
 const MONTHS = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
-export function pageHeading(dayKey: string): string {
+export function pageHeading(dayKey: string, lang: UiLang = uiLang()): string {
   const [y, m, d] = dayKey.split('-').map((v) => Number.parseInt(v, 10));
   if (!y || !m || !d) return dayKey;
-  return `${MONTHS[m - 1]} ${d}, ${y}`;
+  return lang === 'zh' ? `${y}年${m}月${d}日` : `${MONTHS[m - 1]} ${d}, ${y}`;
+}
+
+export function monthHeading(year: number, month0: number, lang: UiLang = uiLang()): string {
+  return lang === 'zh' ? `${year}年${month0 + 1}月` : `${MONTHS[month0]} ${year}`;
+}
+
+// v0.48.0: real diaries often open on their own bold date line (`**September 21, 2026**`), which
+// the page heading already says — and under pre-wrap its asterisks showed literally. The book drops
+// that one leading line; the rest of her text is untouched.
+export function diaryBody(text: string): string {
+  return text.replace(/^\s*\*\*[^*\n]+\*\*[ \t]*\n+/, '');
 }
 
 // ── fetch + mount ────────────────────────────────────────────────────────────────────────────
@@ -240,7 +194,7 @@ export function mountDiaryBook(doc: Document, fetchFn: FetchLike = (u) => fetch(
       skeleton.remove();
       const err = doc.createElement('p');
       err.className = 'book-empty';
-      err.textContent = '现在取不到她的日记——她的后端没有在跑。';
+      err.textContent = t('diary.unreachable');
       book.appendChild(err);
     });
   return book;
@@ -250,7 +204,7 @@ function assemble(doc: Document, book: HTMLElement, index: BookIndex): void {
   if (index.litDays.length === 0) {
     const empty = doc.createElement('p');
     empty.className = 'book-empty';
-    empty.textContent = '这本还是空的——她还没写下第一篇。';
+    empty.textContent = t('diary.empty');
     book.appendChild(empty);
     return;
   }
@@ -288,7 +242,7 @@ function assemble(doc: Document, book: HTMLElement, index: BookIndex): void {
       for (const f of ['diary', 'dream'] as const) {
         const b = doc.createElement('button');
         b.type = 'button';
-        b.textContent = f === 'diary' ? 'Diary' : 'Dream';
+        b.textContent = t(f === 'diary' ? 'diary.face.diary' : 'diary.face.dream');
         b.classList.toggle('on', face === f);
         b.addEventListener('click', () => {
           if (face === f || halfTurning) return;
@@ -303,7 +257,7 @@ function assemble(doc: Document, book: HTMLElement, index: BookIndex): void {
     body.className = 'book-body';
     if (face === 'diary' && entry?.diary) {
       const p = doc.createElement('p');
-      p.textContent = entry.diary.text;
+      p.textContent = diaryBody(entry.diary.text);
       body.appendChild(p);
     } else {
       for (const dream of entry?.dreams ?? []) {
@@ -323,7 +277,7 @@ function assemble(doc: Document, book: HTMLElement, index: BookIndex): void {
     const foot = doc.createElement('div');
     foot.className = 'book-foot';
     const nth = index.litDays.length - index.litDays.indexOf(currentDay);
-    foot.textContent = `第 ${nth} / ${index.litDays.length} 页`;
+    foot.textContent = t('diary.page', { n: nth, total: index.litDays.length });
     target.appendChild(foot);
   };
 
@@ -369,7 +323,7 @@ function assemble(doc: Document, book: HTMLElement, index: BookIndex): void {
     prev.type = 'button';
     prev.textContent = '‹';
     const label = doc.createElement('span');
-    label.textContent = `${MONTHS[viewMonth0]} ${viewYear}`;
+    label.textContent = monthHeading(viewYear, viewMonth0);
     const next = doc.createElement('button');
     next.type = 'button';
     next.textContent = '›';
@@ -424,7 +378,7 @@ function assemble(doc: Document, book: HTMLElement, index: BookIndex): void {
 
     const foot = doc.createElement('div');
     foot.className = 'book-foot';
-    foot.textContent = `本月 ${monthCount} 篇 · 共 ${index.diaryCount} 篇日记`;
+    foot.textContent = t('diary.monthCount', { month: monthCount, total: index.diaryCount });
     left.appendChild(foot);
   };
 

@@ -9,7 +9,8 @@ const LANG_STORE = 'luna:setup-lang';
 
 export function detectSetupLang(
   navLang: string | undefined = typeof navigator !== 'undefined' ? navigator.language : undefined,
-  stored: string | null = safeGet(LANG_STORE),
+  // v0.48.0: the app's interface language, once the owner has chosen one, is the wizard's too.
+  stored: string | null = safeGet('luna:ui-lang') ?? safeGet(LANG_STORE),
 ): SetupLang {
   if (stored === 'zh' || stored === 'en') return stored;
   return (navLang ?? '').toLowerCase().startsWith('zh') ? 'zh' : 'en';

@@ -228,6 +228,17 @@ No avatar model or voice weights ship in this repo. The front end renders a frie
 Live2D model is installed; voice is bring-your-own. See [`.env.example`](.env.example) for the
 configuration surface.
 
+**The interface language (v0.48.x).** Every string the front end writes itself lives in one
+`{en, zh}` table (`ui/uiCopy.ts`, parity-tested); the language is resolved once at the top of `boot()`
+(`?lang=` → the replay's bridge → `luna:ui-lang` → English — never the system language, so an
+upgrade changes nothing until the owner picks one under Settings → System) and a change is a reload.
+The server has no language: tool summaries, dream step details, the quiet note and the settings
+registry stay English on the wire, byte for byte. The view re-presents them — dream steps through
+`ui/dreamWords.ts` (the same sentences in the live chips, the dream overlay and the diary book),
+settings by their stable key (`ui/settingsView.ts`), the quiet note through a phrase table shared
+with the server in `@luna/protocol` (`quietNote.ts`), so a server-side rewording fails a test instead
+of leaking English into a Chinese screen. A tool's own finish summary is shown as the tool wrote it.
+
 ## The showcase replay (v0.46.x – v0.47.x)
 
 The public demo at the GitHub Pages root is this front end — the same bundle entry, the same

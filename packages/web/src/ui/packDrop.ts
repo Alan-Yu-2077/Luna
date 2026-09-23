@@ -3,6 +3,8 @@
 // Desktop-only (needs the lunaSetup scan/install bridges); ambiguous packs (multiple candidate
 // weights) are routed to the wizard where the full picker lives.
 
+import { t, uiLang, type UiLang } from './uiCopy';
+
 export type PackScan = { gpt: string[]; sovits: string[]; refWavs: string[]; transcripts: string[] };
 export type PackPicks = { gptCkpt: string; sovitsPth: string; referenceWav: string; transcriptTxt?: string };
 
@@ -17,11 +19,12 @@ export function autoPicksFrom(scan: PackScan): PackPicks | null {
   };
 }
 
-export function swapResultText(r: Record<string, unknown>): string {
-  if (r['ok'] !== true) return typeof r['error'] === 'string' ? r['error'] : 'Voice install failed';
-  if (r['managed'] === true && r['ready'] === true) return '✓ 音色已切换 · Voice swapped';
-  if (r['managed'] === true) return '已安装 — 语音服务就绪后自动应用 · Installed, applies when the runtime is ready';
-  return '已安装 — 请手动重启你的语音服务 · Installed — restart your voice server';
+// v0.48.0: one language at a time (it used to print both side by side).
+export function swapResultText(r: Record<string, unknown>, lang: UiLang = uiLang()): string {
+  if (r['ok'] !== true) return typeof r['error'] === 'string' ? r['error'] : t('pack.failed', undefined, lang);
+  if (r['managed'] === true && r['ready'] === true) return t('pack.swapped', undefined, lang);
+  if (r['managed'] === true) return t('pack.pending', undefined, lang);
+  return t('pack.manual', undefined, lang);
 }
 
 export type PackDropBridge = {
@@ -58,26 +61,26 @@ export function mountPackDrop(doc: Document, bridge: PackDropBridge): () => void
     ev.preventDefault();
     void bridge.scanVoicePack(file).then((r) => {
       if (r['ok'] !== true || typeof r['root'] !== 'string') {
-        flash(typeof r['error'] === 'string' ? r['error'] : '不是音色包 · Not a voice pack');
+        flash(typeof r['error'] === 'string' ? r['error'] : t('pack.notPack'));
         return;
       }
       const root = r['root'];
       const scan = r['scan'] as PackScan | undefined;
       const picks = scan ? autoPicksFrom(scan) : null;
       if (!picks) {
-        flash('候选不止一个——请到设置向导里安装 · Ambiguous pack — install it from the setup wizard');
+        flash(t('pack.ambiguous'));
         return;
       }
       const preview = typeof r['transcriptPreview'] === 'string' ? r['transcriptPreview'] : '';
       show((el) => {
         const label = doc.createElement('span');
-        label.textContent = `换成这个音色包?· Swap voice to “${root.split('/').pop() ?? root}”?`;
+        label.textContent = t('pack.confirm', { name: root.split('/').pop() ?? root });
         const apply = doc.createElement('button');
         apply.type = 'button';
-        apply.textContent = '应用 · Apply';
+        apply.textContent = t('pack.apply');
         apply.addEventListener('click', () => {
           apply.disabled = true;
-          label.textContent = '安装中… · Installing…';
+          label.textContent = t('pack.installing');
           void bridge
             .installVoicePack({
               root,
@@ -93,7 +96,7 @@ export function mountPackDrop(doc: Document, bridge: PackDropBridge): () => void
         });
         const cancel = doc.createElement('button');
         cancel.type = 'button';
-        cancel.textContent = '取消 · Cancel';
+        cancel.textContent = t('pack.cancel');
         cancel.addEventListener('click', dismiss);
         el.append(label, apply, cancel);
       });

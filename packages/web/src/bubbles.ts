@@ -4,6 +4,8 @@
 // multiple message bubbles per turn each stream independently — the v0.6.2
 // reality, not the Python single-bubble merge.
 
+import { t } from './ui/uiCopy';
+
 export type ChipKind = 'tool' | 'dream' | 'proactive' | 'expression' | 'error' | 'source';
 
 // Only http(s) urls become clickable; anything else (javascript:, data:, …) falls
@@ -122,7 +124,7 @@ export class DomBubbleView implements BubbleView {
     const leaf = doc.createElement('button');
     leaf.type = 'button';
     leaf.className = 'luna-leaf';
-    leaf.setAttribute('aria-label', 'something she quietly did');
+    leaf.setAttribute('aria-label', t('chat.leaf'));
     const glyph = doc.createElement('span');
     glyph.className = 'leaf-glyph';
     glyph.textContent = '🍃';

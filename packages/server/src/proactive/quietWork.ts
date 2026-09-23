@@ -1,3 +1,4 @@
+import { QUIET_NOTE_SEPARATOR, QUIET_VERBS, unknownVerbEn } from '@luna/protocol';
 import { getMemoryDb } from '../memory/sessionStore';
 
 // Initiative 35 (v0.45.10) — quiet agency. The investigation found the culprit in one sentence:
@@ -38,18 +39,8 @@ export function isWander(toolNames: string[]): boolean {
 // One bounded human line out of the turn's tool-call list — the ledger note and, verbatim, the
 // leaf's copy (v0.45.11). Counts collapsed per verb, capped hard.
 const NOTE_MAX_CHARS = 140;
-const VERB: Record<string, (n: number) => string> = {
-  remember: (n) => (n === 1 ? 'saved a memory' : `saved ${n} memories`),
-  recall: () => 'looked through her memories',
-  web_search: () => 'searched the web',
-  web_fetch: (n) => (n === 1 ? 'read a page' : `read ${n} pages`),
-  music_now: () => 'glanced at the music',
-  music_library: () => 'browsed his listening history',
-  music_lyrics: () => 're-read the lyrics',
-  weather: () => 'checked the weather',
-  enter_dream: () => 'slipped toward a dream',
-};
-
+// v0.48.0: the phrase table lives in @luna/protocol (quietNote.ts) — the front end reads the same
+// table to re-present the note in the interface language. The English written here is unchanged.
 export function compressNote(toolNames: string[]): string {
   const counts = new Map<string, number>();
   for (const n of toolNames) {
@@ -58,9 +49,10 @@ export function compressNote(toolNames: string[]): string {
   }
   const parts: string[] = [];
   for (const [name, n] of counts) {
-    parts.push(VERB[name] ? VERB[name](n) : `used ${name}${n > 1 ? ` ×${n}` : ''}`);
+    const verb = QUIET_VERBS[name];
+    parts.push(verb ? verb.en(n) : unknownVerbEn(name, n));
   }
-  const line = parts.join(' · ');
+  const line = parts.join(QUIET_NOTE_SEPARATOR);
   return line.length > NOTE_MAX_CHARS ? `${line.slice(0, NOTE_MAX_CHARS - 1)}…` : line;
 }
 

@@ -6,3 +6,4 @@ export * from './tools';
 export * from './trace';
 export * from './utils';
 export * from './music';
+export * from './quietNote';

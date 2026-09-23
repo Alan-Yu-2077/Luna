@@ -69,6 +69,10 @@ packages/
               — `window.lunaDemo` (set by demo.html via demo/bridge.js) swaps the socket for a tape
               at app.ts's ONE client seam; `bun run build:demo` → dist-demo/ (Pages), never dist/
               audio/ physics/ tts/ + menuMode wakeSequence returnGate quietLeaf uiMode workbenchMode
+              ui/uiCopy.ts (v0.48.0) — THE interface-language table ({en,zh}, parity-tested); set once
+              in boot(), `luna:ui-lang`, default English. New visible text goes in it, not inline.
+              Server text stays English on the wire; views re-present it (dreamWords, settingsView,
+              protocol/quietNote.ts shared with the server's compressNote).
   music-cli/  vendored macOS Now-Playing observer (v0.45.0, re-vendored v0.45.8)
               adapter.ts (the ONLY file that knows media-control's JSON)
               library.ts (the ONLY file that knows the NetEase local SQLite — opened READ-ONLY)

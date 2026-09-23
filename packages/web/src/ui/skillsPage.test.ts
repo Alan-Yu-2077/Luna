@@ -44,17 +44,20 @@ describe('selfTaught', () => {
 describe('relativeTime', () => {
   const now = 10 * 24 * 60 * 60_000; // an arbitrary fixed clock
   test('the three bands read naturally', () => {
-    expect(relativeTime(now - 30_000, now)).toBe('刚刚');
-    expect(relativeTime(now - 5 * 60_000, now)).toBe('5 分钟前');
-    expect(relativeTime(now - 3 * 60 * 60_000, now)).toBe('3 小时前');
-    expect(relativeTime(now - 2 * 24 * 60 * 60_000, now)).toBe('2 天前');
+    expect(relativeTime(now - 30_000, now, 'zh')).toBe('刚刚');
+    expect(relativeTime(now - 5 * 60_000, now, 'zh')).toBe('5 分钟前');
+    expect(relativeTime(now - 3 * 60 * 60_000, now, 'zh')).toBe('3 小时前');
+    expect(relativeTime(now - 2 * 24 * 60 * 60_000, now, 'zh')).toBe('2 天前');
+    expect(relativeTime(now - 2 * 24 * 60 * 60_000, now, 'en')).toBe('2 days ago');
+    expect(relativeTime(now - 5 * 60_000, now, 'en')).toBe('5 min ago');
   });
 
   test('never used says so instead of pretending an epoch date', () => {
-    expect(relativeTime(0, now)).toBe('还没用过');
+    expect(relativeTime(0, now, 'zh')).toBe('还没用过');
+    expect(relativeTime(0, now, 'en')).toBe('never used');
   });
 
   test('a clock skew cannot produce a negative age', () => {
-    expect(relativeTime(now + 60_000, now)).toBe('刚刚');
+    expect(relativeTime(now + 60_000, now, 'zh')).toBe('刚刚');
   });
 });

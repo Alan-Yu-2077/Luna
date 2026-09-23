@@ -8,17 +8,19 @@
 // is constructed at boot, and a hot swap is complexity a single-machine app does not need — the
 // card says so plainly and offers the Restart button.
 
+import { pick, t, uiLang, type Bilingual, type UiLang } from './uiCopy';
+
 export type ModuleField = {
   key: string; // the luna.env key, exactly
-  label: string;
+  label: string | Bilingual; // technical names (Base URL, API key) stay as they are in both
   secret?: boolean;
   placeholder?: string;
 };
 
 export type ModuleCard = {
   id: 'chat' | 'embedding' | 'search' | 'weather';
-  title: string;
-  blurb: string;
+  title: Bilingual;
+  blurb: Bilingual;
   fields: ModuleField[];
   // Which probe the card runs: the chat card rides lunaSetup.probe; the rest ride probeProvider.
   probe: 'chat' | 'embedding' | 'search' | 'weather';
@@ -27,44 +29,44 @@ export type ModuleCard = {
 export const MODULE_CARDS: readonly ModuleCard[] = [
   {
     id: 'chat',
-    title: 'Chat LLM',
-    blurb: '她说话用的脑子',
+    title: { en: 'Chat LLM', zh: '聊天模型' },
+    blurb: { en: 'The mind she talks with', zh: '她说话用的脑子' },
     probe: 'chat',
     fields: [
       { key: 'ANTHROPIC_BASE_URL', label: 'Base URL', placeholder: 'https://…' },
       { key: 'ANTHROPIC_API_KEY', label: 'API key', secret: true, placeholder: 'sk-…' },
-      { key: 'LUNA_MODEL', label: 'Model' },
-      { key: 'LUNA_MAX_TOKENS', label: 'Max tokens' },
+      { key: 'LUNA_MODEL', label: { en: 'Model', zh: '模型' } },
+      { key: 'LUNA_MAX_TOKENS', label: { en: 'Max tokens', zh: '最大 token 数' } },
     ],
   },
   {
     id: 'embedding',
-    title: 'Embedding',
-    blurb: '她回忆的检索向量',
+    title: { en: 'Embedding', zh: 'Embedding' },
+    blurb: { en: 'The vectors her recall searches', zh: '她回忆的检索向量' },
     probe: 'embedding',
     fields: [
       { key: 'LUNA_EMBEDDING_BASE_URL', label: 'Base URL', placeholder: 'https://…' },
       { key: 'LUNA_EMBEDDING_API_KEY', label: 'API key', secret: true, placeholder: 'sk-…' },
-      { key: 'LUNA_EMBEDDING_MODEL', label: 'Model' },
+      { key: 'LUNA_EMBEDDING_MODEL', label: { en: 'Model', zh: '模型' } },
     ],
   },
   {
     id: 'search',
-    title: 'Web search',
-    blurb: '她查外面世界的手',
+    title: { en: 'Web search', zh: '联网搜索' },
+    blurb: { en: 'Her hand for looking things up out there', zh: '她查外面世界的手' },
     probe: 'search',
     fields: [
-      { key: 'LUNA_WEB_SEARCH_PROVIDER', label: 'Provider', placeholder: 'tavily' },
+      { key: 'LUNA_WEB_SEARCH_PROVIDER', label: { en: 'Provider', zh: '服务商' }, placeholder: 'tavily' },
       { key: 'LUNA_WEB_SEARCH_API_KEY', label: 'API key', secret: true, placeholder: 'tvly-…' },
     ],
   },
   {
     id: 'weather',
-    title: 'Weather',
-    blurb: '她看窗外的眼睛',
+    title: { en: 'Weather', zh: '天气' },
+    blurb: { en: 'Her eyes on the window', zh: '她看窗外的眼睛' },
     probe: 'weather',
     fields: [
-      { key: 'LUNA_WEATHER_PROVIDER', label: 'Provider', placeholder: 'qweather' },
+      { key: 'LUNA_WEATHER_PROVIDER', label: { en: 'Provider', zh: '服务商' }, placeholder: 'qweather' },
       { key: 'LUNA_WEATHER_API_KEY', label: 'API key', secret: true },
       { key: 'LUNA_WEATHER_API_HOST', label: 'API host', placeholder: 'xxxx.qweatherapi.com' },
     ],
@@ -73,9 +75,9 @@ export const MODULE_CARDS: readonly ModuleCard[] = [
 
 // `sk-gt6U…` — enough to recognise which key it is, never enough to retype it. An empty value reads
 // 未配置; a configured-but-unknown secret (the prefill sends names only) reads as dots.
-export function maskKey(value: string): string {
+export function maskKey(value: string, lang: UiLang = uiLang()): string {
   const v = value.trim();
-  if (v === '') return '未配置';
+  if (v === '') return t('modules.notSet', undefined, lang);
   if (v.length <= 8) return `${v[0]}…`;
   return `${v.slice(0, 7)}…${v.slice(-4)}`;
 }
@@ -143,7 +145,7 @@ export function mountModulesSection(doc: Document, bridges: ModulesBridges): HTM
   if (!bridges.prefill || !bridges.saveConfig) {
     const note = doc.createElement('p');
     note.className = 'settings-page-note';
-    note.textContent = '模块配置在桌面端编辑——浏览器里只是看看。';
+    note.textContent = t('modules.browserOnly');
     host.appendChild(note);
     return host;
   }
@@ -159,17 +161,17 @@ export function mountModulesSection(doc: Document, bridges: ModulesBridges): HTM
       const el = doc.createElement('article');
       el.className = 'module-card';
       const h = doc.createElement('h4');
-      h.textContent = card.title;
+      h.textContent = pick(card.title);
       const blurb = doc.createElement('p');
       blurb.className = 'module-blurb';
-      blurb.textContent = card.blurb;
+      blurb.textContent = pick(card.blurb);
       el.append(h, blurb);
 
       for (const f of card.fields) {
         const row = doc.createElement('label');
         row.className = 'module-field';
         const name = doc.createElement('span');
-        name.textContent = f.label;
+        name.textContent = typeof f.label === 'string' ? f.label : pick(f.label);
         const input = doc.createElement('input');
         input.type = 'text';
         if (f.placeholder) input.placeholder = f.placeholder;
@@ -207,9 +209,9 @@ export function mountModulesSection(doc: Document, bridges: ModulesBridges): HTM
       const probeBtn = doc.createElement('button');
       probeBtn.type = 'button';
       probeBtn.className = 'module-btn';
-      probeBtn.textContent = 'Probe';
+      probeBtn.textContent = t('modules.probe');
       probeBtn.addEventListener('click', () => {
-        verdict.textContent = '探测中…';
+        verdict.textContent = t('modules.probing');
         verdict.dataset['state'] = 'busy';
         const fields = probeFieldsFor(card, valueOf);
         const run =
@@ -217,29 +219,29 @@ export function mountModulesSection(doc: Document, bridges: ModulesBridges): HTM
             ? bridges.probeChat?.(fields as { baseUrl: string; apiKey: string; model: string })
             : bridges.probeProvider?.(card.probe, fields);
         void (run ?? Promise.resolve({ ok: false, error: 'no bridge' })).then((v) => {
-          verdict.textContent = v.ok ? '通 ✓' : (v.error ?? '失败');
+          verdict.textContent = v.ok ? t('modules.ok') : (v.error ?? t('modules.failed'));
           verdict.dataset['state'] = v.ok ? 'ok' : 'bad';
         });
       });
       const saveBtn = doc.createElement('button');
       saveBtn.type = 'button';
       saveBtn.className = 'module-btn primary';
-      saveBtn.textContent = 'Save';
+      saveBtn.textContent = t('modules.save');
       saveBtn.addEventListener('click', () => {
         const cardEdits = new Map([...edits].filter(([k]) => card.fields.some((f) => f.key === k)));
         const fields = changedFields([card], cardEdits);
         if (Object.keys(fields).length === 0) {
-          verdict.textContent = '没有改动。';
+          verdict.textContent = t('modules.noChange');
           verdict.dataset['state'] = 'bad';
           return;
         }
         void bridges.saveConfig!(fields).then((v) => {
           if (!v.ok) {
-            verdict.textContent = v.error ?? '保存失败';
+            verdict.textContent = v.error ?? t('modules.saveFailed');
             verdict.dataset['state'] = 'bad';
             return;
           }
-          verdict.textContent = '已保存——重启后生效。';
+          verdict.textContent = t('modules.saved');
           verdict.dataset['state'] = 'ok';
           restartRow.hidden = false;
         });
@@ -256,11 +258,11 @@ export function mountModulesSection(doc: Document, bridges: ModulesBridges): HTM
       const btn = doc.createElement('button');
       btn.type = 'button';
       btn.className = 'module-btn primary';
-      btn.textContent = 'Restart Luna';
+      btn.textContent = t('modules.restartLuna');
       btn.addEventListener('click', () => bridges.relaunch?.());
       restartRow.appendChild(btn);
     } else {
-      restartRow.textContent = '重启 Luna 后生效。';
+      restartRow.textContent = t('modules.afterRestart');
     }
     host.appendChild(restartRow);
   };

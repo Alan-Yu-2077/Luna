@@ -4,6 +4,8 @@
 // where the user is staring. Desktop-only (needs the shell's openSetup bridge); a plain browser
 // never shows it. Pure visibility rule so it unit-tests.
 
+import { t } from './uiCopy';
+
 // Only 'closed' (the reconnect loop — the backend died or never came up): showing during the
 // initial 'connecting' would flash the button on every healthy boot.
 export function reconfigureVisible(status: string, canOpenSetup: boolean): boolean {
@@ -19,8 +21,8 @@ export function mountReconfigureButton(
   const btn = doc.createElement('button');
   btn.type = 'button';
   btn.className = 'reconfigure-btn';
-  btn.textContent = '⚙ 重新配置 / Setup';
-  btn.title = 'Open the setup wizard (fix keys, model, voice)';
+  btn.textContent = t('reconfigure.label');
+  btn.title = t('reconfigure.title');
   btn.style.display = 'none';
   btn.addEventListener('click', () => openSetup());
   badge.after(btn);

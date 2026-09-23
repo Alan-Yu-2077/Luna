@@ -40,13 +40,17 @@ import { createReturnGate } from './returnGate';
 import { mountDiaryBook } from './ui/diaryBook';
 import { mountSkillsPage } from './ui/skillsPage';
 import { mountSettingsPage } from './ui/settingsPage';
+import { controllerCopy } from './ui/chipCopy';
+import { translateStep } from './ui/dreamWords';
+import { parseUiLang, readStoredUiLang, resolveUiLang, setUiLang, storeUiLang, t, uiLang, type CopyKey } from './ui/uiCopy';
 
 // Browser entry — builds the cute UI shell + the live Live2D avatar + voice, and
 // wires the v0.12.0 consumption controller plus the v0.13.4 polish chrome (dream
 // overlay, thinking indicator, mood pip, scroll pill, settings). Degrades to the
 // placeholder + silence if WebGL/audio are unavailable; chat works regardless.
 
-const STATUS_TEXT: Record<WsStatus, string> = { connecting: 'Connecting…', open: 'Online', closed: 'Reconnecting…' };
+// v0.48.0: looked up when the status changes, not at import — the language is set in boot().
+const STATUS_KEY: Record<WsStatus, CopyKey> = { connecting: 'status.connecting', open: 'status.open', closed: 'status.closed' };
 // Backend WS endpoint: fixed 127.0.0.1 + `?ws=<port>` override (isolated dev: `:5273/?ws=8888`).
 // v0.26.0: no longer derived from location.hostname — a desktop shell's origin must not decide
 // where the local server lives.
@@ -62,6 +66,13 @@ const TYPING_IDLE_MS = 1500;
 async function boot(): Promise<void> {
   const root = document.getElementById('app');
   if (!root) return;
+  // v0.48.0 (Initiative 40): the interface language, resolved ONCE before anything is built — every
+  // boot path (the setup screens and the workbench included) reads it. ?lang= → the replay's bridge
+  // → the owner's stored choice → English; never the system language, so an upgrade changes nothing
+  // until he picks one in Settings.
+  const bridgeLang = (globalThis as { lunaDemo?: { lang?: unknown } }).lunaDemo?.lang;
+  setUiLang(resolveUiLang({ search: location.search, bridgeLang, stored: readStoredUiLang() }));
+  document.documentElement.lang = uiLang() === 'zh' ? 'zh-CN' : 'en';
   // v0.28.0: first-run setup screen (desktop shell loads ?setup=1). Mount the form and stop — no
   // WS, no Live2D, no boot gate until the shell has keys and swaps this window for the app.
   // v0.35.0: the shell advertises the multi-step wizard via lunaSetup.wizard (LUNA_SETUP_WIZARD);
@@ -177,13 +188,7 @@ async function boot(): Promise<void> {
     }).then((res) => {
       gate.setSkipHidden(false);
       if (skipped) return;
-      gate.setStatus(
-        res === 'unavailable'
-          ? 'No voice service detected, entering…'
-          : res === 'failed'
-            ? 'Voice failed to load, entering muted'
-            : 'Voice ready ✓',
-      );
+      gate.setStatus(t(res === 'unavailable' ? 'boot.unavailable' : res === 'failed' ? 'boot.failed' : 'boot.ready'));
       globalThis.setTimeout(() => gate.done(), res === 'ready' ? 300 : 900);
     });
   }
@@ -246,7 +251,7 @@ async function boot(): Promise<void> {
   function setDream(on: boolean): void {
     dreaming = on;
     refs.input.disabled = on;
-    refs.input.placeholder = on ? 'Luna is dreaming…' : 'Say something to Luna…';
+    refs.input.placeholder = t(on ? 'chat.placeholderDreaming' : 'chat.placeholder');
     if (on) {
       clearTimeout(dreamHideTimer);
       dreamShownAt = Date.now();
@@ -354,6 +359,7 @@ async function boot(): Promise<void> {
       view,
       live2d,
       audio: speechGatedAudio,
+      copy: controllerCopy(),
       onSettings: (settings) =>
         renderServerSettings(refs.serverSettings, settings, (key, value) =>
           client.send({ type: 'settings.set', key, value }),
@@ -373,7 +379,8 @@ async function boot(): Promise<void> {
       // dots up for the whole turn and hides them on turn.result / proactive.finished,
       // instead of this open-only show that the first tool/message used to kill.
       if (e.type === 'dream.status') setDream(e.is_dreaming);
-      if (e.type === 'dream.step') refs.dreamCaption.textContent = e.detail || e.step;
+      // v0.48.0: the overlay caption reads as the chips and the diary book do, not as a raw detail.
+      if (e.type === 'dream.step') refs.dreamCaption.textContent = translateStep(e);
       // barge-in: a new user turn clears the beside-model stack (the window keeps the full log).
       if (e.type === 'turn.started') speechStack.clearAll();
       if (e.type === 'tool.finished' && e.result.kind === 'ok') {
@@ -383,7 +390,7 @@ async function boot(): Promise<void> {
       controller.handle(e);
     };
     const onStatus = (s: WsStatus): void => {
-      refs.statusBadge.textContent = STATUS_TEXT[s];
+      refs.statusBadge.textContent = t(STATUS_KEY[s]);
       refs.statusBadge.dataset['status'] = s;
       // v0.35.6: a broken config (dead backend, reconnect loop) surfaces the way back to the
       // wizard right on the badge — no hunting through Settings while nothing works.
@@ -470,7 +477,7 @@ async function boot(): Promise<void> {
     const gen = ++collapseGen;
     clearTimeout(collapseTimer);
     refs.collapseBtn.textContent = isCollapsed ? '⌃' : '⌄';
-    refs.collapseBtn.setAttribute('aria-label', isCollapsed ? 'Expand chat' : 'Collapse chat');
+    refs.collapseBtn.setAttribute('aria-label', t(isCollapsed ? 'chat.expand' : 'chat.collapse'));
 
     if (!animate) {
       root.classList.remove('collapsing');
@@ -688,6 +695,32 @@ async function boot(): Promise<void> {
     });
   }
 
+  // v0.48.0: the interface language. The DOM is built once per boot, so a change takes a reload — safe
+  // from the lobby (the backend is not even connected) and in the replay (the language picks the
+  // tape too); mid-conversation it is saved and applies when she is next opened, never cutting her off.
+  refs.languageSelect.addEventListener('change', () => {
+    const next = parseUiLang(refs.languageSelect.value);
+    if (!next || next === uiLang()) return;
+    storeUiLang(next);
+    if (!root.classList.contains('menu-mode') && !demo) {
+      const row = refs.languageSelect.closest('label');
+      if (row && !row.nextElementSibling?.classList.contains('language-later')) {
+        const later = document.createElement('div');
+        later.className = 'hint language-later';
+        later.textContent = t('settings.languageLater');
+        row.after(later);
+      }
+      return;
+    }
+    const params = new URLSearchParams(location.search);
+    if (params.has('lang') || demo) {
+      params.set('lang', next);
+      location.search = `?${params.toString()}`;
+    } else {
+      location.reload();
+    }
+  });
+
   // v0.43.7: leaving for the workbench is a full navigation (it is a different page mode), so the
   // current URL is stashed first — the bench's "← Back" restores the exact instance.
   refs.workbenchBtn.addEventListener('click', () => {
@@ -724,11 +757,11 @@ async function boot(): Promise<void> {
     const row = document.createElement('label');
     row.className = 'setting-row rerun-setup-row';
     const name = document.createElement('span');
-    name.textContent = 'Setup wizard';
+    name.textContent = t('settings.setupWizard');
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'setting-reset';
-    btn.textContent = 'Re-run…';
+    btn.textContent = t('settings.rerun');
     btn.addEventListener('click', () => openSetup());
     row.append(name, btn);
     petRow.after(row);
@@ -858,7 +891,7 @@ async function boot(): Promise<void> {
     const returnBtn = document.createElement('button');
     returnBtn.type = 'button';
     returnBtn.className = 'menu-return-btn';
-    returnBtn.textContent = '← Menu';
+    returnBtn.textContent = t('nav.menu');
     returnBtn.addEventListener('click', () => {
       returnGate.request(() => {
         clearTimeout(swapTimer);
@@ -890,12 +923,14 @@ async function boot(): Promise<void> {
 function applyEmptyState(stage: HTMLElement, state: 'none' | 'webgl-off' | 'load-failed'): void {
   const ph = stage.querySelector('.model-placeholder');
   if (!ph) return;
-  const copy: Record<typeof state, [string, string]> = {
-    none: ['No avatar installed', 'Drop a Live2D model in public/models/ — see docs/SETUP.md'],
-    'webgl-off': ['WebGL unavailable', "This browser can't render the avatar"],
-    'load-failed': ['Model failed to load', 'Check the model files in public/models/'],
+  const copy: Record<typeof state, [CopyKey, CopyKey]> = {
+    none: ['stage.none', 'stage.noneSub'],
+    'webgl-off': ['stage.webglOff', 'stage.webglOffSub'],
+    'load-failed': ['stage.loadFailed', 'stage.loadFailedSub'],
   };
-  const [labelText, subText] = copy[state];
+  const [labelKey, subKey] = copy[state];
+  const labelText = t(labelKey);
+  const subText = t(subKey);
   const label = ph.querySelector('.label');
   const sub = ph.querySelector('.sub');
   if (label) label.textContent = labelText;
@@ -909,7 +944,7 @@ function applyEmptyState(stage: HTMLElement, state: 'none' | 'webgl-off' | 'load
     const btn = ph.ownerDocument.createElement('button');
     btn.className = 'choose-model-btn';
     btn.type = 'button';
-    btn.textContent = 'Choose model folder…';
+    btn.textContent = t('stage.chooseFolder');
     btn.addEventListener('click', () => void chooseModel());
     ph.appendChild(btn);
   }

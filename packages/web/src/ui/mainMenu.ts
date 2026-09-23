@@ -1,5 +1,6 @@
 import type { Live2DSink } from '../sinks';
 import { LUNA_VERSION } from '../version';
+import { t } from './uiCopy';
 
 // v0.44.0 — the main menu, her front door. Opening the app no longer drops you mid-conversation:
 // she sleeps on the right (pure front-end state, the backend is not even connected), and the left
@@ -22,13 +23,13 @@ export type MenuItem = {
 // tab's close button is not ours to duplicate.
 export function menuItems(opts: { hasQuit: boolean; dreamEnabled: boolean }): MenuItem[] {
   const items: MenuItem[] = [
-    { id: 'talk', label: 'Talk', primary: true },
-    { id: 'diary', label: 'Diary', primary: true },
-    { id: 'skills', label: 'Skills', primary: true },
-    { id: 'dream', label: 'Dream', primary: true, disabled: !opts.dreamEnabled },
-    { id: 'settings', label: 'Settings', primary: false },
+    { id: 'talk', label: t('menu.talk'), primary: true },
+    { id: 'diary', label: t('menu.diary'), primary: true },
+    { id: 'skills', label: t('menu.skills'), primary: true },
+    { id: 'dream', label: t('menu.dream'), primary: true, disabled: !opts.dreamEnabled },
+    { id: 'settings', label: t('menu.settings'), primary: false },
   ];
-  if (opts.hasQuit) items.push({ id: 'quit', label: 'Quit', primary: false });
+  if (opts.hasQuit) items.push({ id: 'quit', label: t('menu.quit'), primary: false });
   return items;
 }
 
@@ -101,7 +102,7 @@ export function mountMainMenu(
   const menu = doc.createElement('nav');
   menu.className = 'main-menu';
   menu.style.setProperty('--spring-ease', springLinear());
-  menu.setAttribute('aria-label', 'Main menu');
+  menu.setAttribute('aria-label', t('menu.aria'));
 
   const mark = doc.createElement('div');
   mark.className = 'menu-mark';
@@ -172,20 +173,17 @@ export function mountMainMenu(
     const back = doc.createElement('button');
     back.type = 'button';
     back.className = 'menu-page-back';
-    back.textContent = '← Menu';
+    back.textContent = t('nav.menu');
     back.addEventListener('click', returnToMenu);
     const title = doc.createElement('h2');
-    title.textContent = id === 'diary' ? 'Diary' : id === 'skills' ? 'Skills' : 'Settings';
+    title.textContent = t(id === 'diary' ? 'menu.diary' : id === 'skills' ? 'menu.skills' : 'menu.settings');
     page.append(back, title);
     const body = deps.pageBody?.(id) ?? null;
     if (body) page.appendChild(body);
     else {
       const ph = doc.createElement('p');
       ph.className = 'menu-page-placeholder';
-      ph.textContent =
-        id === 'diary' ? 'Her diary opens here soon.'
-        : id === 'skills' ? 'Her skills gather here soon.'
-        : 'Settings assemble here soon.';
+      ph.textContent = t(id === 'diary' ? 'menu.soon.diary' : id === 'skills' ? 'menu.soon.skills' : 'menu.soon.settings');
       page.appendChild(ph);
     }
     root.appendChild(page);

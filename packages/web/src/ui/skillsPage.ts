@@ -1,4 +1,5 @@
 import { DataSkills, type SkillRecord } from '@luna/protocol';
+import { t, uiLang, type UiLang } from './uiCopy';
 
 // v0.44.4 — the skills page. The star of this page is not the body (that is an operating manual she
 // wrote for herself) but the GROWTH RECORD: what she learned, how often it gets used, when last —
@@ -20,15 +21,15 @@ export function selfTaught(source: string): boolean {
   return source === 'saved' || source === 'dream';
 }
 
-export function relativeTime(ms: number, now: number): string {
-  if (ms <= 0) return '还没用过';
+export function relativeTime(ms: number, now: number, lang: UiLang = uiLang()): string {
+  if (ms <= 0) return t('skills.neverUsed', undefined, lang);
   const diff = Math.max(0, now - ms);
   const minutes = Math.floor(diff / 60_000);
-  if (minutes < 1) return '刚刚';
-  if (minutes < 60) return `${minutes} 分钟前`;
+  if (minutes < 1) return t('time.justNow', undefined, lang);
+  if (minutes < 60) return t('time.min', { n: minutes }, lang);
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} 小时前`;
-  return `${Math.floor(hours / 24)} 天前`;
+  if (hours < 24) return t('time.hr', { n: hours }, lang);
+  return t('time.days', { n: Math.floor(hours / 24) }, lang);
 }
 
 // v0.46.0: one-argument fetch shape (see diaryBook.ts) — the showcase injects a static one.
@@ -47,7 +48,7 @@ export function mountSkillsPage(doc: Document, fetchFn: FetchLike = (u) => fetch
     .catch(() => {
       const err = doc.createElement('p');
       err.className = 'skills-empty';
-      err.textContent = '现在取不到她的技能——她的后端没有在跑。';
+      err.textContent = t('skills.unreachable');
       page.appendChild(err);
     });
   return page;
@@ -57,7 +58,7 @@ function assemble(doc: Document, page: HTMLElement, groups: SkillGroups): void {
   if (groups.active.length === 0 && groups.retired.length === 0) {
     const empty = doc.createElement('p');
     empty.className = 'skills-empty';
-    empty.textContent = '她还没攒下自己的技能。';
+    empty.textContent = t('skills.empty');
     page.appendChild(empty);
     return;
   }
@@ -78,8 +79,8 @@ function assemble(doc: Document, page: HTMLElement, groups: SkillGroups): void {
     const meta = doc.createElement('span');
     meta.className = 'skill-meta';
     meta.textContent = retired
-      ? `已退役 · ${relativeTime(s.deprecated_ms, Date.now()).replace('还没用过', '')}`
-      : `用过 ${s.used_count} 次 · ${relativeTime(s.last_used_ms, Date.now())}`;
+      ? t('skills.retiredAt', { when: relativeTime(s.deprecated_ms, Date.now()) })
+      : t('skills.used', { n: s.used_count, when: relativeTime(s.last_used_ms, Date.now()) });
     head.append(name, desc, meta);
     const body = doc.createElement('pre');
     body.className = 'skill-body';
@@ -104,7 +105,7 @@ function assemble(doc: Document, page: HTMLElement, groups: SkillGroups): void {
   if (groups.retired.length > 0) {
     const h = doc.createElement('h3');
     h.className = 'skills-retired-head';
-    h.textContent = '退役';
+    h.textContent = t('skills.retiredHead');
     page.appendChild(h);
     for (const s of groups.retired) page.appendChild(card(s, true));
   }

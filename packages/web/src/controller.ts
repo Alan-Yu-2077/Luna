@@ -17,6 +17,30 @@ export type ControllerDeps = {
   audio: AudioSink;
   // v0.27.1: server-driven settings panel — pushed on connect + after every accepted set.
   onSettings?: (settings: Setting[]) => void;
+  // v0.48.0: the words the controller puts around server text on chips. The default is the legacy
+  // English (tests pin it); the app passes the interface-language copy (ui/chipCopy.ts). The tool
+  // START chip stays `🔧 <tool>…` in every language — the view parses it into its label.
+  copy?: ControllerCopy;
+};
+
+export type ControllerCopy = {
+  done: string;
+  failed: (message: string) => string;
+  dreaming: (currentStep: string | null) => string;
+  awake: string;
+  dreamStep: (step: { step: string; status: 'ok' | 'skipped' | 'failed'; detail: string }) => string;
+  quietNote: (note: string) => string;
+  quietMoment: string;
+};
+
+export const LEGACY_COPY: ControllerCopy = {
+  done: 'done',
+  failed: (m) => `Failed: ${m}`,
+  dreaming: (step) => `🌙 dreaming${step ? ` · ${step}` : ''}`,
+  awake: '☀️ awake',
+  dreamStep: (s) => `🌙 ${s.step} → ${s.status}${s.detail ? ` · ${s.detail}` : ''}`,
+  quietNote: (note) => `🍃 ${note}`,
+  quietMoment: '(a quiet moment)',
 };
 
 // synthetic bubble id for text-mode (LUNA_MESSAGE_TOOL=0) reply.token streaming
@@ -31,6 +55,7 @@ function proactiveGlyph(cycleId: string): string {
 }
 
 export function createController(deps: ControllerDeps): { handle: (e: ServerEvent) => void } {
+  const copy = deps.copy ?? LEGACY_COPY;
   // call_ids that opened as message-tool bubbles (vs other tools → chips)
   const messageBubbles = new Set<string>();
   let textStreaming = false;
@@ -178,8 +203,8 @@ export function createController(deps: ControllerDeps): { handle: (e: ServerEven
           return;
         }
         // a non-message tool
-        if (e.result.kind === 'ok') deps.view.chip('tool', `🔧 ${e.result.summary || 'done'}`);
-        else deps.view.chip('error', `Failed: ${e.result.message}`);
+        if (e.result.kind === 'ok') deps.view.chip('tool', `🔧 ${e.result.summary || copy.done}`);
+        else deps.view.chip('error', copy.failed(e.result.message));
         reflectTyping();
         return;
       }
@@ -205,17 +230,12 @@ export function createController(deps: ControllerDeps): { handle: (e: ServerEven
         return;
 
       case 'dream.status':
-        deps.view.chip(
-          'dream',
-          e.is_dreaming
-            ? `🌙 dreaming${e.current_step ? ` · ${e.current_step}` : ''}`
-            : '☀️ awake',
-        );
+        deps.view.chip('dream', e.is_dreaming ? copy.dreaming(e.current_step) : copy.awake);
         deps.live2d.setState(e.is_dreaming ? 'sleeping' : 'neutral');
         return;
 
       case 'dream.step':
-        deps.view.chip('dream', `🌙 ${e.step} → ${e.status}${e.detail ? ` · ${e.detail}` : ''}`);
+        deps.view.chip('dream', copy.dreamStep(e));
         return;
 
       case 'proactive.started':
@@ -241,9 +261,9 @@ export function createController(deps: ControllerDeps): { handle: (e: ServerEven
           if (e.quiet_note && deps.view.leaf) {
             deps.view.leaf(e.quiet_note);
           } else if (e.quiet_note) {
-            deps.view.chip('proactive', `🍃 ${e.quiet_note}`);
+            deps.view.chip('proactive', copy.quietNote(e.quiet_note));
           } else {
-            deps.view.chip('proactive', `${proactiveGlyph(e.cycle_id)} (a quiet moment)`);
+            deps.view.chip('proactive', `${proactiveGlyph(e.cycle_id)} ${copy.quietMoment}`);
           }
         }
         return;

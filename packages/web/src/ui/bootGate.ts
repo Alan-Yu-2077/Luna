@@ -3,6 +3,8 @@
 // fails). Degrades fast (no block) when no voice sidecar is configured, so running
 // the web standalone (or voiceless) still works.
 
+import { t, type CopyKey } from './uiCopy';
+
 export type BootGate = {
   setStatus(text: string): void;
   done(): void;
@@ -21,11 +23,11 @@ export function createBootGate(root: HTMLElement): BootGate {
   card.innerHTML =
     '<div class="boot-moon">🌙</div>' +
     '<div class="boot-spinner"><i></i><i></i><i></i></div>' +
-    '<div class="boot-title">Luna is waking up…</div>' +
-    '<div class="boot-sub">First launch loads the voice model, one moment…</div>' +
-    '<div class="boot-status">Connecting…</div>' +
+    `<div class="boot-title">${t('boot.title')}</div>` +
+    `<div class="boot-sub">${t('boot.sub')}</div>` +
+    `<div class="boot-status">${t('status.connecting')}</div>` +
     '<div class="boot-elapsed"></div>' +
-    '<button class="boot-skip" type="button">Skip · enter muted</button>';
+    `<button class="boot-skip" type="button">${t('boot.skip')}</button>`;
   el.appendChild(card);
   root.appendChild(el);
 
@@ -35,7 +37,7 @@ export function createBootGate(root: HTMLElement): BootGate {
 
   const start = performance.now();
   const timer = globalThis.setInterval(() => {
-    elapsedEl.textContent = `elapsed ${Math.round((performance.now() - start) / 1000)}s`;
+    elapsedEl.textContent = t('boot.elapsed', { n: Math.round((performance.now() - start) / 1000) });
   }, 1000);
 
   return {
@@ -54,16 +56,17 @@ export function createBootGate(root: HTMLElement): BootGate {
   };
 }
 
-const TTS_STATE_LABEL: Record<string, string> = {
-  idle: 'Preparing voice…',
-  starting: 'Starting the voice engine…',
-  spawning: 'Starting the voice engine…',
-  booting: 'Starting the voice engine…',
-  restarting: 'Voice engine restarting…',
-  loading: 'Loading the voice model…',
-  loading_model: 'Loading the voice model…',
-  warming: 'Loading the voice model…',
-  ready: 'Voice ready ✓',
+// v0.48.0: copy keys, read when a state arrives (the language is set in boot(), after import).
+const TTS_STATE_LABEL: Record<string, CopyKey> = {
+  idle: 'boot.idle',
+  starting: 'boot.starting',
+  spawning: 'boot.starting',
+  booting: 'boot.starting',
+  restarting: 'boot.restarting',
+  loading: 'boot.loading',
+  loading_model: 'boot.loading',
+  warming: 'boot.loading',
+  ready: 'boot.ready',
 };
 
 type HealthShape = { backend?: { ready?: boolean; state?: string } };
@@ -103,7 +106,7 @@ export async function warmUpTts(
   if (isReady(j0)) return 'ready'; // already warm (e.g. a reload)
   let lastState = j0?.backend?.state;
   if (lastState === 'gave-up') return 'failed'; // the managed child crash-looped out — fail fast
-  onStatus(TTS_STATE_LABEL[lastState ?? 'idle'] ?? 'Preparing voice…', lastState);
+  onStatus(t(TTS_STATE_LABEL[lastState ?? 'idle'] ?? 'boot.idle'), lastState);
 
   // Resolve as soon as EITHER /health reports ready (the model is loaded — don't
   // wait for the warmup synth to finish) OR the warmup synth returns. Firing
@@ -133,7 +136,7 @@ export async function warmUpTts(
             finish('failed'); // supervisor exhausted its restarts — don't burn the deadline
             return;
           }
-          if (st) onStatus(TTS_STATE_LABEL[st] ?? `Voice engine: ${st}…`, st);
+          if (st) onStatus(TTS_STATE_LABEL[st] ? t(TTS_STATE_LABEL[st]) : `Voice engine: ${st}…`, st);
           if (isReady(j)) finish('ready');
         } catch {
           /* transient — keep polling */

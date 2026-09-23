@@ -21,3 +21,20 @@ describe('toolCardLabel', () => {
       'edited memory/recall.ts (1 replacements)',
     ));
 });
+
+describe('v0.48.0 — every tool, both languages', () => {
+  test('the tools that used to leak their raw id now carry a label', () => {
+    for (const name of ['weather', 'music_now', 'music_control', 'music_library', 'music_lyrics', 'time_now'] as const) {
+      expect(toolCardLabel(`🔧 ${name}…`, 'en')).not.toBe(name);
+      expect(toolCardLabel(`🔧 ${name}…`, 'zh')).not.toBe(name);
+    }
+  });
+  test('the start label speaks the interface language; the finish summary stays the tool’s own words', () => {
+    expect(toolCardLabel('🔧 recall…', 'zh')).toBe('翻了翻记忆 🔖');
+    expect(toolCardLabel('🔧 3 hits', 'zh')).toBe('3 hits');
+    expect(toolCardLabel('🔧 tests pass (2110)', 'zh')).toBe('tests pass (2110)');
+  });
+  test('remember no longer wears the second-thought glyph', () => {
+    expect(toolCardLabel('🔧 remember…', 'en')).not.toContain('💭');
+  });
+});

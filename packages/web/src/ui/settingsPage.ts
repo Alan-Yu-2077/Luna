@@ -1,6 +1,7 @@
 import type { LayoutRefs } from './layout';
 import { mountModulesSection, type ModulesBridges } from './modulesConfig';
 import { mountPersonaSection } from './personaEditor';
+import { pick, t, type Bilingual } from './uiCopy';
 
 // v0.44.5 — settings, reorganised by WHICH PART OF HER a control touches. The old VTS side panel
 // grew three tabs and a dozen switches; finding one meant guessing. Five categories now, entered
@@ -20,18 +21,20 @@ export type SettingsCategoryId =
   | 'modules'
   | 'system';
 
-export type SettingsCategory = { id: SettingsCategoryId; label: string; blurb: string };
+// v0.48.0: label and blurb in both interface languages (the page used to mix an English label with a
+// Chinese blurb); read with pick() when the page is built.
+export type SettingsCategory = { id: SettingsCategoryId; label: Bilingual; blurb: Bilingual };
 
 export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
-  { id: 'voice', label: 'Voice', blurb: '她的声音' },
-  { id: 'expression', label: 'Expression & Motion', blurb: '她的表情与动作' },
-  { id: 'appearance', label: 'Appearance', blurb: '她的样子与这间屋子' },
-  { id: 'behaviour', label: 'Behaviour', blurb: '她自己的行为' },
+  { id: 'voice', label: { en: 'Voice', zh: '声音' }, blurb: { en: 'Her voice', zh: '她的声音' } },
+  { id: 'expression', label: { en: 'Expression & Motion', zh: '表情与动作' }, blurb: { en: 'How her face and body move', zh: '她的表情与动作' } },
+  { id: 'appearance', label: { en: 'Appearance', zh: '外观' }, blurb: { en: 'How she looks, and the room she is in', zh: '她的样子与这间屋子' } },
+  { id: 'behaviour', label: { en: 'Behaviour', zh: '行为' }, blurb: { en: 'What she does on her own', zh: '她自己的行为' } },
   // v0.44.6: persona is its own category (it is ABOUT her, not about widgets), and the four module
   // cards get their own too — four cards under System would have buried both.
-  { id: 'persona', label: 'Persona', blurb: '她是谁' },
-  { id: 'modules', label: 'Modules', blurb: '接进来的能力' },
-  { id: 'system', label: 'System', blurb: '底层与工具' },
+  { id: 'persona', label: { en: 'Persona', zh: '人格' }, blurb: { en: 'Who she is', zh: '她是谁' } },
+  { id: 'modules', label: { en: 'Modules', zh: '模块' }, blurb: { en: 'The abilities plugged into her', zh: '接进来的能力' } },
+  { id: 'system', label: { en: 'System', zh: '系统' }, blurb: { en: 'Under the hood, and tools', zh: '底层与工具' } },
 ];
 
 // The reconciliation artifact (the version's core risk is losing a switch in the move): every
@@ -52,7 +55,8 @@ export const SETTINGS_IA: Record<SettingsCategoryId, readonly string[]> = {
   behaviour: [],
   persona: [], // HTTP-backed (the soul endpoints), not localStorage
   modules: [], // luna.env-backed through the desktop bridge, not localStorage
-  system: [], // the server registry card is WS-driven, not localStorage-backed
+  // The server registry card is WS-driven, not localStorage-backed; v0.48.0's interface language is.
+  system: ['luna:ui-lang'],
 };
 
 export function iaKeys(): string[] {
@@ -78,7 +82,7 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
     b.type = 'button';
     b.className = 'settings-page-cat';
     b.dataset['cat'] = cat.id;
-    b.textContent = cat.label;
+    b.textContent = pick(cat.label);
     rail.appendChild(b);
     railBtns.push(b);
 
@@ -86,10 +90,10 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
     sec.className = 'settings-page-section';
     sec.dataset['cat'] = cat.id;
     const h = doc.createElement('h3');
-    h.textContent = cat.label;
+    h.textContent = pick(cat.label);
     const blurb = doc.createElement('p');
     blurb.className = 'settings-page-blurb';
-    blurb.textContent = cat.blurb;
+    blurb.textContent = pick(cat.blurb);
     sec.append(h, blurb);
     bodyHost.appendChild(sec);
     sections.set(cat.id, sec);
@@ -111,17 +115,22 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
   adopt('voice', rowOf(refs.ttsToggle));
   const health = doc.createElement('p');
   health.className = 'settings-voice-health';
-  health.textContent = '声音服务:查看中…';
+  health.textContent = t('settings.health.checking');
   sections.get('voice')?.appendChild(health);
   void fetch('/api/tts/health')
     .then(async (r) => {
       const body = (await r.json().catch(() => null)) as { backend?: { state?: string } } | null;
       const state = body?.backend?.state ?? (r.ok ? 'ready' : 'down');
-      health.textContent =
-        state === 'ready' ? '声音服务:在跑 ✓' : state === 'starting' || state === 'restarting' ? '声音服务:正在启动…' : '声音服务:没有在跑';
+      health.textContent = t(
+        state === 'ready'
+          ? 'settings.health.ready'
+          : state === 'starting' || state === 'restarting'
+            ? 'settings.health.starting'
+            : 'settings.health.down',
+      );
     })
     .catch(() => {
-      health.textContent = '声音服务:没有在跑';
+      health.textContent = t('settings.health.down');
     });
 
   // ── Expression & Motion — the seven performance controls, in the PERF_FLAGS order ──
@@ -147,7 +156,7 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
   // surfacing them is its own decision, not a side effect of moving furniture. ──
   const note = doc.createElement('p');
   note.className = 'settings-page-note';
-  note.textContent = '她的主动行为(何时来找你、多久说一次)暂时还住在配置文件里——搬进这里是之后的一版。';
+  note.textContent = t('settings.behaviourNote');
   sections.get('behaviour')?.appendChild(note);
 
   // ── Persona (v0.44.6) — the soul endpoints; the self-edit firewall lives in the tool layer. ──
@@ -174,6 +183,7 @@ export function mountSettingsPage(doc: Document, refs: LayoutRefs): HTMLElement 
   );
 
   // ── System — the server registry card is adopted whole; its render pipeline is untouched. ──
+  adopt('system', rowOf(refs.languageSelect));
   adopt('system', refs.serverSettings);
   const wbRow = doc.createElement('div');
   wbRow.className = 'settings-page-tools';

@@ -31,13 +31,14 @@ describe('autoPicksFrom — single-candidate packs auto-pick, ambiguity routes t
 
 describe('swapResultText', () => {
   test('managed + ready → swapped', () => {
-    expect(swapResultText({ ok: true, managed: true, ready: true })).toContain('已切换');
+    expect(swapResultText({ ok: true, managed: true, ready: true }, 'zh')).toContain('已切换');
+    expect(swapResultText({ ok: true, managed: true, ready: true }, 'en')).toBe('✓ Voice swapped');
   });
   test('managed + not ready → deferred apply', () => {
-    expect(swapResultText({ ok: true, managed: true, ready: false })).toContain('自动应用');
+    expect(swapResultText({ ok: true, managed: true, ready: false }, 'zh')).toContain('自动应用');
   });
   test('legacy BYO → manual restart hint', () => {
-    expect(swapResultText({ ok: true })).toContain('重启');
+    expect(swapResultText({ ok: true }, 'zh')).toContain('重启');
   });
   test('failure surfaces the error', () => {
     expect(swapResultText({ ok: false, error: 'no space' })).toBe('no space');

@@ -10,8 +10,9 @@ describe('maskKey — recognisable, never retypeable (v0.44.6)', () => {
     expect(maskKey('abc')).toBe('a…');
   });
   test('empty reads 未配置, not an empty mask', () => {
-    expect(maskKey('')).toBe('未配置');
-    expect(maskKey('   ')).toBe('未配置');
+    expect(maskKey('', 'zh')).toBe('未配置');
+    expect(maskKey('', 'en')).toBe('not set');
+    expect(maskKey('   ', 'zh')).toBe('未配置');
   });
 });
 

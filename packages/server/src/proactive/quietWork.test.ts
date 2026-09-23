@@ -68,6 +68,19 @@ describe('compressNote', () => {
     expect(n).toBe('searched the web · read 2 pages · saved a memory');
   });
 
+  // v0.48.0: the table moved into @luna/protocol; every phrase the server wrote before must come out
+  // byte-identical (the ledger and the leaf store it in English, and the front end parses it back).
+  test('the shared table writes exactly the English the server always wrote', () => {
+    expect(compressNote(['remember', 'remember', 'remember'])).toBe('saved 3 memories');
+    expect(compressNote(['recall'])).toBe('looked through her memories');
+    expect(compressNote(['web_fetch'])).toBe('read a page');
+    expect(compressNote(['music_now', 'music_library', 'music_lyrics'])).toBe(
+      'glanced at the music · browsed his listening history · re-read the lyrics',
+    );
+    expect(compressNote(['weather', 'enter_dream'])).toBe('checked the weather · slipped toward a dream');
+    expect(compressNote(['plan', 'plan'])).toBe('used plan ×2');
+  });
+
   test('unknown tools degrade to a generic verb; the line is hard-capped', () => {
     expect(compressNote(['plan'])).toBe('used plan');
     const long = compressNote(Array.from({ length: 30 }, (_, i) => `tool_${i}`));
