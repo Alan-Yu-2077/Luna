@@ -35,6 +35,8 @@ export type SinkCall =
 export type StageCue =
   | { kind: 'skip'; label: string; ms: number }
   | { kind: 'music'; track: string | null }
+  // v0.48.3: the visitor presses play in "his" player — the director gates the next line on it.
+  | { kind: 'press_play'; track: string; label: string }
   | { kind: 'await'; what: 'wake' };
 
 export type Cue =
@@ -251,6 +253,11 @@ class RunBuilder {
       case 'music':
         this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'music', track: beat.track } });
         return;
+      case 'press_play':
+        // After her last word lands; the run then ends and the next line arms behind the prompt.
+        this.settle();
+        this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'press_play', track: beat.track, label: beat.label } });
+        return;
       case 'dream': {
         if (!this.dream) throw new Error('a dream beat needs the script-level dream block');
         this.settle();
@@ -291,12 +298,12 @@ class RunBuilder {
 }
 
 // Is there another spoken/tool frame in this turn after beat `i`? Pauses and choreography are
-// transparent; a user beat, a waking, a curtain or a dream closes the turn.
+// transparent; a user beat, a waking, a curtain, a dream or his hand on the player closes the turn.
 export function moreInTurn(beats: readonly Beat[], i: number): boolean {
   for (let j = i + 1; j < beats.length; j++) {
     const k = beats[j]?.kind;
     if (k === 'luna' || k === 'tool') return true;
-    if (k === 'user' || k === 'proactive' || k === 'skip' || k === 'dream') return false;
+    if (k === 'user' || k === 'proactive' || k === 'skip' || k === 'dream' || k === 'press_play') return false;
   }
   return false;
 }

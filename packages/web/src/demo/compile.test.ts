@@ -287,6 +287,40 @@ describe('music — the turntable', () => {
   });
 });
 
+// v0.48.3 — his hand on the player: the prompt comes after her last word, and the turn is over.
+describe('press_play — the player prompt', () => {
+  test('closes the turn, waits for her voice, and leaves the next line to the director', () => {
+    const compiled = compileScene(
+      scene([
+        { kind: 'user', text: 'u' },
+        { kind: 'luna', text: 'aa' },
+        { kind: 'press_play', track: 'hw', label: 'Open the player' },
+        { kind: 'user', text: 'it is on' },
+        { kind: 'luna', text: 'bb' },
+      ]),
+      () => 4000,
+    );
+    const cues = compiled.turns[0]!.run.cues;
+    const stage = cues.find((c) => c.kind === 'stage')!;
+    expect(stage.stage).toEqual({ kind: 'press_play', track: 'hw', label: 'Open the player' });
+    expect(stage.at).toBe(PACING.thinkMs + PACING.chunkMs + 4000); // after the voice, not under it
+    const resultIdx = cues.findIndex((c) => c.kind === 'frame' && c.frame.type === 'turn.result');
+    expect(resultIdx).toBeLessThan(cues.indexOf(stage));
+    expect(compiled.turns[0]!.run.endMs).toBe(stage.at);
+    expect(compiled.turns.map((t) => t.userText)).toEqual(['u', 'it is on']);
+    expect(moreInTurn([{ kind: 'luna', text: 'a' }, { kind: 'press_play', track: 'hw', label: 'x' }], 0)).toBe(false);
+  });
+
+  test('the schema refuses a prompt for a track the shelf does not have', () => {
+    const bad = {
+      version: 1,
+      music: { tracks: [{ id: 'a', title: 'A', artist: 'B', album: '', duration: 10 }] },
+      scenes: [{ id: 'a', title: 'A', beats: [{ kind: 'press_play', track: 'zzz', label: 'x' }] }],
+    };
+    expect(DemoScript.safeParse(bad).success).toBe(false);
+  });
+});
+
 describe('dream — the block and the beat', () => {
   const block = {
     steps: [

@@ -24,6 +24,9 @@ export type Director = {
   sceneStart(index: number, title: string): void;
   sceneEnd(index: number, hasNext: boolean): void;
   skip(label: string, ms: number): void;
+  // v0.48.3: his hand on the player — the room dims like the time curtain, an app icon waits for
+  // the visitor's click; the click starts the track (`onPlay`) and only then is the next line typed.
+  pressPlay(label: string, onPlay: () => void): void;
   dispose(): void;
 };
 
@@ -84,6 +87,24 @@ const STYLE = `
 @keyframes demo-sweep-hour { from { transform: rotate(0deg); } to { transform: rotate(60deg); } }
 .demo-curtain .demo-curtain-label { font-size: 16px; letter-spacing: 0.08em; color: #c9d4e3; }
 
+.demo-play { gap: 16px; }
+body:has(.menu-mode) .demo-play { display: none; }
+.demo-play .demo-play-app {
+  position: relative; width: 104px; height: 104px; border: none; border-radius: 28px; padding: 0; cursor: pointer;
+  background: #d43c33; box-shadow: 0 10px 30px rgba(212, 60, 51, 0.35); transition: transform 0.15s ease;
+}
+.demo-play .demo-play-app:hover { transform: scale(1.05); }
+.demo-play .demo-play-app:active { transform: scale(0.97); }
+.demo-play .demo-play-app svg { width: 60px; height: 60px; }
+.demo-play .demo-play-app::after {
+  content: ''; position: absolute; inset: -8px; border-radius: 34px; border: 2px solid rgba(212, 60, 51, 0.6);
+  animation: demo-play-ring 1.6s ease-out infinite;
+}
+@keyframes demo-play-ring { from { transform: scale(0.94); opacity: 1; } to { transform: scale(1.18); opacity: 0; } }
+.demo-play .demo-play-name { font-size: 13px; letter-spacing: 0.06em; color: #e8edf5; }
+.demo-play .demo-curtain-label { max-width: min(460px, calc(100vw - 48px)); text-align: center; line-height: 1.5; }
+.demo-play .demo-play-hint { font-size: 12px; letter-spacing: 0.08em; color: #8fa6bf; }
+
 .demo-guide {
   position: fixed; inset: 0; z-index: 900; display: flex; align-items: center; justify-content: center;
   padding: 24px; background: rgba(20, 26, 38, 0.58); backdrop-filter: blur(3px);
@@ -113,6 +134,12 @@ const STYLE = `
 .demo-guide .demo-guide-lang:hover { transform: translateY(-2px); }
 .demo-guide .demo-guide-lang strong { display: block; font-size: 22px; margin-bottom: 4px; }
 .demo-guide .demo-guide-lang span { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+.demo-guide .demo-guide-lang { position: relative; }
+.demo-guide .demo-guide-lang.recommended { box-shadow: 0 0 0 2px var(--sky-deep), 0 3px 0 rgba(90, 120, 160, 0.2); }
+.demo-guide .demo-guide-badge {
+  position: absolute; top: -10px; right: 14px; font-style: normal; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--sky-text); color: #fff;
+}
 `;
 
 let styleMounted = false;
@@ -178,6 +205,27 @@ export function mountDirector(
   doc.body.appendChild(curtain);
   let curtainTimer: ReturnType<typeof setTimeout> | undefined;
 
+  // The player prompt: the same dark room, an app icon instead of a clock. The icon is drawn here — a
+  // red tile and a note, named in words — not the vendor's logo artwork.
+  const play = doc.createElement('div');
+  play.className = 'demo-curtain demo-play';
+  play.setAttribute('role', 'dialog');
+  const appBtn = doc.createElement('button');
+  appBtn.type = 'button';
+  appBtn.className = 'demo-play-app';
+  appBtn.innerHTML =
+    '<svg viewBox="0 0 60 60" aria-hidden="true"><path fill="#fff" d="M37 10v26.5a7.5 7.5 0 1 1-4-6.6V17.8l-12 3.4v19.3a7.5 7.5 0 1 1-4-6.6V16.9L37 10z"/></svg>';
+  const appName = doc.createElement('div');
+  appName.className = 'demo-play-name';
+  const playLabel = doc.createElement('div');
+  playLabel.className = 'demo-curtain-label';
+  const playHint = doc.createElement('div');
+  playHint.className = 'demo-play-hint';
+  play.append(appBtn, appName, playLabel, playHint);
+  doc.body.appendChild(play);
+  let playGate: (() => void) | null = null;
+  let pendingArm: string | null = null;
+
   refs.input.readOnly = true;
   refs.sendBtn.disabled = true;
 
@@ -208,32 +256,58 @@ export function mountDirector(
   const onNextClick = (): void => nextHandler?.();
   next.addEventListener('click', onNextClick);
 
-  return {
-    arm(text) {
-      disarm();
-      refs.input.value = '';
-      const chars = Array.from(text);
-      chars.forEach((_, i) => {
-        typing.push(
-          setTimeout(() => {
-            refs.input.value = chars.slice(0, i + 1).join('');
-            refs.input.dispatchEvent(new Event('input', { bubbles: true }));
-          }, TYPE_LEAD_MS + i * TYPE_MS),
-        );
-      });
+  const typeIn = (text: string): void => {
+    disarm();
+    refs.input.value = '';
+    const chars = Array.from(text);
+    chars.forEach((_, i) => {
       typing.push(
         setTimeout(() => {
-          armed = true;
-          refs.sendBtn.disabled = false;
-          refs.sendBtn.classList.add('demo-armed');
-        }, TYPE_LEAD_MS + chars.length * TYPE_MS),
+          refs.input.value = chars.slice(0, i + 1).join('');
+          refs.input.dispatchEvent(new Event('input', { bubbles: true }));
+        }, TYPE_LEAD_MS + i * TYPE_MS),
       );
+    });
+    typing.push(
+      setTimeout(() => {
+        armed = true;
+        refs.sendBtn.disabled = false;
+        refs.sendBtn.classList.add('demo-armed');
+      }, TYPE_LEAD_MS + chars.length * TYPE_MS),
+    );
+  };
+
+  const closePlay = (): void => {
+    playGate = null;
+    pendingArm = null;
+    play.classList.remove('on');
+  };
+  appBtn.addEventListener('click', () => {
+    const start = playGate;
+    if (!start) return;
+    const text = pendingArm;
+    closePlay();
+    start();
+    // The next line is typed once the room is lit again: he pressed play, then he says so.
+    if (text !== null) setTimeout(() => typeIn(text), CURTAIN_FADE_MS);
+  });
+
+  return {
+    arm(text) {
+      // Behind the player prompt the line waits — it is typed after the click, not under the curtain.
+      if (playGate) {
+        disarm();
+        pendingArm = text;
+        return;
+      }
+      typeIn(text);
     },
 
     disarm,
 
     sceneStart(index, title) {
       disarm(); // a jump mid-typing must not leave a half line armed later
+      closePlay();
       refs.input.value = '';
       label.textContent = t('demo.scene', { n: index + 1, total: opts.sceneTitles.length, title });
       items.forEach((b, i) => b.classList.toggle('current', i === index));
@@ -261,8 +335,18 @@ export function mountDirector(
       curtainTimer = setTimeout(() => curtain.classList.remove('on'), Math.max(0, ms - CURTAIN_FADE_MS));
     },
 
+    pressPlay(text, onPlay) {
+      appName.textContent = t('demo.playApp');
+      playLabel.textContent = text;
+      playHint.textContent = t('demo.playHint');
+      playGate = onPlay;
+      play.classList.add('on');
+    },
+
     dispose() {
       disarm();
+      closePlay();
+      play.remove();
       clearTimeout(curtainTimer);
       refs.input.removeEventListener('keydown', guard, true);
       next.removeEventListener('click', onNextClick);
@@ -314,8 +398,9 @@ export function mountLobbyLinks(
 export const PICKER_COPY = {
   title: 'Luna',
   prompt: '选择语言 · Choose your language',
-  zh: { label: '中文', sub: '我说中文' },
-  en: { label: 'English', sub: 'I speak English' },
+  zh: { label: '中文', sub: '我说中文', badge: null },
+  // The owner's pick: English is the original — her own language, her voice as recorded.
+  en: { label: 'English', sub: 'I speak English', badge: 'Recommended' },
 } as const;
 
 export const GUIDE_COPY: Record<UiLang, { title: string; sub: string; p1: string; p2: string; how: string; enter: string }> = {
@@ -410,6 +495,14 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
       const sub = doc.createElement('span');
       sub.textContent = PICKER_COPY[lang].sub;
       b.append(strong, sub);
+      const badge = PICKER_COPY[lang].badge;
+      if (badge) {
+        const tag = doc.createElement('em');
+        tag.className = 'demo-guide-badge';
+        tag.textContent = badge;
+        b.classList.add('recommended');
+        b.appendChild(tag);
+      }
       b.addEventListener('click', () => {
         showGuide(lang);
         resolve(lang);

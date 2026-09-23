@@ -451,6 +451,10 @@ async function boot(): Promise<void> {
         onStage: (cue) => {
           if (cue.kind === 'skip') director?.skip(cue.label, cue.ms);
           else if (cue.kind === 'music') bundle.music?.set(cue.track);
+          else if (cue.kind === 'press_play') {
+            const track = cue.track;
+            director?.pressPlay(cue.label, () => bundle.music?.set(track));
+          }
           // 'await' never reaches here — the tape holds on it itself (a finished dream waits for Wake).
         },
       });

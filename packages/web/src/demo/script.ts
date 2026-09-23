@@ -109,6 +109,10 @@ export const Beat = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('skip'), label: z.string().min(1), ms: z.number().int().positive().optional() }),
   // The turntable: what is playing now (a track id from the music block), or nothing.
   z.object({ kind: z.literal('music'), track: z.string().regex(SLUG).nullable() }),
+  // v0.48.3: HIS hand on the player. She never starts his music — he does, in his own player, and
+  // she hears it. The director dims the room like the time curtain and asks the visitor to do it;
+  // the track starts on the click, and the next line waits for it. Never inside a turn.
+  z.object({ kind: z.literal('press_play'), track: z.string().regex(SLUG), label: z.string().min(1) }),
   // She dreams, in the chat: the script's dream block plays here (after the turn closes).
   z.object({ kind: z.literal('dream') }),
 ]);
@@ -132,11 +136,12 @@ export const DemoScript = z
     const tracks = new Set((script.music?.tracks ?? []).map((t) => t.id));
     script.scenes.forEach((scene, si) => {
       scene.beats.forEach((beat, bi) => {
-        if (beat.kind === 'music' && beat.track !== null && !tracks.has(beat.track)) {
+        const named = beat.kind === 'music' || beat.kind === 'press_play' ? beat.track : null;
+        if (named !== null && !tracks.has(named)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: ['scenes', si, 'beats', bi, 'track'],
-            message: `unknown track "${beat.track}" — not in music.tracks`,
+            message: `unknown track "${named}" — not in music.tracks`,
           });
         }
         if (beat.kind === 'dream' && !script.dream) {
