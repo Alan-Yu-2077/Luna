@@ -1,7 +1,7 @@
 {
  "_note": "Engineering notes for the replay (v0.50.x): one stack of sheets per scene, both languages. Every code block is the named file verbatim at `from` in commit `ref` (notes.test.ts checks it against the working tree); every quote is a line the scene really says.",
  "repo": "https://github.com/Alan-Yu-2077/Luna",
- "ref": "c14ed232e5024525c56e00d59a781abc2bd2d1a3",
+ "ref": "86778b1e2a7e7895c40e7a2c849e3884793e237c",
  "scenes": {
   "morning": {
    "hook": {
@@ -197,6 +197,11 @@
         "en": "Every turn already runs an automatic memory search (scene 9). For \"How do you know?\" her instructions push for a deliberate one: recall before answering. Scene 5 shows the ranking.",
         "zh": "每一轮本来就会自动搜一遍记忆（第 9 幕）。碰到“你怎么知道”这种问题，她的指令会促使她再主动查一次：先回想，再回答。结果怎么排序，见第 5 幕。"
        }
+      },
+      {
+       "type": "card",
+       "tool": "recall",
+       "summary": "3 hits"
       },
       {
        "type": "code",
@@ -427,6 +432,11 @@
       "zh": "教个词也要跑 2110 个测试？"
      },
      "blocks": [
+      {
+       "type": "card",
+       "tool": "save_skill",
+       "summary": "saved skill (verified, 2110 tests pass)"
+      },
       {
        "type": "p",
        "text": {
@@ -730,6 +740,11 @@
      },
      "blocks": [
       {
+       "type": "card",
+       "tool": "web_search",
+       "summary": "3 results for \"how large language models work transformer explained\": [1] https://en.wikipedia.org/wiki/Large_language_model; [2] https://jalammar.github.io/illustrated-transformer/; [3] https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"
+      },
+      {
        "type": "p",
        "text": {
         "en": "When the turn ends, she gets one link card per source. The server collects them as the tools finish: every search result, plus the final address of each page read after redirects. They are de-duplicated by URL, so a page that was both found and read shows up once. A link is clickable only if it is http(s), because these addresses come from the open web. None of this is what she reads. The start label and the link cards exist only in the front end. The finish card's one-line summary does reach her, but only inside the whole result, next to every snippet and the full capped page body.",
@@ -754,6 +769,11 @@
       "zh": "为什么是 12,134 字符而不是 12,000？"
      },
      "blocks": [
+      {
+       "type": "card",
+       "tool": "web_fetch",
+       "summary": "read Transformer (deep learning architecture) - Wikipedia (https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)) — 12134 chars (truncated)"
+      },
       {
        "type": "p",
        "text": {
@@ -986,6 +1006,11 @@
        }
       },
       {
+       "type": "card",
+       "tool": "web_fetch",
+       "summary": "read [1706.03762] Attention Is All You Need (https://arxiv.org/abs/1706.03762) — 4876 chars"
+      },
+      {
        "type": "code",
        "file": "packages/server/src/tools/web/web_fetch.ts",
        "from": 72,
@@ -1016,6 +1041,11 @@
         "en": "You said you wanted to learn this, so I'm leaving you a copy on your desktop, in a folder called 'From Luna'. No rush.",
         "zh": "你说想学这个，我在桌面上给你放一份，文件夹叫“Luna 给你的”。不急，有空再看。"
        }
+      },
+      {
+       "type": "card",
+       "tool": "shell",
+       "summary": "shell exit 0"
       },
       {
        "type": "code",
@@ -1194,6 +1224,11 @@
        }
       },
       {
+       "type": "card",
+       "tool": "weather",
+       "summary": "Paris · light rain 14°, high 16°/low 11°"
+      },
+      {
        "type": "p",
        "text": {
         "en": "Now there's a concrete plan. The tool's own description tells the model when a fetch is worth it: when asked, or when a plan makes it relevant, never just to recite. The model chose to call `weather`. The tool makes a live request (QWeather if a key is set, otherwise the keyless Open-Meteo) and returns a structured object: temperature, feels-like, condition, wind, high, low, rain chance. The model gets the **whole object** back. The card shows only the one line that `summarize` builds from it.",
@@ -1265,6 +1300,11 @@
      },
      "blocks": [
       {
+       "type": "card",
+       "tool": "remember",
+       "summary": "added: at_mu2uvp6on02rlk"
+      },
+      {
        "type": "quote",
        "text": {
         "en": "Kept. 'Took the umbrella, Tuesday, six o'clock.' I'll bring it up at exactly the wrong moment.",
@@ -1318,13 +1358,6 @@
        "note": {
         "en": "Live GPS fix first, then config. A bad or missing value means no weather, never a guess.",
         "zh": "先用实时 GPS 定位，再看配置。值缺失或不合法就不带天气，绝不瞎猜。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The replay clears the music player at the start of this scene, so no track is loaded, which in the real app means no now-playing line rides with his message.",
-        "zh": "回放在这一幕开头清空了音乐播放器，没有加载任何曲目；在真实应用里，这意味着他的消息不会附带“正在播放”那一行。"
        }
       }
      ]
@@ -1460,6 +1493,11 @@
         "en": "Remember this one.",
         "zh": "这个记一下"
        }
+      },
+      {
+       "type": "card",
+       "tool": "remember",
+       "summary": "added: km_mu31n0g0r2b9ep"
       },
       {
        "type": "flow",
@@ -1748,6 +1786,11 @@
      },
      "blocks": [
       {
+       "type": "card",
+       "tool": "web_fetch",
+       "summary": "read Orionids - Wikipedia (https://en.wikipedia.org/wiki/Orionids) — 9310 chars"
+      },
+      {
        "type": "p",
        "text": {
         "en": "The `web_fetch` cards give the page title, the final URL and the length of what it handed her ('9310 chars', counting the `<untrusted_content>` wrapper the text arrives in). Every tool in this errand opts in as `safe`, so it may run in a waking with nobody watching (scene 4 shows the gate). When a waking ends without a message, the server squeezes its tool list into one line and sends it on `proactive.finished`. The front end draws that line as a leaf, not a speech bubble. A waking with no tools at all leaves only a soft chip.",
@@ -1778,6 +1821,11 @@
         "en": "You missed nothing. I read about the Orionids — next month, around the twenty-first, Halley's dust — and this sky is a lid anyway. I saved the date in case it ever clears.",
         "zh": "啥也没错过。我顺手查了下猎户座流星雨，下个月二十一号前后，是哈雷彗星留下的尘埃。反正这天跟扣了个锅盖似的。日期我存下了，万一哪天放晴呢。"
        }
+      },
+      {
+       "type": "card",
+       "tool": "remember",
+       "summary": "added: at_mu477o2o1vbsquc"
       },
       {
        "type": "p",
@@ -1857,6 +1905,11 @@
         "en": "Looking. First I want to watch it fail with my own eyes.",
         "zh": "在看了。我先亲眼看它挂一次。"
        }
+      },
+      {
+       "type": "card",
+       "tool": "run_tests",
+       "summary": "tests: 1 failed, 41 passed"
       },
       {
        "type": "p",
@@ -2020,6 +2073,11 @@
       "zh": "本不该出现的卡片"
      },
      "blocks": [
+      {
+       "type": "card",
+       "tool": "edit",
+       "summary": "edited packages/server/src/memory/recall/recall.test.ts (1 replacement)"
+      },
       {
        "type": "p",
        "text": {
@@ -2234,7 +2292,7 @@
       {
        "type": "code",
        "file": "packages/web/src/controller.ts",
-       "from": 241,
+       "from": 254,
        "snippet": "      case 'proactive.started':\n        deps.view.chip('proactive', `${proactiveGlyph(e.cycle_id)} …`);\n        turnActive = true;\n        // v0.33.2: proactive turns no longer emit turn.started (that would barge-in over the\n        // prior reply's TTS), so set the thinking pose here — it used to ride the inner\n        // turn.started. NB: no audio.stop() — a follow-up must queue behind, not cut off.\n        deps.live2d.setState('thinking');\n        reflectTyping();\n        return;",
        "note": {
         "en": "The thinking pose and the chip, and no audio.stop().",
@@ -2286,7 +2344,7 @@
   },
   "a-bad-day": {
    "hook": {
-    "en": "He said he didn't want to talk about it. Why didn't she ask what happened anyway?",
+    "en": "He said he didn't want to talk about it. Why didn't she ask what happened?",
     "zh": "他说了不想聊。她为什么真就一句“怎么了”都没问？"
    },
    "sheets": [
@@ -2306,8 +2364,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Nothing on the server tags his mood. His sentence reaches the model with whatever context applies (recalled memories, the time, the weather, the music) and no label for how he feels. What shapes the reply is standing text in her prompt. Her seeded soul says to go easy when the user is cautious and rules out scripted comfort. The rules for how she speaks say a reply can simply end, and they list \"What's wrong?\" as a banned closer. The model read his line against those rules and chose to promise no questions. The code supplied the rules. The sentence is the model's.",
-        "zh": "服务端没有哪段代码会给他的情绪打标签。他这句话送到模型面前时，带着这一轮该带的上下文（召回的记忆、时间、天气、正在放的歌），唯独没有一条标注他此刻的心情。真正左右这句回复的，是她 prompt 里一直都在的几段文字。她 soul 的初始设定写着：对方态度谨慎时别逼太紧，也不说套话式的安慰。规定她怎么说话的规则写着：回复可以说完就停，还把 \"What's wrong?\"（怎么了？）列为禁用的收尾句。模型拿他这句话对照这些规则，选择了承诺不问。规则是代码给的，这句话是模型写的。"
+        "en": "Nothing on the server labels his mood. Her system prompt carries standing rules instead. The seed of her soul says \"When the user is cautious, don't push too hard\" and rules out scripted comfort. The rules for how she speaks go further: a reply can simply end, she asks something back only when she is genuinely curious, and hollow check-ins such as \"What's wrong?\" are banned by name. So she is free to answer with no question at all. The promise itself is the model's choice: the rules are code, the sentence is not.",
+        "zh": "服务端没有任何地方给他的情绪打标签，有的只是她 system prompt 里几条常驻的规则。她 soul（人格文件）的初始版本写着 \"When the user is cautious, don't push too hard\"（对方谨慎时，别逼得太紧），也写明不说套话式的安慰。规定她怎么说话的那段规则更进一步：回复可以说完就停；只有真的好奇才反问；像 \"What's wrong?\"（怎么了？）这种空洞的例行关心，被点名禁用。所以她完全可以只回话、不提问。至于“一个问题都不问”这个承诺，是模型自己的选择：规则是代码给的，这句话是模型写的。"
        }
       },
       {
@@ -2316,70 +2374,80 @@
        "from": 48,
        "snippet": "    'A reply can simply end — you do not owe every message a trailing question, and you ask ' +\n    'something back only when you are genuinely, specifically curious, never as reflexive ' +\n    'engagement bait. So never tack a hollow check-in onto the end: banned closers, and anything ' +\n    'with their flavor — \"Still here\", \"What\\'s on your mind?\", \"Let me know\", \"I\\'m here whenever\", ' +\n    '\"Talk to me\", \"What\\'s wrong?\", \"在吗\", \"还在吗\". When the user sends something light or empty ' +\n    '(an \"OwO\", a \"lol\", a keysmash), answer just as lightly; never inflate a thin message into a ' +\n    'probing or status question.'",
        "note": {
-        "en": "Part of every system prompt: no reflexive trailing question, no check-in bait.",
-        "zh": "每一份 system prompt 都带着这段：结尾不条件反射地追问，也不拿“还在吗”这类话钓回复。"
+        "en": "Part of every system prompt: permission to stop first, then the banned closers by name.",
+        "zh": "每份 system prompt 都带着这段：先允许说完就停，再点名列出禁用的收尾句。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "Two lines, one turn",
-      "zh": "一个回合，两句话"
+      "en": "Her face waits for her voice",
+      "zh": "表情等她开口"
      },
      "blocks": [
       {
-       "type": "p",
+       "type": "quote",
        "text": {
-        "en": "She answered twice without him typing again. Each bubble is one `message` call (scene 2), and each call says whether more is coming: the first went out with `is_final` false, the second with true. What guards a \"more is coming\" that never arrives is scene 3.",
-        "zh": "他没再打字，她却接连回了两句。每个气泡是一次 `message` 调用（见第 2 幕），每次调用都要声明后面还有没有话：第一句发出时 `is_final` 为 false，第二句为 true。要是说了“还有”却迟迟没有下文，靠什么兜底，见第 3 幕。"
+        "en": "You don't have to explain it for it to count. It counted.",
+        "zh": "你不用解释，这一天也照样算数。算数的。"
        }
       },
       {
-       "type": "aside",
-       "text": {
-        "en": "Replay: the 1.5 s pause is written into the tape and delays the second bubble. Her voice lines still play back to back. In the real app the server never sleeps between messages; the gap is how long the model takes to write the next call.",
-        "zh": "回放说明：1.5 秒的停顿是写在磁带里的，推迟的是第二个气泡。她的语音照样一句接一句连着播。真实应用里，服务端不会在两条消息之间 sleep；那段空隙，就是模型写下一次调用所花的时间。"
-       }
-      }
-     ]
-    },
-    {
-     "title": {
-      "en": "What does 0.55 do to her face?",
-      "zh": "0.55 在她脸上起什么作用？"
-     },
-     "blocks": [
-      {
        "type": "p",
        "text": {
-        "en": "Each message can carry one of 15 affect keys and an optional number from 0 to 1. The number is not volume. It picks which clip plays and how long the mood lingers. Below 0.7, `gentle_concern` plays the same tender clip as `soft_warmth`; at 0.7 or above it becomes dismay with welling tears. The tape stays at 0.5 and 0.55, so no tears. `steady_presence` plays no clip at all. The concern shows in a slower mood underneath, on three axes (valence, arousal, dominance), which it pulls slightly negative. Each nudge holds at least 6 s, then fades with a half-life of about 38 s.",
-        "zh": "每条消息可以带一个 affect key（共 15 种），外加一个 0 到 1 的可选数值。这个数不是音量旋钮，它只管两件事：播哪段表情动画（clip），以及这份心情留多久。低于 0.7 时，`gentle_concern` 播的和 `soft_warmth` 是同一段温柔的 clip；到了 0.7 及以上，就换成眼眶泛泪的失望。磁带里只给到 0.5 和 0.55，所以没有眼泪。`steady_presence` 干脆不播 clip。担心体现在底下一层变化更慢的心情里。心情有三个轴：愉悦度（valence）、唤醒度（arousal）、支配度（dominance），`gentle_concern` 会把它们都往负方向轻轻拉一点。每次推动至少保持 6 秒，之后按约 38 秒的半衰期慢慢回落。"
+        "en": "Her messages can arrive faster than she can say them, and her voice plays one line at a time. So the next message often lands while the current line is still being spoken. Earlier, the face changed the moment a message arrived, and this line's concerned face could land on \"Then don't\". Now each line's face is set when its voice starts or, if the line is never voiced, when its turn in the voice queue passes. Here the resting face (`steady_presence` plays no clip) holds through the first line, and the tender clip starts with the second. Scene 1 covers which affect plays which clip.",
+        "zh": "她的消息可能来得比她说得快，而语音一次只播一句，所以下一条消息常常在上一句还没说完时就到了。以前消息一到就换表情，这句的担忧表情可能会提前落在“那就不说”上。现在每句的表情要等这句语音开始播放才换上；要是这句根本没出声，就等语音队列轮过它再换。这里第一句从头到尾都是静息表情（`steady_presence` 不播 clip），温柔的那段 clip 到第二句才开始。哪种 affect 播哪段 clip，见第 1 幕。"
        }
       },
       {
        "type": "code",
-       "file": "packages/web/src/live2d/faceVm.ts",
-       "from": 418,
-       "snippet": "  setExpression(key: ExpressionKey, emotion?: number): void {\n    // `emotion` is optional on the wire. The 0.95 fallback is how strongly to RENDER the pose; the\n    // raw (possibly undefined) value is what decides whether the affect escalates into its other\n    // clip — an unstated intensity must never mean \"maximum\".\n    // v0.43.15: `emotion` no longer scales the pose. It keeps exactly two jobs, both deliberate:\n    //   1. WHICH clip — `affectToEmotion` reads the RAW value, so \"omitted never escalates\" holds.\n    //   2. how long the mood lingers — the VAD impulse and its hold still scale, because \"how long\n    //      did that land for\" is a real judgement, and consecutive messages accumulate it. Unlike a\n    //      single frame's amplitude, a small value there is not invisible, just brief.\n    // Do not \"unify\" these onto the constant the amplitude now uses.\n    this.pending = { id: affectToEmotion(key, emotion) };\n    this.affect?.nudge(key, clamp01(emotion ?? 0.95));\n  }",
+       "file": "packages/web/src/controller.ts",
+       "from": 182,
+       "snippet": "                let faced = false;\n                const face = (): void => {\n                  if (faced || !d.expression) return;\n                  faced = true;\n                  deps.live2d.setExpression(d.expression, d.emotion);\n                };\n                void deps.audio\n                  .speak(d.text, d.voice_params, () => {\n                    face();\n                    if (gesture?.when === 'start') firePulse();\n                  })",
        "note": {
-        "en": "One field, two jobs: which clip plays, and how far the lasting mood is pushed.",
-        "zh": "一个字段，两份差事：播哪段 clip，以及把持续的心情推多远。"
+        "en": "`face()` runs from the voice's start callback; `faced` makes sure it runs once.",
+        "zh": "`face()` 在语音的开始回调里调用；`faced` 保证它只执行一次。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "Why lean in, then sigh?",
-      "zh": "为什么先前倾，后叹气？"
+      "en": "What lingers after the face?",
+      "zh": "表情过后，留下什么？"
      },
      "blocks": [
       {
        "type": "p",
        "text": {
-        "en": "Her idle pool holds nine authored gestures (two more are reserved for when she is thinking). In the live app one fires every 8 to 20 seconds, only while no expression clip plays and she is neither speaking nor asleep. The pick is a random draw weighted by mood: each weight is 1 plus the gesture's coefficients times the mood axes, and the last three picks sit out. A warm mood favors the lean-in; low valence favors the sigh. Gestures also come bundled inside clips: the dismay clip carries its own sigh. Mood biases her body between lines. It doesn't decide it.",
-        "zh": "她的待机动作池里有 9 个手工做的小动作（另有 2 个专留给她思考的时候）。真实应用里每隔 8 到 20 秒触发一个，前提是当下没有表情 clip 在播、她没在说话、也没睡着。抽哪个，是按心情加权的随机抽签：每个动作的权重等于 1 加上它的各项系数乘以对应的心情轴，最近抽过的 3 个暂不参与。心情暖，前倾更容易被抽中；valence 低，叹气更容易。有些小动作还打包在 clip 里：失望那段 clip 自带一声叹气。心情会让她台词间隙的身体动作有所偏向，但不决定具体做哪一个。"
+        "en": "Under the clips runs a slower mood: three numbers for valence (pleasant or not), arousal (calm or keyed up) and dominance (leading or yielding). Each message's affect pulls a target point toward that affect's coordinates. The number she attaches (0.3 to 0.6 here) sets how far it pulls and how long it holds: at least 6 s, then a drift back toward neutral with a half-life of about 38 s. On screen, the mood shifts the pose she relaxes to and adds a faint undertone beneath any clip. So consecutive tender lines build on each other, and after \"Okay.\" the warmth fades slowly instead of snapping off.",
+        "zh": "clip 底下还跑着一层变化更慢的心情，用三个数表示：愉悦度 valence（舒服与否）、唤醒度 arousal（平静还是激动）、支配度 dominance（主导还是退让）。每条消息的 affect 会把一个目标点往这个 affect 对应的坐标拉。她附上的那个数（这一幕在 0.3 到 0.6 之间）决定拉多远、维持多久：至少 6 秒，之后以约 38 秒的半衰期向中性回落。落到画面上，心情会改变她放松下来时回到的姿态，还会在任何 clip 底下垫一层淡淡的底色。所以连着几句温柔的话会一层层叠上去；说完“好。”之后，那份暖意是慢慢退去的，不会一下子断掉。"
+       }
+      },
+      {
+       "type": "code",
+       "file": "packages/web/src/live2d/affect.ts",
+       "from": 138,
+       "snippet": "  // An affect never SETS the state — it perturbs the target, which is what makes two messages with\n  // the same affect land differently depending on where she already was.\n  nudge(key: ExpressionKey, intensity = 0.95): void {\n    const i = clamp01(intensity);\n    const amount = Math.max(0, Math.min(0.96, (0.28 + i * 0.58) * this.reactivity));\n    this.target = lerpVad(this.target, AFFECT_VAD[key], amount);\n    this.holdRemaining = Math.max(this.holdRemaining, HOLD_FLOOR_SECONDS + i * this.holdSeconds);\n  }",
+       "note": {
+        "en": "The pull grows with her number (0.28 + 0.58 × it), and so does the hold above the 6 s floor.",
+        "zh": "拉力随她给的数 i 增大（0.28 + 0.58 × i）；6 秒下限之上多出来的维持时间，也随 i 变长。"
+       }
+      }
+     ]
+    },
+    {
+     "title": {
+      "en": "What does her body do between lines?",
+      "zh": "台词之间，身体在做什么？"
+     },
+     "blocks": [
+      {
+       "type": "p",
+       "text": {
+        "en": "In the live app an idle gesture fires every 8 to 20 seconds, but only while no expression clip is playing and she is neither speaking nor asleep. Which gesture is a weighted random draw: each weight is 1 plus the gesture's coefficients times the current mood, and her last three picks sit out. Mood tilts the odds; it never picks outright. By the sigh, two warm lines have pulled her valence up, so the live draw would favour the lean-in and make the sigh less likely than usual.",
+        "zh": "真实应用里，每隔 8 到 20 秒会触发一个待机小动作，前提是没有表情 clip 在播，她既没在说话也没睡着。抽哪个是加权随机：每个动作的权重是 1 加上它的三个系数与当前心情三个轴的乘积；最近做过的 3 个，这次不参与抽签。心情只把概率往一边偏，从不直接替她选。到叹气那一下，前面两句温暖的话已经把她的 valence 拉高了，真实的抽签会偏向前倾，叹气反而比平时更难抽到。"
        }
       },
       {
@@ -2388,23 +2456,23 @@
        "from": 124,
        "snippet": "const IDLE_ACTION_POOL: ReadonlyArray<{ name: string; v: number; a: number; d: number }> = [\n  { name: 'headLiftAlert', v: 0.1, a: 0.7, d: 0.2 },\n  { name: 'bodyLeanInSoft', v: 0.6, a: 0.1, d: -0.2 },\n  { name: 'slowBlinkAffection', v: 0.7, a: -0.5, d: -0.1 },\n  { name: 'bodySwayTenderSlow', v: 0.5, a: -0.4, d: 0 },\n  { name: 'bodyLeanBackGuarded', v: -0.5, a: 0.1, d: 0.3 },\n  { name: 'lookAwayThenBack', v: -0.2, a: 0.2, d: -0.4 },\n  { name: 'bodyPresentRight', v: 0.3, a: 0.3, d: 0.6 },\n  { name: 'sighRelease', v: -0.6, a: -0.3, d: -0.2 },\n  { name: 'headLowerShy', v: 0.1, a: -0.2, d: -0.7 },\n];\nconst IDLE_ACTION_MIN_MS = 8_000;\nconst IDLE_ACTION_MAX_MS = 20_000;",
        "note": {
-        "en": "A positive coefficient means the gesture is more likely when that mood axis is high.",
-        "zh": "系数为正：该心情轴越高，这个动作越容易被抽中。"
+        "en": "A positive coefficient makes the gesture likelier when that mood axis is high; compare the lean-in and the sigh on valence.",
+        "zh": "系数为正，表示该心情轴越高，这个动作越容易被抽中；可以对比前倾和叹气在 valence 上的系数。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "Replay: on the tape, the lean-in and the sigh are placed by hand. They are cues that call the same `playAction` on the same face at the moments the scene needs.",
-        "zh": "回放说明：磁带里的前倾和叹气是手工摆放的。它们是一个个 cue，在这一幕需要的时刻，对同一张脸调用同一个 `playAction`。"
+        "en": "Replay: the lean-in and the sigh are scripted cues, and both land while she is still speaking, which the live scheduler never allows.",
+        "zh": "回放说明：前倾和叹气都是剧本里预先排好的动作，而且都落在她还在说话的时候，真实应用的调度器从不允许这样。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "How does she know the song?",
-      "zh": "她怎么知道是哪首？"
+      "en": "Who pressed play?",
+      "zh": "谁按的播放？"
      },
      "blocks": [
       {
@@ -2415,141 +2483,141 @@
          "zh": "网易云在播"
         },
         {
-         "en": "MediaRemote push",
-         "zh": "MediaRemote 推送"
+         "en": "macOS Now Playing",
+         "zh": "macOS 正在播放"
         },
         {
          "en": "media-control stream",
          "zh": "media-control 流"
         },
         {
-         "en": "track in memory",
-         "zh": "内存里的曲目"
+         "en": "server memory",
+         "zh": "服务端内存"
         },
         {
-         "en": "his turn's context",
-         "zh": "他这轮的上下文"
+         "en": "his message",
+         "zh": "他的消息"
         }
        ]
       },
       {
        "type": "p",
        "text": {
-        "en": "She never asks the player. On macOS one long-running `media-control` process receives now-playing events as the system pushes them: instant on a track change, free when idle. The server keeps the track in memory. Each turn, a formatter turns it into a short labelled line or two (the track, how well he knows it), placed in his message just before his own words, outside the cached system prompt. With nothing loaded, nothing is added. A paused track still shows, with a coarse note of where this play stopped.",
-        "zh": "她从不主动去问播放器。macOS 上有一个常驻的 `media-control` 进程，系统推送“正在播放”事件，它就接着：切歌立刻知道，闲着不花开销。服务端把当前曲目存在内存里。每一轮，一个格式化函数把它写成一两行带标签的短句（哪首歌、他对这首有多熟），放进他的消息里，紧挨在他自己的话前面，而不是放进有缓存的 system prompt。什么都没放，就什么也不加。暂停的歌照样会写进去，附一句粗略的进度：这次停在了哪一段。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/server/src/turn/nowPlayingContext.ts",
-       "from": 91,
-       "snippet": "// The per-turn read: null when dormant, idle, or between tracks — the prompt shows no trace.\nexport function musicBlockFor(now = new Date()): string | null {\n  const s = getNowPlaying();\n  if (s === null || s.track === null) return null;\n  let block = buildMusicBlock(musicFactsOf(s.track, s.playing, now));\n  const enrich = getMusicEnrichment();\n  if (enrich && enrich.trackId === s.track.id && enrich.affinity) {\n    const phrase = affinityPhrase(enrich.affinity);\n    if (phrase) block += ` ${phrase}`;\n  }\n  return block;\n}",
-       "note": {
-        "en": "Read from memory on every turn, with no network request and no tool call.",
-        "zh": "每轮都从内存里读：不发网络请求，也不走 tool call。"
+        "en": "He did; she only listens. Music is opt-in (`LUNA_MUSIC=1`) and macOS only. A resident `media-control` process hears each track change, the server keeps it in memory, and each turn a formatter adds a line to his message, no tool call. So \"Music's on.\" arrives carrying: Music the user is playing right now: \"ball w/o you\" by 21 Savage (album \"i am > i was\") — it just started. He knows this one well: 212 plays, about 52 hours of listening — his #1 most-played overall.",
+        "zh": "是他按的，她只是在听。音乐功能要手动开启（`LUNA_MUSIC=1`），而且只支持 macOS。每次切歌，常驻的 `media-control` 进程都会收到通知，服务端把当前曲目存在内存里；每个回合，一个格式化函数往他的消息里加一行，不经过任何工具调用。所以“放了点歌。”送到模型时，带着这样一行：Music the user is playing right now: \"ball w/o you\" by 21 Savage (album \"i am > i was\") — it just started. He knows this one well: 212 plays, about 52 hours of listening — his #1 most-played overall.（大意：他正在放这首歌，刚开始；这首他很熟，播过 212 次，累计约 52 小时，是他听得最多的一首。）"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "Replay: the \"press play\" prompt is drawn. Your click loads a scripted shelf that feeds the real player card data shaped like /api/music/now.",
-        "zh": "回放说明：“去放歌”那个提示是画出来的。你一点，载入的是剧本里排好的曲目；喂给真实播放器卡片的数据，和 /api/music/now 返回的形状一致。"
+        "en": "Replay: the NetEase icon is drawn. The player card is the real one, fed a scripted shelf of five tracks; the real song cannot play here, for copyright reasons.",
+        "zh": "回放说明：网易云图标是画上去的。播放器卡片是真实组件，喂给它的是剧本里排好的五首歌；出于版权原因，这里放不了原曲。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "\"You always pause it\": says who?",
-      "zh": "“每次都按暂停”，谁说的？"
+      "en": "What did recall find?",
+      "zh": "recall 找到了什么？"
      },
      "blocks": [
       {
+       "type": "card",
+       "tool": "recall",
+       "summary": "1 hit"
+      },
+      {
+       "type": "quote",
+       "text": {
+        "en": "You told me once it's your favourite",
+        "zh": "你跟我说过，这是你最喜欢的一首。"
+       }
+      },
+      {
        "type": "p",
        "text": {
-        "en": "Nothing in the code keeps a record of where he stops a song. What reaches her is his history with it: NetEase's local database has one row per play and how long it lasted, which Luna opens read-only and adds up. With the tape's numbers, the real prompt would read: \"He knows this one well: 138 plays, about 7 hours of listening — his #1 most-played overall.\" About three minutes a play. The prompt never states the track's length, so \"you stop before the end\" also needs the model to know the song runs about four. That inference is the model's, and scene 12 cashes it in.",
-        "zh": "代码里没有任何地方记下他听歌停在哪儿。送到她面前的，是他和这首歌的历史：网易云的本地数据库里每播一次记一行，写着这次播了多久；Luna 以只读方式打开它，做个加总。按磁带里的数字，真实的 prompt 会是这样一句：\"He knows this one well: 138 plays, about 7 hours of listening — his #1 most-played overall.\"（这首他很熟：播过 138 次，累计约 7 小时，是他所有歌里听得最多的一首。）算下来一次三分钟左右。prompt 从没写这首歌有多长，所以要说出“快放完的时候按暂停”，模型还得自己知道这首歌大约四分钟。这个推断是模型做的，第 12 幕会回收这个伏笔。"
+        "en": "The song was already in his message; the model chose to look further. `recall` searches her own memory by meaning, across saved facts, past conversation and diaries, and hands the model each hit's text, source and timestamp. The card shows only the count. In this story the one hit is the fact she saved on 8 September, when he mentioned his favourite song in passing. Scene 5 covers how hits are ranked.",
+        "zh": "歌名已经在他的消息里了；多查这一步，是模型自己的选择。`recall` 按语义检索她自己的记忆，范围包括存下的事实、过去的对话和日记，把每条命中的原文、来源和时间交给模型。卡片上只显示条数。在这个故事里，唯一那条命中是她 9 月 8 日存下的事实：那天他随口提过自己最喜欢的歌。命中怎么排序，见第 5 幕。"
+       }
+      },
+      {
+       "type": "code",
+       "file": "packages/server/src/tools/builtin/recall.ts",
+       "from": 37,
+       "snippet": "export const recallTool = defineTool({\n  name: 'recall',\n  description:\n    'Search your own long-term memory by meaning. Use it when the user references something you ' +\n    'feel you should already know but do not have in front of you — recall before answering. ' +\n    'Returns ranked snippets from your durable facts and past conversation.',\n  input: Input,\n  output: Output,\n  concurrency: 'safe-parallel',\n  proactiveRisk: 'safe',\n  timeoutMs: 4000,\n  summarize: (out) => `${out.hits.length} hit${out.hits.length === 1 ? '' : 's'}`,",
+       "note": {
+        "en": "The description tells her to recall before answering; `summarize` is the whole card line.",
+        "zh": "description 里要她先 recall 再回答；卡片上那一行就是 `summarize` 的全部输出。"
+       }
+      },
+      {
+       "type": "aside",
+       "text": {
+        "en": "Saved facts are also printed in her system prompt every turn, up to a cap per category (scene 6), so the fact may already have been on her page. The lookup was her choice.",
+        "zh": "存下的事实每个回合也会写进她的 system prompt，每类有上限（第 6 幕），所以这条事实可能本来就摆在她眼前。查这一下，是她自己的选择。"
+       }
+      }
+     ]
+    },
+    {
+     "title": {
+      "en": "Fifty-two hours, says who?",
+      "zh": "五十二个小时，谁说的？"
+     },
+     "blocks": [
+      {
+       "type": "card",
+       "tool": "music_library",
+       "summary": "top: 1. ball w/o you/21 Savage 52h · 2. 東京フラッシュ/Vaundy 4h · 3. Double Take/dhruv 2h · 4. About You/The 1975 2h · 5. Mrs. Officer/Lil Wayne 1h (+5 more)"
+      },
+      {
+       "type": "p",
+       "text": {
+        "en": "His own listening history. `music_library` opens NetEase's local database read-only and, for \"top\", adds up how long each track has played, largest first, ten rows. No network, no account. The card shows five; the model gets all ten, with play counts. The ambient line already said #1 and 52 hours. Only the list shows the gap: second place sits at 4 hours, which is what \"nothing else comes close\" rests on. That ambient count is attached only when the playing song matches one library track by title, artist and duration (within 3 s), so a cover can't borrow his 212 plays.",
+        "zh": "他自己的听歌记录说的。`music_library` 以只读方式打开网易云的本地数据库；查 \"top\" 时，把每首歌的播放时长加总，从多到少排，取前十行。不联网，也不需要账号。卡片只显示前五；模型拿到的是全部十行，还带着播放次数。他消息里附带的那行已经说了第一名、52 小时，但差距只有这张榜单看得出来：第二名只有 4 小时，“第二名差得远”靠的就是这个。那行里的播放数据，只有正在放的歌按歌名、歌手、时长（相差不超过 3 秒）对上库里某一首时才会附上，所以翻唱版借不走他那 212 次播放。"
        }
       },
       {
        "type": "code",
        "file": "packages/music-cli/src/library.ts",
-       "from": 178,
-       "snippet": "  affinity(neteaseId: string): TrackAffinity | null {\n    if (!this.db) return null;\n    const agg = this.db\n      .query<{ sessions: number; total: number | null }, [string]>(\n        `SELECT COUNT(*) AS sessions, SUM(playDuration) AS total\n         FROM playingCount WHERE resourceId = ?`,\n      )\n      .get(neteaseId);",
+       "from": 208,
+       "snippet": "  /** Your most-listened tracks, by accumulated time. */\n  top(limit = 10): (LibraryTrack & { listenedSeconds: number; sessions: number })[] {\n    if (!this.db) return [];\n    const rows = this.db\n      .query<{ id: string; json: string; total: number; sessions: number }, [number]>(\n        `SELECT t.id AS id, t.jsonStr AS json,\n                SUM(p.playDuration) AS total, COUNT(*) AS sessions\n         FROM playingCount p JOIN dbTrack t ON t.id = p.resourceId\n         GROUP BY p.resourceId\n         ORDER BY total DESC\n         LIMIT ?`,\n      )\n      .all(limit);",
        "note": {
-        "en": "Plays are the row count and listening time is the sum. Where each play stopped is never read.",
-        "zh": "播放次数是行数，收听时长是求和。每次停在哪儿，从来不读。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The player never reports NetEase's song id, so the title is the only bridge, and titles also match covers and live versions. So the artist must loosely match and, when both lengths are known, agree within 3 s. Otherwise: no id, no play count. Lyrics may still come from a separate, equally strict NetEase search. Better nothing than someone else's history.",
-        "zh": "播放器从不报网易云的歌曲 id，唯一能拿来对号的只有歌名，而同名的还有翻唱和现场版。所以还要求歌手大致对得上；两边时长都已知时，相差不能超过 3 秒。否则就没有 id，也就没有播放次数。歌词可能还拿得到，走的是另一条同样严格的网易云搜索。宁缺勿错：宁可什么都没有，也不能把别的歌的记录安到这首头上。"
+        "en": "One row per play in `playingCount`; the sum of `playDuration` is the listening time.",
+        "zh": "`playingCount` 里每播一次记一行；把 `playDuration` 加起来，就是收听时长。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "What is the lyrics card?",
-      "zh": "那张歌词卡片是什么？"
-     },
-     "blocks": [
-      {
-       "type": "p",
-       "text": {
-        "en": "Usually the lyrics arrive without a card. When a new track starts, the server fetches its lyrics once from NetEase (an opt-in feature) and keeps them. The first turn after that carries the whole text once and marks it used; later turns don't. `music_lyrics` is the fallback: it re-reads that local copy with no network request. The card shows a friendly label while the call runs, then the tool's own summary line.",
-        "zh": "平时歌词送到她那里，界面上根本不出卡片。新歌一开始，服务端就从网易云拉一次歌词（这个功能默认关闭，要手动开启），存在本地。之后的第一轮会把全文带上一次，并标记为已送达；再往后就不带了。`music_lyrics` 是后备：它重读那份本地副本，不发网络请求。调用进行时，卡片先显示一句口语化的说明，跑完再换成工具自己的摘要行。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/server/src/tools/builtin/musicLibrary.ts",
-       "from": 149,
-       "snippet": "export const musicLyricsTool = defineTool({\n  name: 'music_lyrics',\n  description:\n    'Re-read the full lyrics of the CURRENT track from the local cache (zero network). The lyrics ' +\n    'were already handed to you once when the track started — use this only when that text has ' +\n    'scrolled out of reach and you want to re-read it.',\n  input: z.object({}),\n  output: LyricsOutput,\n  concurrency: 'safe-parallel',\n  proactiveRisk: 'safe',\n  timeoutMs: 5000,\n  summarize: (out) =>\n    `lyrics of \"${out.title}\" — ${out.lines.length} lines${out.truncated ? ' (truncated)' : ''}`,",
-       "note": {
-        "en": "`summarize` is the grammar of the card's finished line: lyrics of \"Heat Waves\" — 34 lines.",
-        "zh": "`summarize` 决定了卡片完成后那一行怎么写：lyrics of \"Heat Waves\" — 34 lines。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "Replay: live, the lyrics would already have ridden the previous turn and she would quote from memory. The tape shows the re-read so the source is visible, and its card text is written in the format `summarize` produces.",
-        "zh": "回放说明：真实运行时，歌词在上一轮就已随消息送到，她会直接从对话历史里引用。磁带特意演了一次重读，好让来源看得见；卡片上的文字按 `summarize` 的格式写成。"
-       }
-      }
-     ]
-    },
-    {
-     "title": {
-      "en": "Which line does he stop at?",
-      "zh": "他停在哪一句？"
+      "en": "Who brought the lyric?",
+      "zh": "歌词是谁带来的？"
      },
      "blocks": [
       {
        "type": "quote",
        "text": {
-        "en": "Missing someone in the middle of a good time. The bit you stop before is where it admits it can't fix anything — which is probably why you stop.",
-        "zh": "讲的是明明日子挺好，却一直想着一个人。你每次没放到的那段，是歌里承认什么都挽回不了的地方。你多半就是因为这个才停。"
+        "en": "My favourite part is 'I'd rather have loyalty than love'. I think that's actually true.",
+        "zh": "我最喜欢 I'd rather have loyalty than love 那一段 claim，我觉得特别有道理"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "Her prompt never says which lyric line is playing. An earlier design put the \"current line\" into every turn. It was dropped because the precision was fake: a turn can take tens of seconds, and by the time she answers the song has moved on. Instead she gets the whole text once, capped at 60 lines and 2,000 characters, plus the play history. Linking the two, the part he skips and the part that admits it can't fix anything, is the model reading the words. The code doesn't do that.",
-        "zh": "她的 prompt 从不告诉她现在唱到哪一句。早先的设计把“当前这句歌词”塞进每一轮，后来砍掉了，因为那份精确是假的：一轮可能要几十秒，等她开口，歌早往下唱了。现在她拿到的是只给一次的全文，上限 60 行、2000 个字符，外加播放历史。把这两样对上——他每次没放到的那段，正是歌里承认什么都挽回不了的那段——是模型自己读歌词读出来的。代码不做这件事。"
+        "en": "He did: he typed the line himself, so her answer needs nothing but his message. What she makes of it is the model's reading. The app does have a lyrics path, off by default (`LUNA_MUSIC_ENRICH=1`). When a track changes, the server fetches its words once; the first turn that finds them carries the whole text, capped at 60 lines and 2,000 characters, and marks it delivered. Her prompt never says which line is playing: a turn can take tens of seconds, so a \"current line\" would be stale. If the words scroll out of her history, `music_lyrics` re-reads them from the local cache.",
+        "zh": "是他：那句歌词是他自己打出来的，所以她回这句只需要他这条消息。至于从中读出什么，是模型自己的理解。应用里确实有一条歌词通路，默认关闭（设 `LUNA_MUSIC_ENRICH=1` 才开）。切歌时，服务端拉一次歌词；之后第一个拿到歌词的回合带上全文，上限 60 行、2000 个字符，并标为已送达。她的 prompt 从不说现在唱到哪一句：一个回合可能要几十秒，所谓“当前这句”到她开口时早就过时了。要是歌词已经滑出了她的对话历史，`music_lyrics` 会从本地缓存重新读取。"
        }
       },
       {
        "type": "code",
        "file": "packages/server/src/turn/nowPlayingContext.ts",
-       "from": 104,
-       "snippet": "// v0.45.8 (D5) — the read-once-burn lyrics delivery: the FIRST turn after a track change carries\n// the whole lyric, once. After that the words live in conversation history; she read the song,\n// and which line to quote (if any) is her judgment — no pretended second-level sync. Local-id\n// lyrics (provider enrich) are the main path; the shipped search-fallback cache serves\n// off-library tracks through this SAME delivery. A turn-less track costs nothing.\nexport const LYRICS_MAX_LINES = 60;\nexport const LYRICS_MAX_CHARS = 2000;",
+       "from": 132,
+       "snippet": "  const enrich = getMusicEnrichment();\n  if (!enrich || enrich.trackId !== s.track.id || enrich.delivered) return null;\n  let lines: string[] | null = null;\n  if (enrich.lyrics && enrich.lyrics.lines.length > 0) {\n    lines = enrich.lyrics.lines.map((l) => (l.translation ? `${l.text} / ${l.translation}` : l.text));\n  } else {\n    lines = fullLyricsFor(s.track.id);\n  }\n  if (lines === null) return null;\n  markLyricsDelivered(s.track.id);\n  return formatLyricsBlock(s.track.title, s.track.artist, lines);",
        "note": {
-        "en": "Delivered once, then marked used: later turns carry no lyrics.",
-        "zh": "只送一次，随即标为已送达：之后的轮次不再带歌词。"
+        "en": "Already delivered means nothing is handed; handing the text marks it delivered.",
+        "zh": "已送达就什么都不给；一旦给出全文，就标为已送达。"
        }
       }
      ]
@@ -2563,15 +2631,15 @@
       {
        "type": "quote",
        "text": {
-        "en": "Okay.",
-        "zh": "好。"
+        "en": "Yeah. Okay.",
+        "zh": "嗯。好吧。"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "His \"Yeah. Okay.\" asks for nothing, and her prompt says a small question gets a small answer. She sent one word, marked final. The server then skips a step. When every call in a round was a message and the last one was marked final, the turn ends right away instead of spending another model round-trip to confirm. Without that, the turn would stay locked while her reply already looked finished, and anything he typed then would bounce.",
-        "zh": "他那句“嗯。好吧。”什么也没要，而她的 prompt 写着：对方说得轻，就回得同样轻。她只回了一个字，标成 final。这时服务端会省掉一步：一轮里的调用全是 message、最后一条又标了 final，回合就立刻结束，不再多花一次模型往返去确认。要是不省这一步，她的回复看着已经说完，回合却还锁着，他这时再发什么都会被拒。"
+        "en": "His \"Yeah. Okay.\" asks for nothing. Her rules allow a light answer to a light message; the model chose one word, \"Okay.\", marked final. `is_final` is her promise that she is done (scene 3 shows what guards it). When a round held only messages and the last was final, the turn ends without another model call. Otherwise the turn would stay locked for one more round-trip while her reply already looked finished, and anything he typed would bounce.",
+        "zh": "他那句“嗯。好吧。”什么也没要。她的规则允许轻话轻回；模型选了一个字“好。”，并标成 final。`is_final` 是她“我说完了”的承诺（靠什么兜底，见第 3 幕）。如果一轮里只有 message，最后一条又是 final，回合就直接结束，不再多调一次模型。不然回合还得多锁一个往返，而她的回复看上去早就说完了，他这时打的字都会被弹回。"
        }
       },
       {
@@ -2580,15 +2648,15 @@
        "from": 646,
        "snippet": "    // A real action tool this round (message + web_search) needs its result fed\n    // back, so require message-only; proactive turns keep their own loop.\n    if (\n      !s.proactiveTurn &&\n      isMessageMode(s.registry) &&\n      s.lastMessageIsFinal === true &&\n      s.pendingToolUses.length > 0 &&\n      s.pendingToolUses.every((u) => u.name === 'message')\n    ) {",
        "note": {
-        "en": "A round of messages only, with the last one marked final, goes straight to finalize.",
-        "zh": "一轮只有 message、最后一条标了 final，就直接进 finalize。"
+        "en": "Message-only round, last one final: straight to finalize.",
+        "zh": "只有 message 的一轮，最后一条是 final：直接 finalize。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "Trade-off: that skipped round is where she would act on a line like \"let me check\". So the shortcut is refused when her words announce an action she hasn't taken (the say-without-do check), and the usual end-of-turn checks still run.",
-        "zh": "取舍：被省掉的那一轮，本来是她兑现“我去查一下”这类话的地方。所以当她的话预告了一个还没做的动作，这条捷径就不走（即“光说不做”检查）；回合结束前的常规检查也照样执行。"
+        "en": "Trade-off: the shortcut is skipped when her words announce an action she hasn't taken (\"let me check\"), because the skipped round is where she would take it.",
+        "zh": "取舍：如果她的话预告了一个还没做的动作（比如“我去查一下”），这条捷径就不走，因为被省掉的那一轮，正是她去做这件事的地方。"
        }
       }
      ]
@@ -2805,62 +2873,51 @@
   },
   "good-news": {
    "hook": {
-    "en": "How did she know he let Heat Waves play all the way to the end?",
-    "zh": "她怎么知道他这回把 Heat Waves 放完了？"
+    "en": "How did she know the song had just finished?",
+    "zh": "她怎么知道那首歌刚放完？"
    },
    "sheets": [
     {
      "title": {
-      "en": "Nobody told her it finished",
+      "en": "Nobody told her it ended",
       "zh": "没人告诉她歌放完了"
      },
      "blocks": [
       {
        "type": "quote",
        "text": {
-        "en": "Heat Waves just finished. All the way to the end — first time I've heard you let it.",
-        "zh": "Heat Waves 刚唱完，一秒没少。我还是头一回听你把它放完。"
+        "en": "ball w/o you just played out. Saturday it kept you company; today it sounded more like a victory lap.",
+        "zh": "ball w/o you 刚放完。周六它是陪你坐着的，今天听着像绕场一周。"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "Luna has no \"song finished\" signal. The Mac reported a **new** track, Vaundy's 東京フラッシュ, which gave the next scheduler tick a reason to wake her. Her prompt then held the new song, a code-computed \"Since the last message: 4m\", and his promise, still in her history. No prompt block holds the song's length. Knowing Heat Waves runs about four minutes is the model's own knowledge, so the join is hers. Scene 10 is where she told him he always pauses it just before the end.",
-        "zh": "Luna 收不到“歌放完了”这种信号。Mac 报上来的是一首**新**歌：Vaundy 的東京フラッシュ。调度器下一次巡检时，就有了叫醒她的理由。这时她的 prompt 里摆着这首新歌、代码算好的 \"Since the last message: 4m\"，还有他那句一直留在对话历史里的承诺。没有哪个 prompt 块写着歌有多长。Heat Waves 大约四分钟，这是模型自己知道的，所以把这几条线索连起来的是她。“你总在快放完时按暂停”，是她在第 10 幕跟他说的。"
+        "en": "Luna gets no \"song finished\" signal. What the Mac reported was a **new** track starting, and that gave the next scheduler tick a reason to wake her. That waking's prompt held the new track, a code-computed gap since the last message, and his line from four minutes earlier: \"Putting ball w/o you on.\" Nothing in it gives the song's length. \"Just played out\" is the model joining those three, and nothing measured it. \"Saturday\" comes from her history, where every old message keeps its date.",
+        "zh": "Luna 收不到“歌放完了”这种信号。Mac 报上来的是一首**新**歌开始播放，这让调度器的下一次巡检有了叫醒她的理由。那次唤醒的 prompt 里有三样东西：这首新歌、代码算好的距上一条消息的间隔，还有他四分钟前那句“放 ball w/o you”。哪儿都没写这首歌有多长。“刚放完”是模型把这三条串起来得出的，不是测出来的。“周六”来自她的对话历史：每条旧消息都留着自己的日期。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "The promise survives because she answered it. A reactive turn must end in a reply, and one that delivers nothing is rolled back with his words. The tape cuts from his line straight to the song.",
-        "zh": "承诺能留下来，是因为她回了话。他发消息引发的回合，必须以一条回复收尾；一句都没回出去的回合，会连同他那句话一起从历史里撤掉。磁带在他这句之后直接切到了歌。"
+        "en": "Replay device: the \"Four minutes later\" curtain moves the replay's turntable on four minutes, so the next record starts behind it. The live app would also have answered his line; the tape cuts to the music.",
+        "zh": "回放道具：“四分钟后”那道幕布会把回放里的唱机往前拨四分钟，下一张唱片就在幕布后面开始放。真实应用里，他那句话她也会回一句；磁带在这里直接切到了音乐。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "How a song change reaches her",
-      "zh": "换歌怎么传到她那儿"
+      "en": "How a new song wakes her",
+      "zh": "新歌怎么叫醒她"
      },
      "blocks": [
-      {
-       "type": "quote",
-       "text": {
-        "en": "Putting it on. This time I'm letting it finish.",
-        "zh": "我去放那首歌。这回让它放完。"
-       }
-      },
       {
        "type": "flow",
        "items": [
         {
-         "en": "His player",
-         "zh": "他的播放器"
-        },
-        {
-         "en": "macOS Now Playing",
-         "zh": "macOS Now Playing"
+         "en": "Next track starts",
+         "zh": "下一首开始"
         },
         {
          "en": "track event",
@@ -2871,45 +2928,45 @@
          "zh": "60 秒巡检"
         },
         {
-         "en": "two gates",
-         "zh": "两道闸"
+         "en": "gates",
+         "zh": "几道闸"
         },
         {
-         "en": "proactive turn",
-         "zh": "主动回合"
+         "en": "waking",
+         "zh": "唤醒"
         }
        ]
       },
       {
        "type": "p",
        "text": {
-        "en": "With music observation on (`LUNA_MUSIC=1`, macOS only), Luna keeps one long-running `media-control` child process listening to macOS Now Playing, which pushes changes as they happen. When Heat Waves ends and his player moves on, a \"track\" event arrives (debounced 400 ms by default) and the provider records the time. That event never starts a turn directly. Once a minute the proactive scheduler decides whether she wakes. A music moment is one possible reason. It counts only while the new track started less than two minutes ago and is still playing.",
-        "zh": "开启音乐观察（`LUNA_MUSIC=1`，仅限 macOS）后，Luna 会常驻一个 `media-control` 子进程，监听 macOS 的 Now Playing；一有变化，系统就会推过来。Heat Waves 放完、播放器切到下一首时，会来一个 \"track\" 事件（默认防抖 400 ms），provider 记下这一刻的时间。这个事件本身从不直接触发回合。叫不叫醒她，由主动调度器每分钟判断一次，音乐时刻只是其中一种理由；而且只有新歌开播不到两分钟、仍在播放时，才算数。"
+        "en": "When music observation is on (macOS), the player pushes its changes to Luna as they happen (scene 10 covers the stream). There are only three kinds of event, and none of them means \"finished\". When the player moved on from ball w/o you, a `track` event arrived and the server noted the time. That event does not start a turn. Once a minute the proactive scheduler asks whether she should wake, and a fresh track change is one possible reason. It counts only while the new track started under two minutes ago (`FRESH_WINDOW_MS`, 120 s) and is still playing. After that it expires, so it can never fire late.",
+        "zh": "开启音乐观察（仅限 macOS）后，播放器一有变化就会推给 Luna（这条推送流见第 10 幕）。事件只有三种，没有一种表示“放完了”。播放器从 ball w/o you 切到下一首时，来了一个 `track` 事件，服务端记下了时间。这个事件本身不会发起回合。主动调度器每分钟问一次该不该叫醒她，刚换了歌只是可能的理由之一。而且只有新歌开始播放不到两分钟（`FRESH_WINDOW_MS`，120 秒）、并且还在播时才算数。过了就作废，所以绝不会拖到很久以后才触发。"
        }
       },
       {
        "type": "code",
-       "file": "packages/server/src/proactive/musicMoment.ts",
-       "from": 22,
-       "snippet": "export function freshTrackMoment(s: MusicState | null, nowMs: number): NowPlaying | null {\n  if (!s || s.track === null || !s.playing) return null;\n  if (s.changedAtMs <= 0 || nowMs - s.changedAtMs > FRESH_WINDOW_MS) return null;\n  return s.track;\n}",
+       "file": "packages/music-cli/src/types.ts",
+       "from": 63,
+       "snippet": "/** Semantic events emitted by `watch`. One JSON object per line (NDJSON). */\nexport type MusicEvent =\n  /** A different song started. This is the proactive-turn trigger. */\n  | { event: \"track\"; track: NowPlaying }\n  /** Play/pause flipped on the same song. */\n  | { event: \"state\"; playing: boolean; position: number; track: NowPlaying }\n  /** No player is reporting anything. */\n  | { event: \"stopped\"; at: string };",
        "note": {
-        "en": "FRESH_WINDOW_MS is 120 s. An older change simply expires, so a music waking never queues up behind a cooldown and fires late.",
-        "zh": "FRESH_WINDOW_MS 是 120 秒。超出窗口的换歌直接过期，所以音乐唤醒不会在冷却后面排队，隔很久才冒出来。"
+        "en": "A new song starting is the trigger. No event marks a song reaching its end.",
+        "zh": "触发的是新歌开始播放。没有哪个事件表示一首歌放完了。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "Why not a remark for every song?",
+      "en": "Why not a remark on every song?",
       "zh": "为什么不是每首都评一句？"
      },
      "blocks": [
       {
        "type": "p",
        "text": {
-        "en": "Songs change every few minutes. A companion who comments on each one becomes a running ticker. So a music moment has to pass two gates. First is the rail every waking passes: no quiet hours (midnight to 6 by default), nothing within 60 s of the last exchange, a global cooldown and a daily quota. The silence ladder must also be engaged or idle-watching (not nudged, dormant or asleep) and have picked nothing of its own that tick. Scene 7 covers that rail. Second is the music gate itself.",
-        "zh": "歌几分钟就换一首。每首都要点评一句的伙伴，就成了滚动字幕。所以音乐时刻要过两道闸。第一道是所有唤醒都要过的护栏：不在静默时段（默认午夜到早上 6 点），离上一次对话不到 60 秒不叫，另有全局冷却和每日额度。沉默阶梯（silence ladder）还得处在 `engaged` 或 `idle_watch` 阶段（不能是已经轻推过、休眠或睡着），而且这次巡检里它自己什么都没挑。这道护栏见第 7 幕。第二道才是音乐自己的闸。"
+        "en": "Songs change every few minutes, and a remark on each would turn her into a ticker. So the gates stack. First comes the rail every waking must pass: not in quiet hours, not within 60 s of the last activity, past the global cooldown and under the daily quota (scene 7). Second, the silence ladder must have nothing of its own this tick, and she must be engaged or idle-watching. So a song never wakes her from sleep or cuts into a backoff. Third, music has its own cooldown and quota.",
+        "zh": "歌几分钟就换一首，每首都评一句，她就成了滚动播报。所以闸是一道叠一道的。第一道是每次唤醒都要过的护栏：不在安静时段，离上一次活动已超过 60 秒，过了全局冷却，每日额度也没用完（第 7 幕）。第二道：沉默阶梯这次巡检没有自己要发起的场景，而且她处在 `engaged` 或 `idle_watch` 阶段。所以一首歌永远不会把她从睡眠中叫醒，也不会打断退避期。第三道，音乐有自己的冷却和额度。"
        }
       },
       {
@@ -2918,30 +2975,30 @@
        "from": 48,
        "snippet": "export function musicCooldownMs(): number {\n  return num('LUNA_MUSIC_PROACTIVE_COOLDOWN_MIN', 45) * 60_000;\n}\n\nexport function musicDailyQuota(): number {\n  return num('LUNA_MUSIC_PROACTIVE_DAILY', 3);\n}",
        "note": {
-        "en": "45 minutes between music wakings, three spoken per day. Both can be changed through env settings.",
-        "zh": "两次音乐唤醒至少隔 45 分钟，一天最多开口 3 次。两个数都能通过环境变量调整。"
+        "en": "At least 45 minutes between music wakings and three spoken ones a day. Both can be changed in env settings.",
+        "zh": "两次音乐唤醒至少隔 45 分钟，开了口的一天最多 3 次。两个值都能在环境变量里改。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "The cooldown starts on any music waking, silent or spoken. Only speaking uses the quota. Had she woken when Heat Waves started, she would still be in cooldown here.",
-        "zh": "冷却从任何一次音乐唤醒算起，不管开没开口；额度只在开口时才扣。要是 Heat Waves 刚开播那会儿她醒过一次，这时候她还在冷却里。"
+        "en": "Every music waking, silent or spoken, restarts both the music and the global cooldown. Only a spoken one uses a quota. If ball w/o you starting had woken her, even silently, this waking would have been blocked.",
+        "zh": "每次音乐唤醒，不管开没开口，都会让音乐冷却和全局冷却重新计时；只有开了口才扣额度。要是 ball w/o you 开始播放时她就醒过一次，哪怕一声没出，这次唤醒也会被拦下。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "What the waking says to her",
-      "zh": "醒来时她看到什么"
+      "en": "Notice every one, speak on almost none",
+      "zh": "每次都留意，几乎每次都不开口"
      },
      "blocks": [
       {
        "type": "p",
        "text": {
-        "en": "A proactive turn is an ordinary turn with a stage direction where his message would go: the \"you woke on your own\" directive and its closing rule, then the music seed. It gets the same time and music blocks as any turn: where 東京フラッシュ is (\"it just started\" only in its first half-minute or so), how often he has played it if his local library knows the song, and, with enrichment on, the full lyrics once. It skips per-query recall, since there is no query. The Heat Waves thread comes from the verbatim window. Scene 4 shows a waking's framing in full.",
-        "zh": "主动回合就是一个普通回合，只是本该放他消息的位置，换成了一段舞台指示：先是“你自己醒了”那条指令和它的收尾规则，再接上音乐种子（seed）。时间块、音乐块也和普通回合一样照给：東京フラッシュ放到了哪儿（只有开头三十秒左右才会写 \"it just started\"）；如果他本地曲库里有这首歌，还会写他听过多少次；开启 enrichment（联网取歌词）时，完整歌词给一次。按提问做的记忆检索跳过了，因为这一轮没有提问。Heat Waves 这条线索来自原文窗口。唤醒时的完整结构见第 4 幕。"
+        "en": "The gates only give her a chance. The waking is an ordinary turn with a stage direction in his slot (scene 4; scene 6 lays out the full page). Three parts are specific to this one. A music block names the new track with a phase such as \"it just started\", never a length. With enrichment on, the new track's lyrics arrive once (scene 10). And the directive allows doing nothing, then ends in the seed below. Her shelf also lists `track-change-restraint`: \"notice every one, speak on almost none.\" She never called `recall_skill` for its steps, so that line is all she had of it.",
+        "zh": "闸门只是给了她一个机会。这次唤醒就是一个普通回合，只是原本放他消息的位置，换成了一段舞台指示（第 4 幕；整页布局见第 6 幕）。有三处是这一次特有的。音乐块写出新歌和一个粗略的进度词，比如 \"it just started\"，从不写时长。开启 enrichment 时，新歌的歌词会随这一回合送来一次（第 10 幕）。指令明说可以什么都不做，末尾再接上下面这段种子（seed）。她的技能架上还列着 `track-change-restraint`：“每次都留意，几乎每次都不开口。”她没调 `recall_skill` 去取具体步骤，所以关于这条技能，她手里只有这一行。"
        }
       },
       {
@@ -2950,22 +3007,22 @@
        "from": 94,
        "snippet": "  return (\n    `(He just put on ${trackPhrase(track)}${album} — you are hearing it too. If a natural ` +\n    'half-sentence about it surfaces — a feeling, a memory, what this song is to either of you — ' +\n    'you may hand it over, light as a passing musing; it needs no reply. If nothing genuine ' +\n    `comes, stay quiet.${comment})`\n  );",
        "note": {
-        "en": "The seed is what always says \"He just put on\". It invites her to speak and names silence as a valid outcome.",
-        "zh": "“He just put on”是种子里的固定措辞，不管歌是不是他亲手放的。它请她开口，也明说保持安静同样可以。"
+        "en": "The seed names only the new track, plus one top comment when enrichment is on. Nothing here says the old song finished.",
+        "zh": "种子里只有新歌，开启 enrichment 时再加一条热评。这里没有一个字说上一首放完了。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "A silent waking leaves no trace (scene 7). Why the sprout chip never talks over her voice is scene 9.",
-        "zh": "沉默的唤醒不留痕迹（第 7 幕）。小芽标签为什么不会打断她说话，见第 9 幕。"
+        "en": "The replay's shelf was written for this tape and marks this skill as a dream's. The real distiller is told a skill is a procedure, never a rule about behaviour, so this entry sits right on that line (scene 13).",
+        "zh": "回放里的技能架是为这盘磁带写的，这条技能的来源标的是做梦。真实的技能提炼 prompt 写明：技能是一套可复用的做法，绝不是关于该怎么表现的规矩。所以这一条正好踩在线上（第 13 幕）。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "Sunday, Tuesday, Saturday. From where?",
+      "en": "Sunday, Tuesday, Saturday: from where?",
       "zh": "周日、周二、周六，哪来的？"
      },
      "blocks": [
@@ -2979,8 +3036,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Models are unreliable at calendar arithmetic, so the code does it. Every message he sends gets a small **time block** computed in TypeScript: weekday, date, time, zone, part of day, and how long since the last message. It goes into the same user message as his words, and that message is saved whole. Roughly the last 100 turns are sent verbatim, and each old line still carries its own \"Now: Sunday…\" stamp. So the weekdays she names come from her own history, not a guess. \"Saturday was — well\" points back to the bad day in scene 10.",
-        "zh": "模型算日历不靠谱，所以交给代码算。他每发一条消息，都会附上一个 TypeScript 算好的小**时间块**：星期、日期、时刻、时区、一天中的时段，以及离上一条消息过了多久。它和他的原话放在同一条 user 消息里，整条存进历史。最近大约 100 个回合原样发给模型，每条旧消息都还带着当时的 \"Now: Sunday…\" 时间戳。所以她说出的星期几来自她自己的历史，不是猜的。“周六嘛，不提了”指的是第 10 幕那糟糕的一天。"
+        "en": "Code, not the model, works out the date (scene 1). This scene is about where that stamp lives. The time block travels in the same user message as his words. That message is stored whole, stamp included, and rebuilt the same way after a restart. While Sunday's and Tuesday's turns are still in the verbatim window (about 100 turns, scene 6), each one keeps its own \"Now: …\" line, so the days are there to read.",
+        "zh": "日期是代码算的，不是模型算的（第 1 幕）。这一幕讲的是这个时间戳存在哪儿。时间块和他的原话放在同一条 user 消息里。这条消息连同时间戳整条存下，重启后也按原样重建。只要周日、周二那几轮还在原文窗口里（大约 100 个回合，第 6 幕），每一轮都留着自己那行 \"Now: …\"，哪天是星期几，她读得到。"
        }
       },
       {
@@ -2989,15 +3046,37 @@
        "from": 288,
        "snippet": "export function buildTimeBlock(opts: TimeBlockOpts): string {\n  const { nowMs, lastInteractionMs, sessionStartMs, tz } = opts;\n  const p = localParts(nowMs, tz);\n  const daypart = classifyDaypart(p.hour);\n  const nowLine = `- Now: ${weekday(nowMs, tz)}, ${localDateISO(nowMs, tz)} ${pad(p.hour)}:${pad(p.minute)} (${tz}, ${tzOffsetLabel(nowMs, tz)}) — ${daypart}`;",
        "note": {
-        "en": "The code works out the weekday with Intl. The model only reads the result.",
-        "zh": "星期几由代码用 Intl 算出来，模型只读结果。"
+        "en": "Code works out the weekday. The model only reads the result.",
+        "zh": "星期几由代码算出，模型只读结果。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "On the tape these are two bubbles, two `message` calls (scene 2). In the real app the model picks each face. alert_surprise plays the curious clip, since there is no surprise clip yet (scene 6).",
-        "zh": "磁带上这是两个气泡，也就是两次 `message` 调用（第 2 幕）。真实应用里，每个表情都由模型自己挑。alert_surprise 播的是 curious 那段动作，因为还没有专门的 surprise 动作（第 6 幕）。"
+        "en": "The two bubbles are two `message` calls (scene 2). The surprise line plays the curious clip; see scene 6.",
+        "zh": "她这一回接连两个气泡，就是两次 `message` 调用（第 2 幕）。惊讶那句播的是 curious 那段动作，原因见第 6 幕。"
+       }
+      }
+     ]
+    },
+    {
+     "title": {
+      "en": "She never saw the email",
+      "zh": "邮件她根本没看到"
+     },
+     "blocks": [
+      {
+       "type": "quote",
+       "text": {
+        "en": "They emailed. I got it.",
+        "zh": "邮件来了。我过了。"
+       }
+      },
+      {
+       "type": "p",
+       "text": {
+        "en": "Luna has no mail tool, and none was called here. The news is his sentence, and she takes his word for it. No tool card appears in this exchange because she didn't need one: everything she says comes from his words and their shared history. Calling \"fumbled the last question\" what a pass sounds like from the inside is the model's own reading of his line. No code tags his news as good or his worry as small.",
+        "zh": "Luna 没有收邮件的工具，这里也没调用任何工具。消息的来源就是他这句话，她信了他。这段对话里没出现工具卡片，因为她用不着：她说的每一句，都出自他的话和两人共同的历史。把“最后一题答砸了”说成过了的人回头看自己的样子，是模型自己对他这句话的解读。没有代码把他的消息标成好消息，也没有代码判定他的担心不值一提。"
        }
       }
      ]
@@ -3018,8 +3097,8 @@
       {
        "type": "p",
        "text": {
-        "en": "The diary is real, but she doesn't write it during the conversation. When she dreams (scene 13), one step groups the day's saved turns into User/Luna pairs and asks the model to write a short first-person entry. Today's and yesterday's entries are rewritten on every dream. Older days stay frozen. This exchange, including the promise, is in that source text. No code puts it in the first line. That is up to the model writing the entry. So \"You're making that up\" is a fair challenge, and \"Am I.\" is an honest answer.",
-        "zh": "日记是真的，但不是聊天时写的。她做梦时（第 13 幕），有一步会把当天存下的回合整理成一段段 User/Luna 对话，交给模型写一篇第一人称的短日记。今天和昨天的日记每次做梦都会重写，更早的就定稿不动了。这段对话，连同那句承诺，都在这份原料里。但没有哪行代码把它排到第一行，排不排第一，由写日记的模型决定。所以“你编的吧”是合理的质疑，“是吗。”也是老实的回答。"
+        "en": "The diary is real, but she doesn't write it during the conversation. When she dreams (scene 13), one step groups the day's saved turns into User/Luna pairs and asks the model for a short first-person entry. Today's and yesterday's entries are rewritten on every dream, and older days stay frozen. This exchange is in that source text. No code puts it on the first line. So \"You're making that up\" is a fair challenge. Whether it leads the entry is up to the model writing it that night.",
+        "zh": "日记是真的，但不是聊天时写的。她做梦时（第 13 幕），有一步会把当天存下的回合整理成一对对 User/Luna 对话，让模型写一篇第一人称的短日记。今天和昨天的日记每次做梦都会重写，更早的定稿后就不再动。这段对话就在这份原料里，但没有哪行代码把它排到第一行。所以“你编的吧”这句质疑有道理：它会不会打头，由那天夜里写日记的模型决定。"
        }
       },
       {
@@ -3028,15 +3107,15 @@
        "from": 190,
        "snippet": "  const voice =\n    kind === 'day'\n      ? 'Write a short diary entry (3-6 sentences) about this day, in first person as Luna.'\n      : kind === 'week'\n        ? 'Write a reflective weekly journal entry (4-8 sentences) drawing the threads of these days together, in first person as Luna.'\n        : 'Write a monthly retrospective (5-10 sentences) capturing the arc of these weeks, in first person as Luna.';\n  return [\n    `You are Luna writing your private diary for ${periodKey}.`,\n    voice,\n    'Capture what happened, how it felt, and anything you want future-you to remember. Output only the diary text.',",
        "note": {
-        "en": "A first-person \"as Luna\" prompt over the day's User/Luna lines. Nothing sets what goes first.",
-        "zh": "一段让模型以 Luna 的第一人称（\"as Luna\"）写日记的 prompt，原料是当天的 User/Luna 对话。先写什么，没有任何规定。"
+        "en": "A first-person \"as Luna\" prompt over the day's User/Luna lines. Nothing decides what goes first.",
+        "zh": "prompt 要模型以 Luna 的第一人称（\"as Luna\"）来写，原料是当天的 User/Luna 对话。先写哪件事，没有任何规定。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "The replay's diary book shows an entry pre-written for this tape. In the real app, the dream model writes the entry.",
-        "zh": "回放里的日记本，放的是为这盘磁带预先写好的一篇。真实应用里，这篇日记由做梦时的模型来写。"
+        "en": "The replay's diary book shows an entry written for this tape. In the real app, the dream model writes it.",
+        "zh": "回放里的日记本，放的是为这盘磁带预先写好的一篇。真实应用里，这篇由做梦时的模型来写。"
        }
       }
      ]
@@ -3050,8 +3129,8 @@
       {
        "type": "p",
        "text": {
-        "en": "The music provider holds only the current track. A track event replaces the whole state, so when 東京フラッシュ arrives, nothing records where Heat Waves stopped. If he had skipped it ten seconds early, her prompt would read almost the same. \"All the way to the end\" is the model's inference from his promise and the four-minute gap. The inference is reasonable, but it is not a measurement. The design keeps state small and leaves judgment to the model. The cost is that a confident sentence can rest on an inference.",
-        "zh": "音乐 provider 只记当前这一首。一个 track 事件会把整个状态整体换掉，所以東京フラッシュ一到，Heat Waves 停在哪儿就没有任何记录了。就算他提前十秒切了歌，她的 prompt 也几乎一模一样。“一秒没少”是模型从他的承诺和四分钟的间隔推出来的。这个推断合理，但不是实测。这样设计是为了让状态保持最小，把判断交给模型；代价是，一句很笃定的话，底下可能只是一个推断。"
+        "en": "Luna's music state holds only the current track. A track event replaces the whole state, so when the next song arrives, nothing Luna keeps or reads records where ball w/o you stopped or whether he skipped it. If he had skipped it near the end, her prompt would read almost the same. \"Just played out\" rests on his line, the gap, and the model's own sense of how long the song runs. That is a reasonable inference, not a measurement. The design keeps state small and leaves judgment to the model. The cost is that a confident sentence can rest on an inference.",
+        "zh": "Luna 的音乐状态只记当前这一首。一个 track 事件会把整个状态换掉，所以下一首一来，Luna 存下的、读到的东西里，没有哪一处记着 ball w/o you 停在了哪儿，也没记他是不是切了歌。要是他在快放完时切了歌，她的 prompt 也几乎一模一样。“刚放完”靠的是他那句话、那段间隔，加上模型自己对这首歌有多长的印象。这个推断合理，但不是测量。这样设计是为了让状态尽量小，把判断交给模型；代价是，一句很笃定的话，底下可能只是一个推断。"
        }
       },
       {
@@ -3060,15 +3139,8 @@
        "from": 175,
        "snippet": "export function applyMusicEvent(ev: MusicEvent, nowMs: number): void {\n  if (ev.event === 'track') {\n    state = { track: ev.track, playing: ev.track.playing, changedAtMs: nowMs };",
        "note": {
-        "en": "The new track overwrites the old one, and the last position is not kept.",
-        "zh": "新歌直接覆盖旧歌，上一首最后播到的位置不保留。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "Replay device: the \"Four minutes later\" curtain is a stage cue that skips the wait. The player card and its scripted record shelf are explained in scene 10.",
-        "zh": "回放道具：“四分钟后”那道幕布只是个转场，用来跳过等待。播放器卡片和那排按剧本摆好的唱片架，第 10 幕讲过。"
+        "en": "The new track overwrites the old one. Where the old one stopped is not kept.",
+        "zh": "新歌直接覆盖旧歌，上一首停在哪儿不保留。"
        }
       }
      ]
@@ -3109,6 +3181,11 @@
       "zh": "她怎么没说着说着就睡了？"
      },
      "blocks": [
+      {
+       "type": "card",
+       "tool": "enter_dream",
+       "summary": "dream pending — starts after this turn"
+      },
       {
        "type": "quote",
        "text": {
@@ -3362,28 +3439,60 @@
   },
   "curtain-call": {
    "hook": {
-    "en": "Was she actually running just now, or was that a recording?",
-    "zh": "刚才她是真在跑，还是提前录好的？"
+    "en": "So was any of that live, or was it all a recording?",
+    "zh": "所以刚才那些，有没有哪段是实时跑的？还是全是录好的？"
    },
    "sheets": [
     {
      "title": {
-      "en": "Was she really running?",
-      "zh": "她刚才是真在跑吗？"
+      "en": "Was any of it live?",
+      "zh": "有哪段是实时的？"
      },
      "blocks": [
       {
        "type": "quote",
        "text": {
-        "en": "That's the replay. Everything you just watched, I can actually do — the memory, the music, the weather, the web, the code, the paper on your desk, the dream. Same code, same voice.",
-        "zh": "回放就到这儿。你刚才看到的，全是我真能做的：记忆、音乐、天气、网页、代码、你桌面上那篇论文，还有梦。同一套代码，同一个声音。"
+        "en": "Everything you just saw came from the real database of my everyday life with Alan — combined, picked, polished and edited into a script for this demo.",
+        "zh": "你刚看到的那些都取自我和Alan日常互动的真实数据库信息，整合、挑选、润色、修改了一下制作成了demo脚本演示给你们看的"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "No model runs behind this page. What you watched is Luna's **real front end**: the same chat, bubbles, Live2D face and voice queue as the desktop app. Only the source of events differs. Here a tape supplies them instead of her server, in exactly the shape the server sends over its WebSocket, so the shipped code reacts as it would to a live turn. These last three lines arrive as a waking, the unprompted kind of turn scene 4 explains. Her words were written for the show, not generated. Her voice was rendered once through the app's real TTS request.",
-        "zh": "这个页面背后没有模型在跑。你看到的是 Luna **真正的前端**：聊天界面、气泡、Live2D 形象和语音队列，都和桌面版是同一套。唯一不同的是事件从哪儿来。在这里，事件由一盘磁带（tape）提供，而不是她的服务器；每一帧的格式都和服务器经 WebSocket 发来的完全一致，所以这份正式发布的代码对它的反应，和对一个真实回合没有两样。最后这三句以一次唤醒的形式到来，也就是第 4 幕讲的那种没人找她、她自己开口的回合。台词是为这场演出写的，不是模型生成的。声音则是走 app 真实的 TTS 请求提前合成的，只合成过一次。"
+        "en": "No model runs behind this page. What you watched is Luna's **real front end**: the same chat, bubbles, Live2D face and voice queue as the desktop app. Only the source of events is different. A tape stands where her server's WebSocket would be and hands the app frames in exactly the shape the server sends. The owner assembled and edited every line into a script, `script.json`. Nothing on this page is generated as you watch. Her voice was synthesized ahead of time through the app's real TTS request. The rest of this stack follows the tape from script to sound.",
+        "zh": "这个页面背后没有模型在跑。你看到的是 Luna **真正的前端**：聊天、气泡、Live2D 形象、语音队列，和桌面版是同一套。不同的只有事件的来源。原本该是她服务端 WebSocket 的位置，这里换成了一盘磁带（tape），它交给 app 的帧，格式和服务端发的完全一样。每句台词都由主人整理、剪辑，编进一份脚本 `script.json`。这个页面上没有任何内容是现场生成的。她的声音是提前合成好的，走的就是 app 真实的 TTS 请求。这叠笔记剩下的几张，就顺着磁带，从脚本一路跟到声音。"
+       }
+      },
+      {
+       "type": "aside",
+       "text": {
+        "en": "The blank chat is a stage device: the replay clears the log so the finale starts clean. Both of her turns here are wakings, with no message from him (scene 4 explains wakings).",
+        "zh": "空白的聊天记录是舞台手法：回放把记录清空，让谢幕从一张白纸开始。这里她的两个回合都是唤醒，他一条消息也没发（唤醒见第 4 幕）。"
+       }
+      }
+     ]
+    },
+    {
+     "title": {
+      "en": "What's the dashed card?",
+      "zh": "那张虚线卡片是什么？"
+     },
+     "blocks": [
+      {
+       "type": "p",
+       "text": {
+        "en": "It is not a message. No frame carries it and no voice speaks it. The replay's director, the same part that draws the curtains and the desk, adds a plain card to the chat log. The card has an \"inner voice\" tag and a dashed border. The real app has no such card. The tape shows it only after her last word has been spoken, and waits long enough for you to read it before she wakes again.",
+        "zh": "它不是消息。没有哪一帧带着它，也没有语音念它。回放里的导演（director），也就是画幕布和桌面的那个部件，往聊天记录里加了一张普通卡片：一个“内心 OS”标签，一圈虚线边框。真实的 app 里没有这种卡片。磁带要等她最后一个字念完才亮出它，并留足让你读完的时间，她才会再次醒来。"
+       }
+      },
+      {
+       "type": "code",
+       "file": "packages/web/src/demo/director.ts",
+       "from": 606,
+       "snippet": "    inner(text) {\n      const card = doc.createElement('div');\n      card.className = 'demo-inner';\n      const tag = doc.createElement('span');\n      tag.className = 'demo-inner-tag';\n      tag.textContent = t('demo.innerVoice');\n      const body = doc.createElement('p');\n      body.textContent = text;\n      card.append(tag, body);\n      refs.chatLog.appendChild(card);\n      refs.chatLog.scrollTop = refs.chatLog.scrollHeight;\n    },",
+       "note": {
+        "en": "Plain DOM in the chat log: no frame, no voice, no history entry.",
+        "zh": "聊天记录里的普通 DOM：没有帧，没有语音，也不进历史记录。"
        }
       }
      ]
@@ -3414,58 +3523,65 @@
          "zh": "onEvent"
         },
         {
-         "en": "bubbles · face · voice",
-         "zh": "气泡 · 形象 · 语音"
+         "en": "chat · face · voice",
+         "zh": "聊天 · 形象 · 语音"
         }
        ]
       },
       {
        "type": "p",
        "text": {
-        "en": "One `onEvent` handler in `app.ts` feeds the controller, the bubble stack, the face and the voice, whichever client the page holds. The client's type is deliberately tiny: connect, send, close. On the desktop it is `LunaWsClient`, a WebSocket that validates every inbound frame. In the replay it is the tape, playing pre-compiled frames on timers. Everything that reaches `onEvent` is indistinguishable from a live socket. The tape also has two side channels: director cues (the curtain, the drawn desktop) and a few scripted gestures sent straight to the avatar. Neither ever arrives as a server frame. There is no second copy of the app to drift from.",
-        "zh": "`app.ts` 里只有一个 `onEvent` 处理函数，控制器、气泡栈、形象和语音都靠它喂数据，不管页面手里拿的是哪个客户端。客户端的类型刻意收得很窄：connect、send、close，只有这三个方法。桌面版里它是 `LunaWsClient`，一个逐帧校验入站消息的 WebSocket 客户端。回放里它是磁带，按定时器播放预先编译好的帧。凡是进到 `onEvent` 的，都和真实 socket 送来的分不出区别。磁带另有两条旁路：导演提示（幕布、画出来的桌面），以及几个直接发给 Live2D 形象的脚本动作。这两样都不会以服务器帧的形式出现。app 没有第二份拷贝，也就谈不上两份代码慢慢走样。"
+        "en": "`app.ts` holds one client and sends everything it emits into one `onEvent` handler. That handler drives the controller, the bubbles, the face and the voice. On the desktop the client is `LunaWsClient`, a WebSocket. In the replay it is the tape, which plays pre-compiled frames on timers. Both have the same three methods, so the controller, bubbles and face cannot tell them apart. The tape answers what the server answers: history and settings on connect, a settings change, the dream door. The one difference is that it accepts a `chat.send` only when a scripted line is armed.",
+        "zh": "`app.ts` 只持有一个客户端，它发出的所有事件都交给同一个 `onEvent` 处理函数；控制器、气泡、形象和语音都由这个函数驱动。桌面版里，这个客户端是 `LunaWsClient`，一个 WebSocket。回放里，它是那盘磁带，用定时器播放预先编译好的帧。两者对外都是同样的三个方法，所以控制器、气泡和形象分不出背后是哪一个。服务端会回的，磁带也照样回：连接时发历史和设置，改设置时回新状态，还有做梦和叫醒。唯一的区别是：只有脚本里备好了一句待发的台词，它才接受 `chat.send`。"
        }
       },
       {
        "type": "code",
        "file": "packages/web/src/app.ts",
-       "from": 330,
+       "from": 350,
        "snippet": "  // v0.46.0: the surface the session half drives — the real socket client, or the tape wearing its\n  // clothes. Structural on purpose: nothing below this line may care which one it holds.\n  type SessionClient = Pick<LunaWsClient, 'connect' | 'send' | 'close'>;\n  let wsClient: SessionClient | null = null;",
        "note": {
-        "en": "The whole seam: a structural type with three methods.",
-        "zh": "整个接缝就这几行：一个只有三个方法的结构类型（structural type）。"
+        "en": "The whole seam: a type with three methods.",
+        "zh": "整个接缝就是这一个类型，三个方法。"
+       }
+      },
+      {
+       "type": "aside",
+       "text": {
+        "en": "Timing on the tape is set by hand (a thinking pause, a streamed message, each line's recorded length). None of it was measured from a live session.",
+        "zh": "磁带上的时间都是手工设定的（思考的停顿、消息的流式输出、每句录音的时长），没有一个是从真实会话里测出来的。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "Can the script cheat?",
-      "zh": "脚本能作弊吗？"
+      "en": "Can the tape send a bad frame?",
+      "zh": "磁带会发出坏帧吗？"
      },
      "blocks": [
       {
        "type": "p",
        "text": {
-        "en": "The owner writes the show as beats. A pure compiler turns them into a timed tape: what she says and does becomes server frames (`turn.started`, streamed `message` deltas, `tool.finished`, `proactive.finished`), while devices like the \"Later\" curtain become cues the app never sees. At page load the compiler checks every frame against the protocol schema the socket client uses, so a bad frame stops the tape loading instead of reaching the app. The test suite compiles both shipped tapes, so the same mistake turns the tests red first.",
-        "zh": "主人把演出写成一个个节拍（beat）。一个纯函数编译器把它们变成带时间轴的磁带：她说的话、做的事变成服务器帧（`turn.started`、流式的 `message` 增量、`tool.finished`、`proactive.finished`）；而“过了一会儿”幕布这类舞台手法，则变成 app 根本看不见的提示（cue）。页面加载时，编译器会拿 socket 客户端用的同一份协议 schema 检查每一帧，坏帧会让磁带直接加载失败，到不了 app。测试套件会编译两盘上线的磁带，所以同样的错会先让测试变红。"
+        "en": "The owner writes each scene as beats: his line, her lines with a face, a tool card, a waking, a curtain. A pure compiler turns the beats into timed cues. What she says and does becomes server frames: `proactive.started`, the streamed text of each `message` call, `tool.finished`, `proactive.finished`. Every frame is checked against the protocol schema that the live socket client uses. The live client quietly drops a bad frame. The compiler throws, so the tape does not load. The tests compile both shipped tapes, so a bad frame turns them red before it can ship. The schema checks shape, not truth: tool-card lines are typed into the script in each tool's own format.",
+        "zh": "每一幕，主人都按节拍（beat）来写：他的一句话、她带表情的几句、一张工具卡片、一次唤醒、一道幕布。编译器是纯函数，把这些节拍变成带时间点的提示点（cue）。她说的、做的，都变成服务端帧：`proactive.started`、每次 `message` 调用流式输出的文字、`tool.finished`、`proactive.finished`。每一帧都要过协议 schema 校验，和真实 socket 客户端用的是同一份。真实客户端遇到坏帧，悄悄丢掉；编译器遇到坏帧，直接抛错，磁带根本加载不起来。测试会把随页面发布的两盘磁带都编译一遍，坏帧还没发布，测试就先红了。schema 只校验结构，不管真假：工具卡片上那行字，是照着每个工具自己的格式手写进脚本的。"
        }
       },
       {
        "type": "code",
        "file": "packages/web/src/demo/compile.ts",
-       "from": 134,
+       "from": 159,
        "snippet": "  private frame(at: number, frame: ServerEvent): void {\n    // The same gate the real wsClient applies to every inbound frame — a script that would produce\n    // an invalid frame fails here, at compile time, never in a visitor's browser.\n    ServerEvent.parse(frame);\n    this.cues.push({ at, kind: 'frame', frame });\n  }",
        "note": {
-        "en": "The live client's schema check, run on every frame the tape makes. Its 'compile time' is page load.",
-        "zh": "真实客户端用的 schema 检查，磁带生成的每一帧都要过一遍。注释里说的“编译期”，其实就是页面加载那一刻。"
+        "en": "One schema for the socket and the tape.",
+        "zh": "socket 和磁带，用的是同一份 schema。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "Tests also hold the tape to the server's rules: real tool names, lines within the message tool's caps (scene 2), and a Chinese tape that matches this one beat for beat.",
-        "zh": "测试还拿服务器的规矩约束磁带：工具名必须来自真实的工具清单，每句台词都得过 message 工具的上限检查（第 2 幕），中英两盘磁带要逐拍对齐。"
+        "en": "The tests also hold every line to the message tool's caps (scene 2), and hold the Chinese tape to the same scenes, beats, tools, faces and timing as this one.",
+        "zh": "测试还会拿 `message` 工具的上限（第 2 幕）卡每一句台词，并要求中文磁带在幕、节拍、工具、表情和时间上与英文磁带完全一致。"
        }
       }
      ]
@@ -3479,8 +3595,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Live, the browser posts her text to `/api/tts/speak`, and the host forwards it to GPT-SoVITS with the owner's voice reference. For the replay, a build script sent every line through that same request builder once, saving mp3s and a manifest of text (whitespace-normalised), file and duration. Here the voice player's one synthesis hook reads that manifest; queue, lip-sync and gestures are untouched. A line with no recording gets a 404 and is skipped: silence, never the wrong words. Before the room changes, the tape's clock waits for her last word.",
-        "zh": "真实运行时，浏览器把她的文字 POST 到 `/api/tts/speak`，本地服务再带上主人的参考音频，转发给 GPT-SoVITS。回放用的声音，是构建脚本让每句台词都经过同一个请求构造函数合成一遍得来的：存成 mp3，再写一份清单（manifest），记下文本（空白已归一化）、文件和时长。在回放里，语音播放器唯一的合成钩子改成查这份清单；队列、口型同步和动作都原样不动。清单里没有的句子拿到 404，直接跳过：宁可不出声，也不念错词。换场之前，磁带的时钟会等她说完最后一个字。"
+        "en": "Live, the browser posts her text to `/api/tts/speak`. The host builds a GPT-SoVITS request with the owner's voice reference and forwards it. For the replay, a build script sent every line once through that same request builder. It saved an mp3 for each line and wrote a manifest: text, file, duration. On this page, the voice player's one synthesis hook reads the manifest instead. The queue, lip-sync and punctuation gestures are unchanged. A line with no recording fails with a 404, the voice player's normal failure path. The line is reported as unspoken and is never voiced with the wrong words.",
+        "zh": "真实运行时，浏览器把她的文字 POST 到 `/api/tts/speak`，服务端带上主人配置的参考音频，拼成一个 GPT-SoVITS 请求转发出去。为了回放，一个构建脚本把每句台词都用同一个请求构造函数发了一遍，每句存成一个 mp3，再写一份清单（manifest）：文字、文件、时长。在这个页面上，语音播放器唯一的合成钩子改成去读这份清单。队列、口型同步、标点触发的头部动作，都没变。没有录音的句子会以 404 报错，走的是语音播放器平常的失败路径：这句被标记为没念出来，绝不会拿别句的录音顶替。"
        }
       },
       {
@@ -3489,86 +3605,66 @@
        "from": 83,
        "snippet": "async function synthesize(text: string, wavPath: string): Promise<void> {\n  const plan = planTtsForward('speak', JSON.stringify({ text }), env);\n  if (plan.kind !== 'speak') throw new Error(`tts plan: ${plan.kind === 'error' ? plan.message : plan.kind}`);\n  const res = await fetch(plan.url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: plan.body });\n  if (!res.ok) throw new Error(`api_v2 ${res.status}: ${(await res.text()).slice(0, 200)}`);\n  writeFileSync(wavPath, new Uint8Array(await res.arrayBuffer()));\n}",
        "note": {
-        "en": "`planTtsForward` is the same function the live dev server and desktop server call for `/api/tts/speak`.",
-        "zh": "真实运行的开发服务器和桌面服务器处理 `/api/tts/speak` 时，调的也正是 `planTtsForward`。"
+        "en": "`planTtsForward` is what the dev server and the desktop server call for `/api/tts/speak`.",
+        "zh": "dev server 和桌面版服务端处理 `/api/tts/speak` 时，调用的也是 `planTtsForward`。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "Known limit: the live app's text language defaults to `auto`, which read some Chinese as Japanese. The Chinese tape was voiced with `zh`; live, the weakness remains (v0.49.2).",
-        "zh": "已知局限：真实 app 发给 TTS 的文本语言默认是 `auto`，有些中文会被当成日语来念。中文磁带配音时指定的是 `zh`；真实运行时，这个毛病还在（v0.49.2）。"
+        "en": "The Chinese tape was voiced with text_lang `zh`. The default, `auto`, misread runs of hanzi as Japanese. The live app still sends `auto`: a known limitation.",
+        "zh": "中文磁带合成时，text_lang 用的是 `zh`。默认值 `auto` 会把连续的汉字误判成日语来读。真实 app 发的仍然是 `auto`，这是已知局限。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "Whose job is \"should she have\"?",
-      "zh": "“该不该说”，归谁管？"
+      "en": "Why not let her run live?",
+      "zh": "为什么不让她真跑起来？"
      },
      "blocks": [
       {
        "type": "quote",
        "text": {
-        "en": "What you didn't see is the part that takes a person: deciding whether I should have said any of it. That's still his job — the one I was talking to.",
-        "zh": "你没看到的，是得靠人来做的那部分：判断我说的这些，到底该不该说。这活儿还是他在干，就是刚才一直跟我聊天的那个人。"
+        "en": "If I actually ran on a server for a crowd of visitors, both I and Alan's wallet would get cranky.",
+        "zh": "如果真让我跑在服务器上应对一大堆访客，不论是我还是Alan的钱包都会觉得烦躁的"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "Code sets the boundaries: when she may wake, how long a message may be, and that on an unprompted turn a tool not marked safe waits until she has spoken (scene 4). Inside them, the model decides. No code grades whether a sentence was right to say. The one check on her words is honesty: promise an action, end the turn without it, and a guard sends her back once. Each waking writes a ledger row (spoke, quiet or nothing); her words stay in the chat history. Judging them is a person's job, through her prompts, settings or soul's fixed core, which only the owner's editors write.",
-        "zh": "代码只划边界：她什么时候能醒，一条消息最长多长，还有在她自己开口的主动回合里，没登记为 safe 的工具要等她先说过话才能用（第 4 幕）。边界之内，由模型决定。没有哪段代码去评判一句话该不该说。对她说的话只有一道检查，查的是诚实：嘴上答应了要做某件事，回合结束却没做，守卫会把她打回去一次。每次唤醒都记一行账（spoke、quiet 或 nothing）；她说的话留在聊天记录里。评判这些话是人的事，手段是她的 prompt、设置，或者灵魂文件里的固定内核（fixed core），而固定内核只有主人的编辑入口能写。"
+        "en": "Her line gives the reason: cost. Live, every turn is at least one model call that carries her whole prompt, and every line she says is a voice synthesis. The bill grows with the audience. The replay is static files: the app itself plus a script, a folder of mp3s and a few JSON records. Nothing runs for each visitor. The price is conversation. You cannot talk to her: the input is read-only, and Send only sends the line typed for you. The dashed card names the other limits.",
+        "zh": "原因她自己说了：成本。真实运行时，每个回合至少是一次模型调用，每次都带着她完整的 prompt；她说的每一句，又是一次语音合成。看的人越多，账单越高。回放只是一堆静态文件：app 本身，加一份脚本、一个装 mp3 的文件夹和几份 JSON 记录。多来一个访客，也不用为他多跑任何东西。代价是没法对话。你不能跟她聊：输入框是只读的，“发送”只会发出替你打好的那一句。其余的局限，虚线卡片里说了。"
        }
       },
       {
-       "type": "code",
-       "file": "packages/server/src/proactive/quietWork.ts",
-       "from": 25,
-       "snippet": "export type OutcomeKind = 'spoke' | 'quiet' | 'nothing';\n\n// Message delivery already decides 'spoke'; any OTHER tool activity without a word is 'quiet'.\nexport function classifyOutcome(spoke: boolean, toolNames: string[]): OutcomeKind {\n  if (spoke) return 'spoke';\n  return toolNames.some((n) => n !== 'message') ? 'quiet' : 'nothing';\n}",
-       "note": {
-        "en": "What each waking became, made countable. Whether it was right is left to a person.",
-        "zh": "每次唤醒最后成了什么，变成可以计数的记录。做得对不对，留给人判断。"
+       "type": "aside",
+       "text": {
+        "en": "The faces are the ones the script names for each line: amused_smirk, steady_presence, awkward_lightness, soft_warmth, shy_softness, and bright_delight for \"Hi!\". Scene 1 shows how names map to clips.",
+        "zh": "每句的表情都是脚本里标好的：amused_smirk、steady_presence、awkward_lightness、soft_warmth、shy_softness，说“嗨！”时是 bright_delight。表情名怎么映射到动画片段，见第 1 幕。"
        }
       }
      ]
     },
     {
      "title": {
-      "en": "The front door, and the curtain",
-      "zh": "门口，还有幕布"
+      "en": "Can it really be traced?",
+      "zh": "真的能溯源吗？"
      },
      "blocks": [
       {
        "type": "quote",
        "text": {
-        "en": "If you want to see how I'm built, the engineering map is one link away, back at the front door. If you just wanted to meet me — hi.",
-        "zh": "想看我是怎么搭起来的，工程图谱就在门口，点一下就到。要是你只是想来见见我——嗨。"
+        "en": "None of the abilities were faked; every one of them can be traced.",
+        "zh": "展示的能力也没有造假，可以溯源的。"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "The \"front door\" is the lobby you came in through. In the replay build it has exactly one way out, to the engineering map, plus a link to the same show in the other language. The links exist only in the lobby. Once she wakes, what's left is the app itself.",
-        "zh": "“门口”就是你进来时经过的那个大厅（lobby）。回放版里，它只有一个出口，通向工程图谱；另外还有一个链接，通向另一种语言的同一场演出。这些链接只在大厅里出现。她一醒，眼前就只剩 app 本身。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/web/src/app.ts",
-       "from": 938,
-       "snippet": "    // v0.46.2: the replay's front door carries the one link out — to the engineering map, which the\n    // showcase build places beside it. Lobby only; it disappears the moment she wakes.\n    if (demo) {\n      // v0.48.1: the map, and the same replay in the other language.\n      const other = new URLSearchParams(location.search);\n      other.set('lang', uiLang() === 'zh' ? 'en' : 'zh');\n      mountLobbyLinks(document, root, [\n        { href: './engineering/', label: t('demo.map') },\n        { href: `?${other.toString()}`, label: t('demo.switchLang') },\n      ]);\n    }",
-       "note": {
-        "en": "Replay only: these links appear only when the demo bridge is present.",
-        "zh": "仅限回放：只有 demo bridge 存在时，这些链接才会挂上去。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The \"hi\" carries `shy_softness`, which plays her shy clip with its blush. Two replay devices close the show: the \"Later\" curtain, a dark room with a sweeping clock while the tape's own clock jumps 2.4 s, and the \"Replay ↻\" button, which reloads the page.",
-        "zh": "那声“嗨”带着 `shy_softness`，播的是她害羞的那段动作，自带脸红。收尾靠两个回放道具：一是“过了一会儿”幕布，房间暗下来，表针扫过表盘，磁带自己的时钟则直接跳过 2.4 秒；二是“重看 ↻”按钮，点一下就重新加载页面。"
+        "en": "These notes are the trace. Each code block is copied from the source and links to it in the public repository. A test holds every block, character for character, to the file it names. Each quote is checked against the tape. The notes cannot check what she says about the source material: that the scenes came from real life with Alan and were edited for the show. The mechanisms are real. The conversations are scripted.",
+        "zh": "溯源，靠的就是这叠笔记。每个代码块都从源码原样抄来，并链接到公开仓库里的出处。有测试逐字比对每个代码块和它标注的文件，每句引用也都和磁带核对过。她对素材来源的说法，笔记核对不了：这些场景取自她和 Alan 的真实日常，再为演出剪辑过。机制是真的，对话是写好的剧本。"
        }
       }
      ]
