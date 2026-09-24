@@ -46,8 +46,14 @@ export const CURTAIN_FADE_MS = 450;
 export const NO_AUDIO_NOTICE_MS = 3800;
 
 const STYLE = `
-.demo-pill {
+/* v0.51.2: the scene pill and the notes button share one bar, the button right beside the pill. */
+.demo-bar {
   position: absolute; left: 50%; top: 10px; transform: translateX(-50%); z-index: 5;
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 10px;
+  width: max-content; max-width: calc(100% - 24px); pointer-events: none;
+}
+.demo-pill {
+  position: relative;
   display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
   background: #fff; color: var(--ink); font-size: 12px; padding: 6px 8px 6px 12px; border-radius: 999px;
   box-shadow: 0 1px 4px rgba(90, 120, 160, 0.18); opacity: 0; transition: opacity 0.3s; pointer-events: none;
@@ -285,9 +291,13 @@ export function mountDirector(
   next.className = 'demo-next';
   next.hidden = true;
   pill.append(label, next, list);
-  refs.modelStage.appendChild(pill);
+  const bar = doc.createElement('div');
+  bar.className = 'demo-bar';
+  bar.appendChild(pill);
+  refs.modelStage.appendChild(bar);
 
-  // v0.50.0: a note paper-clipped to the stage once a scene is over — the door to the engineering notes.
+  // v0.50.0: the door to the engineering notes, shown once a scene is over. v0.51.2: it pops in beside
+  // the scene pill, where the eye already is when a scene ends.
   const codeBtn = doc.createElement('button');
   codeBtn.type = 'button';
   codeBtn.className = 'demo-code-btn';
@@ -302,7 +312,7 @@ export function mountDirector(
   codeBtn.addEventListener('click', () => {
     if (codeIndex >= 0) opts.onNotes?.(codeIndex);
   });
-  refs.modelStage.appendChild(codeBtn);
+  bar.appendChild(codeBtn);
 
   const curtain = doc.createElement('div');
   curtain.className = 'demo-curtain';
@@ -694,7 +704,7 @@ export const GUIDE_COPY: Record<
     how:
       'Lines are typed for you — press ➤ (or Enter). When a scene ends, press Next scene (or pick a scene ' +
       'from the pill at the top). Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her ' +
-      'Diary, Skills and Dream. After each scene, the note clipped to the stage opens the engineering notes: ' +
+      'Diary, Skills and Dream. After each scene, a button pops up beside the scene name and opens the engineering notes: ' +
       'why she did that, and the code behind it.',
     enter: 'Enter',
     loading: 'Getting her ready… {pct}%',
@@ -704,7 +714,7 @@ export const GUIDE_COPY: Record<
     sub: '真实场景 · 真实前端 · 她自己的声音',
     p1: '接下来你看到的是一段回放：照着真实使用场景复现的日常片段，用 Luna 真正的前端和渲染引擎播出来。这个页面背后没有在运行的 AI。',
     p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
-    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，舞台上别着的那张便签会打开工程笔记：她为什么这么做，背后是哪段代码。',
+    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，顶上幕名旁边会冒出一个按钮，点它就能翻开工程笔记：她为什么这么做，背后是哪段代码。',
     enter: '进入',
     loading: '正在把她接过来… {pct}%',
   },

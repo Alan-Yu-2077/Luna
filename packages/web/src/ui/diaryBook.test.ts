@@ -99,7 +99,7 @@ describe('the dream translation layer (M10)', () => {
     expect(translateStep({ step: 'rate_salience', status: 'ok', detail: 'rated 9 turns', ms: 1 }, 'zh')).toBe('回看了 9 个瞬间。');
     expect(translateStep({ step: 'refine_semantic', status: 'ok', detail: 'removed 2, added 2', ms: 1 }, 'zh')).toBe('放下了 2 件事，记住了 2 件。');
     expect(translateStep({ step: 'memory_audit', status: 'ok', detail: 'removed 0, added 3', ms: 1 }, 'zh')).toBe('整理了记忆的抽屉（−0 / +3）。');
-    expect(translateStep({ step: 'persona_update', status: 'ok', detail: 'self+bond', ms: 1 }, 'zh')).toBe('对自己、对两个人之间，认识都动了动。');
+    expect(translateStep({ step: 'persona_update', status: 'ok', detail: 'self+bond', ms: 1 }, 'zh')).toBe('对自己、对两人的关系，认识都动了动。');
     expect(translateStep({ step: 'run_diaries', status: 'ok', detail: '2 diaries written', ms: 1 }, 'zh')).toBe('写下了 2 篇日记。');
     expect(translateStep({ step: 'distill_skills', status: 'ok', detail: 'new:live2d-gesture-control', ms: 1 }, 'zh')).toBe(
       '学会了一件新事：live2d-gesture-control。',

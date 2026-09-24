@@ -20,7 +20,7 @@ const IDLE_LABEL: Record<string, Bilingual> = {
   cuteSwayV1: { en: 'Cute sway', zh: '轻轻摇晃' },
   peekyIdleV1: { en: 'Peek', zh: '偷看' },
   shyDriftV1: { en: 'Shy drift', zh: '害羞地飘' },
-  sweetBounceV1: { en: 'Sweet bounce', zh: '甜甜地弹' },
+  sweetBounceV1: { en: 'Sweet bounce', zh: '甜甜地蹦' },
 };
 
 // v0.48.0: the interface-language options, each named in its own language.

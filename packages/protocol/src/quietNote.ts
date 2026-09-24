@@ -38,7 +38,7 @@ export const QUIET_VERBS: Record<string, QuietVerb> = {
   music_library: fixed('browsed his listening history', '翻了翻他的听歌记录'),
   music_lyrics: fixed('re-read the lyrics', '又看了一遍歌词'),
   weather: fixed('checked the weather', '看了看天气'),
-  enter_dream: fixed('slipped toward a dream', '差点溜进梦里'),
+  enter_dream: fixed('slipped toward a dream', '准备溜进梦里'),
 };
 
 // A tool the table has never met: named as itself, counted when repeated.

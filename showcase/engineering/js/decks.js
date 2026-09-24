@@ -299,16 +299,16 @@ window.LUNA_DECKS = {
       "en": "The one text block in the system prompt that carries a cache_control breakpoint. Persona, soul, L3 long-term facts, diary digest and skill shelf — everything stable across turns — are concatenated into a single block, then memoized within a turn by memoryEpoch, so a turn's eight tool iterations do not rebuild the prefix eight times."
     },
     "mechanism": {
-      "zh": "buildSystemPrompt 最多推入十段内容，顺序固定：基础指令、message-mode 指令、L1 思维契约、web 不可信内容规则、灵魂(固定核心 + 她自己演化的部分)、具身块、humanity 块、L3 长期事实、日记摘要、技能货架。十段 join 成一个 text block,整个进程只有这一处断点。一个回合最多跑 8 轮工具迭代，但前缀不会重建八次:open_stream 每轮先读 memoryEpoch,只有 epoch 变了(这一回合真的写了记忆、改了灵魂、存了技能)才重渲染一次。",
+      "zh": "buildSystemPrompt 最多推入十段内容，顺序固定：基础指令、message-mode 指令、L1 思维契约、web 不可信内容规则、灵魂(固定核心 + 她自己演化的部分)、具身块、humanity 块、L3 长期事实、日记摘要、技能货架。十段 join 成一个 text block，整个进程只有这一处断点。一个回合最多跑 8 轮工具迭代，但前缀不会重建八次：open_stream 每轮先读 memoryEpoch，只有 epoch 变了(这一回合真的写了记忆、改了灵魂、存了技能)才重渲染一次。",
       "en": "buildSystemPrompt pushes at most ten sections in a fixed order: base directives, the message-mode directive, the L1 thinking contract, the untrusted-web rule, the soul (fixed core plus the part she evolves), the embodiment block, the humanity block, the L3 long-term facts, the diary digest, and the skill shelf. All ten are joined into one text block, and that is the only breakpoint in the process. A turn runs up to 8 tool iterations, but the prefix is not rebuilt eight times: open_stream reads memoryEpoch first and re-renders only when the epoch actually moved (a real memory write, soul edit or skill save mid-turn)."
     },
     "contract": {
       "exposes": {
-        "zh": "buildSystemPrompt(...) 返回 Anthropic.TextBlockParam[],长度恒为 1。",
+        "zh": "buildSystemPrompt(...) 返回 Anthropic.TextBlockParam[]，长度恒为 1。",
         "en": "buildSystemPrompt(...) returns an Anthropic.TextBlockParam[] whose length is always 1."
       },
       "depends": {
-        "zh": "renderSoulBlock / renderCoreBlock / renderDiaryDigest / renderSkillShelf / renderL1Contract / renderHumanityBlock,以及 memoryEpoch 这个单调计数器。",
+        "zh": "renderSoulBlock / renderCoreBlock / renderDiaryDigest / renderSkillShelf / renderL1Contract / renderHumanityBlock，以及 memoryEpoch 这个单调计数器。",
         "en": "renderSoulBlock, renderCoreBlock, renderDiaryDigest, renderSkillShelf, renderL1Contract, renderHumanityBlock — plus the monotonic memoryEpoch counter."
       },
       "boundary": {
@@ -325,13 +325,13 @@ window.LUNA_DECKS = {
       "lines": "399-412",
       "snippet": "    // A1: reuse the memoized system block unless memory changed since it was built.\n    const epoch = memoryEpoch();\n    if (!s.systemBlock || s.systemBlockEpoch !== epoch) {\n      s.systemBlock = buildSystemPrompt(\n        s.session,\n        isMessageMode(s.registry),\n        isWebSearchMode(s.registry),\n        isWebFetchMode(s.registry),\n        isCodeWriteMode(s.registry),\n        isShellMode(s.registry),\n        isRepoMapMode(s.registry),\n        isSkillsMode(s.registry),\n      );\n      s.systemBlockEpoch = epoch;\n    }",
       "note": {
-        "zh": "一次整数比较就决定了要不要重建整个人格前缀——记忆化的判据不是内容 diff,是一个计数器。",
+        "zh": "一次整数比较就决定了要不要重建整个人格前缀——记忆化的判据不是内容 diff，是一个计数器。",
         "en": "One integer comparison decides whether the whole persona prefix is rebuilt — the memoization key is a counter, not a content diff."
       }
     },
     "decision": {
       "why": {
-        "zh": "一整块、一个断点，失效判定就退化成一个整数；分成多块再逐块判断，省下的字节远不如复杂度贵。",
+        "zh": "一整块、一个断点，失效判定就只剩一次整数比较；拆成多块再逐块判断，省下的那点字节抵不上多出来的复杂度。",
         "en": "One block and one breakpoint collapse invalidation into a single integer. Splitting it into several blocks with per-block invalidation buys fewer bytes than it costs in complexity."
       },
       "cost": {
@@ -613,16 +613,16 @@ window.LUNA_DECKS = {
       "en": "The user message assembled by parse_input: this turn's recall hits, time, weather, current track, lyrics and the user's own words — at most seven text blocks, pushed into history in one go. Everything that varies per turn sits to the right of the cache breakpoint."
     },
     "mechanism": {
-      "zh": "顺序是固定的：醒来场景(只在开机后第一条真实用户回合)、召回块、时间块、天气块、音乐块、整首歌词块，最后才是用户原话。每一块都可以缺席，缺席就是零残留——没有占位符、没有空标签。整条消息按发出去的样子进 history 并持久化，所以下一回合她读到的历史，和当时真正发给模型的字节是同一份。",
+      "zh": "顺序是固定的：醒来场景(只在开机后第一个真实用户回合)、召回块、时间块、天气块、音乐块、整首歌词块，最后才是用户原话。每一块都可以缺席，缺席就是零残留——没有占位符、没有空标签。整条消息按发出去的样子进 history 并持久化，所以下一回合她读到的历史，和当时真正发给模型的字节是同一份。",
       "en": "The order is fixed: wake scene (only on the first real user turn after boot), recall block, time block, weather block, music block, full-lyrics block, and only then the user’s own words. Any block may be absent, and absence leaves zero residue — no placeholder, no empty tag. The message is stored in history exactly as sent, so the history she reads next turn is byte-for-byte what the model actually received."
     },
     "contract": {
       "exposes": {
-        "zh": "一条 role 为 user 的消息,content 是 1 到 7 个 text block。",
+        "zh": "一条 role 为 user 的消息，content 是 1 到 7 个 text block。",
         "en": "One message with role user, whose content is between 1 and 7 text blocks."
       },
       "depends": {
-        "zh": "retrieve + renderRecallBlock、buildTimeBlock、buildWeatherBlock、musicBlockFor、lyricsBurstFor,全部是同步或已 await 的纯格式化。",
+        "zh": "retrieve + renderRecallBlock、buildTimeBlock、buildWeatherBlock、musicBlockFor、lyricsBurstFor，全部是同步或已 await 的纯格式化。",
         "en": "retrieve + renderRecallBlock, buildTimeBlock, buildWeatherBlock, musicBlockFor, lyricsBurstFor — all synchronous or already-awaited pure formatting."
       },
       "boundary": {
@@ -645,7 +645,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "cost": {
-        "zh": "这些块每回合重新发送，不享受任何缓存折扣；时间、天气、音乐三块加起来的成本是逐回合全额的。",
+        "zh": "这些块每回合重新发送，不享受任何缓存折扣；时间、天气、音乐三块每一回合都按全价计费。",
         "en": "These blocks are re-sent every turn with no cache discount; time, weather and music are paid in full, turn after turn."
       }
     }
@@ -886,7 +886,7 @@ window.LUNA_DECKS = {
       "en": "The only cache_control in the repository's production code. A hit requires the byte sequence to its left to be identical to last time, so it works as a constraint running backwards: no system-prompt renderer may emit a timestamp, a count, or anything else that varies per turn."
     },
     "mechanism": {
-      "zh": "断点是位置性的：命中要求断点左边的字节序列与上次完全一致。所以这不是一条建议，而是一条反向约束所有渲染器的全局不变量。三个具体后果:renderCoreBlock 在注释里明文禁止插入时间戳;renderSkillShelf 按名字排序、不带日期不带计数；开机醒来场景本该是系统级设定，却被推进了用户消息里，只为了不让开机这个状态变化改动前缀的一个字节。",
+      "zh": "断点是位置性的：命中要求断点左边的字节序列与上次完全一致。所以这不是一条建议，而是一条全局不变量，反过来约束着每一个渲染器。三个具体后果：renderCoreBlock 在注释里明文禁止插入时间戳；renderSkillShelf 按名字排序、不带日期不带计数；开机醒来场景本该是系统级设定，却被推进了用户消息里，只为了不让开机这件事改动前缀哪怕一个字节。",
       "en": "The breakpoint is positional: a hit requires the byte sequence to its left to be identical to last time. So this is not a guideline but a global invariant that constrains every renderer in reverse. Three concrete consequences: renderCoreBlock forbids interpolating timestamps in so many words; renderSkillShelf is name-ordered, dateless and countless; and the wake scene, which reads like a system-level stage direction, was pushed down into the user message purely so that booting cannot change one byte of the prefix."
     },
     "contract": {
@@ -895,7 +895,7 @@ window.LUNA_DECKS = {
         "en": "A single cache_control: { type: \"ephemeral\" } — the only one in production code anywhere in the repo."
       },
       "depends": {
-        "zh": "provider 的 promptCache 能力位。OpenAI 协议路径上,systemToOpenAI 只把各 block 的 .text join 起来，断点被直接丢弃。",
+        "zh": "provider 的 promptCache 能力位。OpenAI 协议路径上，systemToOpenAI 只把各 block 的 .text join 起来，断点被直接丢弃。",
         "en": "The provider’s promptCache capability bit. On the OpenAI-protocol path, systemToOpenAI merely joins each block’s .text and the breakpoint is dropped outright."
       },
       "boundary": {
@@ -918,7 +918,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "只留一个断点、一整块前缀，失效判定就退化成一次整数比较(memoryEpoch),而不是逐块 diff。",
+        "zh": "只留一个断点、一整块前缀，失效判定就退化成一次整数比较(memoryEpoch)，而不是逐块 diff。",
         "en": "One breakpoint and one whole prefix reduce invalidation to an integer comparison (memoryEpoch) instead of a per-block diff."
       },
       "rejected": {
@@ -1067,7 +1067,7 @@ window.LUNA_DECKS = {
           "y": 140,
           "w": 210,
           "text": {
-            "zh": "一条决定性相关的旧记忆，不会被时近度埋掉",
+            "zh": "一条高度相关的旧记忆，不会被时近度埋掉",
             "en": "a decisively relevant old memory cannot be buried by recency"
           },
           "tone": "edge"
@@ -1219,16 +1219,16 @@ window.LUNA_DECKS = {
       "en": "The retrieval step at the head of every user turn: candidates from four sources (L2 turns, L3 facts, diaries, skills) are scored on recency, importance and relevance, and up to 18 hits are rendered into a <memory> block in the uncached tail. It is the only path back to anything outside the verbatim window."
     },
     "mechanism": {
-      "zh": "候选来自四个源:L2 最近 500 轮对话、全部 L3 事实、最近 30 篇日记、至多 500 条技能。每条算三项:recency = 1/(1+天数);importance(未评分 0.4、日记 0.7、技能 0.75);relevance = 0.7×余弦 + 0.3×词法重叠。三项按权重(默认各为 1)取平均。词法侧对中文用滑动 bigram 切词，不依赖任何分词器依赖。技能是特例:recency 项被清零，而且必须有真实信号(词法重叠大于 0,或余弦不低于 0.5)才有资格进榜，否则一次存技能的爆发就会把整个 k 位淹掉。",
+      "zh": "候选来自四个源：L2 最近 500 轮对话、全部 L3 事实、最近 30 篇日记、至多 500 条技能。每条算三项：recency = 1/(1+天数)；importance(未评分 0.4、日记 0.7、技能 0.75)；relevance = 0.7×余弦 + 0.3×词法重叠。三项按权重(默认各为 1)取平均。词法侧对中文用滑动 bigram 切词，不需要引入任何分词器。技能是特例：recency 项被清零，而且必须有真实信号(词法重叠大于 0，或余弦不低于 0.5)才有资格进榜，否则一口气存下一批技能，就会把 k 个位置全部淹掉。",
       "en": "Candidates come from four sources: the most recent 500 L2 turns, every L3 fact, the last 30 diaries, and up to 500 skills. Each gets three terms: recency = 1/(1+days); importance (0.4 unrated, 0.7 diary, 0.75 skill); relevance = 0.7×cosine + 0.3×lexical overlap. The three are averaged under weights that default to 1 each. On the lexical side, Chinese is tokenized as sliding bigrams, so no segmenter dependency is needed. Skills are the exception: their recency term is zeroed and they need real signal (lexical overlap above 0, or cosine of at least 0.5) to be eligible at all — otherwise one burst of skill saves floods every slot."
     },
     "contract": {
       "exposes": {
-        "zh": "retrieve(sessionId, query, opts) 返回 Hit[];renderRecallBlock(hits) 返回 <memory> 块或 null。",
+        "zh": "retrieve(sessionId, query, opts) 返回 Hit[]；renderRecallBlock(hits) 返回 <memory> 块或 null。",
         "en": "retrieve(sessionId, query, opts) returns Hit[]; renderRecallBlock(hits) returns a <memory> block or null."
       },
       "depends": {
-        "zh": "embeddings_cache 表，加一个 OpenAI 兼容的 /v1/embeddings 端点。两者缺一，余弦全为 null,整条打分降级成纯词法。",
+        "zh": "embeddings_cache 表，加一个 OpenAI 兼容的 /v1/embeddings 端点。两者缺一，余弦就全为 null，整条打分降级成纯词法。",
         "en": "The embeddings_cache table plus an OpenAI-compatible /v1/embeddings endpoint. Missing either makes every cosine null and degrades the whole ranking to lexical-only."
       },
       "boundary": {
@@ -1251,15 +1251,15 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "Generative-Agents 那套 α·recency + β·importance + γ·relevance 里，时近项会碾压一切:8 天前的记忆 recency 只有 1/9 约等于 0.11,新鲜的接近 1.0,一个中等的余弦优势根本翻不了盘。地板就是给确实相关但很旧的记忆留三个保底位；查询正常时最相关的本来就是最近的，地板自动是个空操作。",
+        "zh": "Generative-Agents 那套 α·recency + β·importance + γ·relevance 里，时近项会碾压一切：8 天前的记忆 recency 只有 1/9 约等于 0.11，新鲜的接近 1.0，一个中等的余弦优势根本翻不了盘。地板就是给确实相关但很旧的记忆留三个保底位；查询正常时最相关的本来就是最近的，地板自动是个空操作。",
         "en": "In the Generative-Agents formula α·recency + β·importance + γ·relevance, recency steamrolls everything: an eight-day-old memory scores 1/9 ≈ 0.11 against a fresh candidate near 1.0, and a modest cosine edge cannot close that. The floor reserves three slots for memories that are genuinely relevant but old; on an ordinary query the top-cosine candidates are already the recent ones, so the floor is a no-op."
       },
       "rejected": {
-        "zh": "sqlite-vec 的 vec0 向量索引。依赖至今留在 package.json,main.ts 开机还会挂自定义 SQLite,但 v0.16.2 删掉了唯一那条 vec0 写入路径，而加载扩展的 tryLoadVec 在整个仓库里没有任何调用者。真实检索是纯 TypeScript 的余弦全扫描——所谓兜底其实是唯一路径。",
-        "en": "A vec0 vector index from sqlite-vec. The dependency is still in package.json and main.ts still points Bun at a custom SQLite at boot, but v0.16.2 deleted the one vec0 write path, and tryLoadVec — the function that loads the extension — has no caller anywhere in the repo. Retrieval is, and stays, a plain TypeScript cosine full scan; the supposed fallback is in fact the only path."
+        "zh": "sqlite-vec 的 vec0 向量索引。检索用的是纯 TypeScript 的余弦全扫描：候选规模不大（对话只取最近 500 轮），全扫描就够用。",
+        "en": "A vec0 vector index from sqlite-vec. Retrieval is a plain TypeScript cosine full scan instead: the candidate pool is small (conversation contributes only its last 500 turns), so a full scan is enough."
       },
       "cost": {
-        "zh": "全扫描的代价随候选数线性增长，单回合最多现场嵌入 64 条冷候选。仓库 .env 里 LUNA_RECALL_ASYNC=1,所以嵌入被 200 毫秒预算掐着——超时这一回合退成纯词法，余弦全为 null,相关性地板也同时失效。",
+        "zh": "全扫描的代价随候选数线性增长，单回合最多现场嵌入 64 条冷候选。仓库 .env 里 LUNA_RECALL_ASYNC=1，所以嵌入被 200 毫秒预算掐着——超时这一回合退成纯词法，余弦全为 null，相关性地板也同时失效。",
         "en": "The full scan costs linearly in candidate count, and a single turn embeds at most 64 cold candidates inline. The repo’s .env sets LUNA_RECALL_ASYNC=1, so embedding runs under a 200 ms budget — past it the turn falls back to lexical-only, every cosine is null, and the relevance floor silently disappears with it."
       }
     }
@@ -1510,12 +1510,12 @@ window.LUNA_DECKS = {
       "en": "Three blocks — time, weather, current track — read synchronously from in-memory snapshots kept warm by background timers, formatted in TypeScript and pushed into the uncached tail. The reactive path makes no network request, and a block that fails to build is dropped on its own without failing the turn."
     },
     "mechanism": {
-      "zh": "三块共享同一条契约：反应路径上绝不发起网络请求。天气由一个 unref 过的后台定时器(默认 30 分钟)刷进内存快照,parse_input 只做一次同步读，快照超过 4 倍 TTL(默认 2 小时)判冷、直接省略这一块。音乐由常驻 provider 的推流写进内存。时间纯 TS 计算。任何一块的构造抛异常都只是 warn 一句、丢掉这一块，绝不掀翻这一回合。音乐块还额外有一道类型层防火墙:builder 的入参类型只有标量字段，几十 KB 的 base64 封面在类型层面就没有门可以进 prompt。",
+      "zh": "三块共享同一条契约：反应路径上绝不发起网络请求。天气由一个 unref 过的后台定时器(默认 30 分钟)刷进内存快照，parse_input 只做一次同步读，快照超过 4 倍 TTL(默认 2 小时)判冷、直接省略这一块。音乐由常驻 provider 的推流写进内存。时间纯 TS 计算。任何一块的构造抛异常都只是 warn 一句、丢掉这一块，绝不掀翻这一回合。音乐块还额外有一道类型层防火墙：builder 的入参类型只有标量字段，几十 KB 的 base64 封面在类型层面就没有门可以进 prompt。",
       "en": "All three share one contract: never touch the network on the reactive path. Weather is refreshed into an in-memory snapshot by an unref’d background timer (30 minutes by default); parse_input only reads it synchronously, and a snapshot older than 4× the TTL (2 hours by default) counts as cold and the block is simply omitted. Music is pushed into memory by the resident provider’s stream. Time is computed purely in TypeScript. If any builder throws, it warns and drops that one block — never the turn. The music block adds a type-level firewall: the builder’s input type has scalar fields only, so tens of kilobytes of base64 artwork have no door into the prompt at all."
     },
     "contract": {
       "exposes": {
-        "zh": "buildTimeBlock / buildWeatherBlock / musicBlockFor —— 三个纯粹的同步 formatter,输入是已经取好的事实。",
+        "zh": "buildTimeBlock / buildWeatherBlock / musicBlockFor —— 三个纯粹的同步 formatter，输入是已经取好的事实。",
         "en": "buildTimeBlock, buildWeatherBlock, musicBlockFor — three purely synchronous formatters over already-fetched facts."
       },
       "depends": {
@@ -1523,7 +1523,7 @@ window.LUNA_DECKS = {
         "en": "getSnapshot() (kept warm by the background timer), getNowPlaying() (the resident provider), resolveTz() and resolveLocation()."
       },
       "boundary": {
-        "zh": "天气在没配 LUNA_LAT_LON 之前整个休眠：不出 L1 clause,也不出块。",
+        "zh": "天气在没配 LUNA_LAT_LON 之前整个休眠：不出 L1 clause，也不出块。",
         "en": "Weather stays entirely dormant until LUNA_LAT_LON is configured — no L1 clause, no block."
       },
       "invariant": {
@@ -1536,13 +1536,13 @@ window.LUNA_DECKS = {
       "lines": "339-350",
       "snippet": "    // Initiative 14 (v0.21.1): hand her the current weather the same way — a\n    // TS-formatted snapshot read SYNCHRONOUSLY from the background cache, pushed\n    // into the UNCACHED user message (the snapshot is volatile → never the cached\n    // system block). No network call on the reactive path; a cold/stale cache omits it.\n    if (weatherAmbientEnabled()) {\n      try {\n        const snap = getSnapshot();\n        if (snap) blocks.push({ type: 'text', text: buildWeatherBlock(snap) });\n      } catch (e) {\n        console.warn('[weather] buildWeatherBlock failed — omitting the weather block:', e);\n      }\n    }",
       "note": {
-        "zh": "同步读 + try/catch 只 warn:感知层被设计成可以整块消失，而不是让这一回合失败。",
+        "zh": "同步读 + try/catch 只 warn：感知层被设计成可以整块消失，而不是让这一回合失败。",
         "en": "A synchronous read wrapped in a warn-only try/catch: the perception layer is designed to vanish block by block rather than fail the turn."
       }
     },
     "decision": {
       "why": {
-        "zh": "快照是易变的，放进缓存前缀等于每回合炸断点；而且她需要的是一句已经成型的事实，不是让模型去解释原始气象代码。稳定的那一半留在缓存里:L1 契约里有一条不含任何数值的天气 clause,只告诉她能看到用户那边的天气，数值全在尾部。",
+        "zh": "快照是易变的，放进缓存前缀等于每回合炸断点；而且她需要的是一句已经成型的事实，不是让模型去解释原始气象代码。稳定的那一半留在缓存里：L1 契约里有一条不含任何数值的天气 clause，只告诉她能看到用户那边的天气，数值全在尾部。",
         "en": "Snapshots are volatile: putting them in the cached prefix would blow the breakpoint every turn. And what she needs is a finished, labelled fact, not raw weather codes to interpret. The stable half stays cached: the L1 contract carries a data-free weather clause that only tells her she is handed the user’s weather, while every number lives on the tail."
       },
       "cost": {
@@ -1590,7 +1590,7 @@ window.LUNA_DECKS = {
             "en": "never again"
           },
           "sub": {
-            "zh": "她从读过里引用",
+            "zh": "她凭读过的来引用",
             "en": "she quotes from having read"
           }
         },
@@ -1841,7 +1841,7 @@ window.LUNA_DECKS = {
       "en": "A one-shot delivery of the full lyrics: the first turn after a track change injects them (at most 60 lines / 2000 characters) and marks the track delivered; later turns carry nothing. If the turn is rolled back, the delivery is returned — matched by trackId."
     },
     "mechanism": {
-      "zh": "标记是内存里 enrichment 对象上的一个布尔，随曲目变化重置。真正的难点在回滚:runTurn 只在这一回合确实产出了回复时才落库，否则把 history 长度直接截回回合开始的位置——歌词块跟着一起没了。但标记如果留在那儿，结果就是这首歌的词既不在 prompt 里也不在历史里，而系统仍认为她读过。v0.45.17 让回滚变对称:parse_input 记下这一回合烧掉的是哪一个 trackId,回滚分支调 unmarkLyricsDelivered 把额度还回去，而且只在 trackId 仍然匹配时才还。",
+      "zh": "标记是内存里 enrichment 对象上的一个布尔值，随曲目变化重置。真正的难点在回滚：runTurn 只在这一回合确实产出了回复时才落库，否则把 history 长度直接截回回合开始的位置——歌词块跟着一起没了。但标记如果留在那儿，结果就是这首歌的词既不在 prompt 里也不在历史里，而系统仍认为她读过。v0.45.17 让回滚变对称：parse_input 记下这一回合烧掉的是哪一个 trackId，回滚分支调 unmarkLyricsDelivered 把额度还回去，而且只在 trackId 仍然匹配时才还。",
       "en": "The mark is a boolean on the in-memory enrichment object, reset on every track change. The hard part is rollback: runTurn persists only when the turn actually produced a reply, and otherwise truncates history back to where the turn began — taking the lyrics block with it. If the mark survived that, the words would be in neither the prompt nor the past while the system still believed she had read them. v0.45.17 made the rollback symmetric: parse_input records which trackId this turn burned, and the rollback branch calls unmarkLyricsDelivered to hand it back — and only when the trackId still matches."
     },
     "contract": {
@@ -1854,7 +1854,7 @@ window.LUNA_DECKS = {
         "en": "TurnState.lyricsBurnedFor — it carries which track was burned all the way to the rollback branch in finally."
       },
       "boundary": {
-        "zh": "只还同一个 trackId 的额度。回滚发生在换歌之后，不会误伤新曲目那份还没用掉的投递。",
+        "zh": "只还同一个 trackId 的额度。就算回滚发生在换歌之后，也不会误伤新曲目那份还没用掉的投递。",
         "en": "Only the same trackId is refunded. A rollback that lands after a track change cannot spend the new track’s untouched delivery."
       },
       "invariant": {
@@ -1867,7 +1867,7 @@ window.LUNA_DECKS = {
       "lines": "1070-1075",
       "snippet": "      } else {\n        opts.session.history.length = historyStart;\n        // v0.45.17: the lyrics block just went with it — hand the delivery back so the next\n        // turn can carry the words she never actually received.\n        if (state.lyricsBurnedFor !== null) unmarkLyricsDelivered(state.lyricsBurnedFor);\n      }",
       "note": {
-        "zh": "一行截断就撤销了整个回合的历史，所以任何跟着历史走的一次性状态都必须在这里显式归还——这是那类 bug 的全部形状。",
+        "zh": "一行截断就撤销了整个回合的历史，所以任何跟着历史走的一次性状态都必须在这里显式归还——这类 bug 说到底就是这个样子。",
         "en": "One assignment truncates the turn’s entire history, so any one-shot state that rode along with it has to be handed back explicitly right here — that is the whole shape of this class of bug."
       }
     },
@@ -2680,7 +2680,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "对话上已经赖账，系统记的是一次干净结束",
+            "zh": "明明已经食言，系统记的却是一次干净结束",
             "en": "a broken promise recorded as a clean finish"
           }
         },
@@ -2952,7 +2952,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "主动漫游常常轮数还早，调用数先贴脸",
+            "zh": "主动漫游常常轮数还早，调用数已经先到顶",
             "en": "a wander usually hits the call count long before the round count"
           }
         },
@@ -2962,19 +2962,19 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "共用一个 finishReason，trace 里分不出是谁触发的",
-            "en": "they share one finishReason — the trace cannot tell them apart"
+            "zh": "各数各的，哪个先到顶，回合就在那里收尾",
+            "en": "each counts its own; whichever tops out first ends the turn"
           }
         }
       ]
     },
     "claim": {
-      "zh": "两个默认值都是 8 的上限，管的不是同一件事：MAX_TOOL_ITERATIONS 数轮，也就是工具结果回灌的次数；maxProactiveActions 数主动回合内派发出去的工具调用次数。两处都在 append_results 检查，都写成 finishReason = max_iterations。",
+      "zh": "两个上限默认都是 8，管的却不是同一件事：MAX_TOOL_ITERATIONS 数轮，也就是工具结果回灌的次数；maxProactiveActions 数主动回合内派发出去的工具调用次数。两处都在 append_results 检查，都写成 finishReason = max_iterations。",
       "en": "Two caps, both defaulting to 8, governing different things: MAX_TOOL_ITERATIONS counts rounds — the number of times tool results are fed back — while maxProactiveActions counts tool calls dispatched within a proactive turn. Both are checked in append_results and both report finishReason = max_iterations."
     },
     "mechanism": {
-      "zh": "MAX_TOOL_ITERATIONS 数的是轮：工具结果每回灌一次加一，到 8 就收尾，反应式和主动回合一视同仁，可用 LUNA_MAX_TOOL_ITERATIONS 覆盖（NaN 或小于等于 0 落回默认）。maxProactiveActions() 数的是调用次数：toolNamesThisTurn 的长度，只在主动回合生效，读 LUNA_PROACTIVE_MAX_ACTIONS，默认 8。之所以要两个，是因为一轮可以并发调好几个工具：主动漫游那条链（搜 1 次 + fetch 2 到 3 次 + remember 1 到 2 次）常常轮数还早，调用数先贴脸。两处检查都在 append_results，都发生在这一轮工具已经跑完之后，所以本轮内可以先超一点再停；两处都写成 finishReason 是 max_iterations，从外面看不出是哪个先响。",
-      "en": "MAX_TOOL_ITERATIONS counts rounds: plus one each time tool results are fed back, stop at 8, applied to reactive and proactive turns alike, overridable via LUNA_MAX_TOOL_ITERATIONS (NaN or <= 0 falls back to the default). maxProactiveActions() counts calls: the length of toolNamesThisTurn, applied only on a proactive turn, read from LUNA_PROACTIVE_MAX_ACTIONS, default 8. Two are needed because one round can dispatch several tools at once: a quiet-wander chain (1 search + 2-3 fetches + 1-2 remembers) tends to press the call ceiling long before the round ceiling. Both checks sit in append_results, both run after that round’s tools have already executed, so a round can overshoot slightly before stopping; and both set finishReason to max_iterations, so from outside you cannot tell which one fired."
+      "zh": "MAX_TOOL_ITERATIONS 数的是轮：工具结果每回灌一次加一，到 8 就收尾，反应式和主动回合一视同仁，可用 LUNA_MAX_TOOL_ITERATIONS 覆盖（NaN 或小于等于 0 落回默认）。maxProactiveActions() 数的是调用次数：toolNamesThisTurn 的长度，只在主动回合生效，读 LUNA_PROACTIVE_MAX_ACTIONS，默认 8。之所以要两个，是因为一轮可以并发调好几个工具：主动漫游那条链（搜 1 次 + fetch 2 到 3 次 + remember 1 到 2 次）常常轮数还早，调用数已经先到顶。两处检查都在 append_results，都发生在这一轮工具已经跑完之后，所以本轮内可以先超一点再停。",
+      "en": "MAX_TOOL_ITERATIONS counts rounds: plus one each time tool results are fed back, stop at 8, applied to reactive and proactive turns alike, overridable via LUNA_MAX_TOOL_ITERATIONS (NaN or <= 0 falls back to the default). maxProactiveActions() counts calls: the length of toolNamesThisTurn, applied only on a proactive turn, read from LUNA_PROACTIVE_MAX_ACTIONS, default 8. Two are needed because one round can dispatch several tools at once: a quiet-wander chain (1 search + 2-3 fetches + 1-2 remembers) tends to press the call ceiling long before the round ceiling. Both checks sit in append_results, both run after that round’s tools have already executed, so a round can overshoot slightly before stopping."
     },
     "contract": {
       "exposes": {
@@ -3009,8 +3009,8 @@ window.LUNA_DECKS = {
         "en": "The round cap governs a loop that will not converge; the call cap governs a single round that fans out too wide. One number cannot do both. v0.45.12 made only the round cap tunable; v0.45.13 admitted the real constraint on a wander is the call count and raised it from 6 to 8."
       },
       "cost": {
-        "zh": "两个上限共用 max_iterations 这一个 finishReason，trace 里分不出是谁触发的；而且检查在派发之后，所以这两个数是「不早于」而不是「不超过」。",
-        "en": "Both caps share the single finishReason max_iterations, so a trace cannot tell them apart; and because the check runs after dispatch, the numbers mean not sooner than rather than never more than."
+        "zh": "检查在派发之后，所以这两个数的意思是「到了才停」，而不是「绝不超过」。",
+        "en": "Because the check runs after dispatch, the numbers mean not sooner than rather than never more than."
       }
     }
   },
@@ -3118,10 +3118,6 @@ window.LUNA_DECKS = {
           "title": {
             "zh": "多一次模型往返",
             "en": "one extra model round-trip"
-          },
-          "sub": {
-            "zh": "activeTurn 仍锁着",
-            "en": "activeTurn still held"
           }
         },
         {
@@ -3216,8 +3212,8 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "此刻用户发的消息被 turn_in_progress 弹回",
-            "en": "a message sent now bounces off turn_in_progress"
+            "zh": "干净的收尾也要白付一轮延迟",
+            "en": "even a clean sign-off pays a full round of latency"
           }
         },
         {
@@ -3263,7 +3259,7 @@ window.LUNA_DECKS = {
       "lines": "661-673",
       "snippet": "      const freshIntentRetry =\n        Bun.env['LUNA_INTEGRITY_GUARD'] !== '0' &&\n        !s.correctionUsed.has('intent') &&\n        (() => {\n          const d = detectDefection({\n            messageTexts: s.messageTexts.slice(s.correctionWatermark),\n            lastIsFinal: s.lastMessageIsFinal,\n            thinking: s.thinking,\n            calledToolNames: s.toolNamesThisTurn,\n            finishReason: 'end_turn',\n          });\n          return d.defected && d.kind === 'message_intent';\n        })();",
       "note": {
-        "zh": "例外判的不是「有没有承诺」，而是「现在收尾会不会立刻触发一次还没用过的 intent 纠正」——所以同一个回合里第二次就不再避让，免得短路和纠正互相推。",
+        "zh": "例外判的不是「有没有承诺」，而是「现在收尾会不会立刻触发一次还没用过的 intent 纠正」——所以同一个回合里第二次就不再避让，免得短路和纠正互相推来推去。",
         "en": "The exception does not ask whether a promise was made but whether finalizing now would immediately trip an intent correction that has not been spent yet — so the second time in a turn it stops yielding, and short-circuit and correction cannot push each other around."
       }
     },
@@ -3924,7 +3920,7 @@ window.LUNA_DECKS = {
       "en": "The action surface is a 28-member ToolName enum in the protocol package. Each tool's input is a Zod schema converted to JSON Schema before every request, with $refStrategy set to none so the result is self-contained. The enum is the ceiling; the registry assembled at boot is what this session actually has mounted."
     },
     "mechanism": {
-      "zh": "ToolName 是 protocol 里的 z.enum,共 28 条。运行时的注册表是 Partial<Record<ToolName, Tool>>,启动时由 9 个 with* 组合器按开关一层层套出来:8 个工具无条件在 builtinRegistry 里，其余按 LUNA_CODE_WRITE / LUNA_SHELL / LUNA_REPO_MAP / LUNA_SKILLS / LUNA_SELF_EDIT / LUNA_WEB_SEARCH / LUNA_WEB_FETCH / LUNA_WEATHER / LUNA_MUSIC 决定挂不挂。所以枚举是上限，注册表才是本次会话真正存在的工具。每轮请求前,toolsToAnthropicFormat 遍历注册表，把每个工具的 Zod 入参跑 zodToJsonSchema。",
+      "zh": "ToolName 是 protocol 里的 z.enum，共 28 条。运行时的注册表是 Partial<Record<ToolName, Tool>>，启动时由 9 个 with* 组合器按开关一层层套出来：8 个工具无条件在 builtinRegistry 里，其余按 LUNA_CODE_WRITE / LUNA_SHELL / LUNA_REPO_MAP / LUNA_SKILLS / LUNA_SELF_EDIT / LUNA_WEB_SEARCH / LUNA_WEB_FETCH / LUNA_WEATHER / LUNA_MUSIC 决定挂不挂。所以枚举是上限，注册表才是本次会话真正存在的工具。每轮请求前，toolsToAnthropicFormat 遍历注册表，把每个工具的 Zod 入参跑 zodToJsonSchema。",
       "en": "ToolName is a z.enum in the protocol package with 28 entries. The runtime registry is a Partial<Record<ToolName, Tool>>, composed at boot by nine with* combinators: eight tools sit unconditionally in builtinRegistry, and the rest mount or not according to LUNA_CODE_WRITE / LUNA_SHELL / LUNA_REPO_MAP / LUNA_SKILLS / LUNA_SELF_EDIT / LUNA_WEB_SEARCH / LUNA_WEB_FETCH / LUNA_WEATHER / LUNA_MUSIC. The enum is therefore the ceiling; the registry is what actually exists this session. Before each round, toolsToAnthropicFormat walks the registry and runs each tool's Zod input through zodToJsonSchema."
     },
     "contract": {
@@ -3933,15 +3929,15 @@ window.LUNA_DECKS = {
         "en": "The ToolName enum (28 entries) plus toolsToAnthropicFormat(registry) → Anthropic.Tool[]."
       },
       "depends": {
-        "zh": "zod-to-json-schema ^3.25;每个工具的 input 必须是对象形状的 Zod schema(转换后被强制标成 type: object)。",
+        "zh": "zod-to-json-schema ^3.25；每个工具的 input 必须是对象形状的 Zod schema(转换后被强制标成 type: object)。",
         "en": "zod-to-json-schema ^3.25; every tool input must be an object-shaped Zod schema (the result is forced to type: object)."
       },
       "boundary": {
-        "zh": "只有 input 会被转成 JSON Schema 发给模型;output schema 从不上线，它只在服务端用 safeParse 校验工具自己的返回。",
+        "zh": "只有 input 会被转成 JSON Schema 发给模型；output schema 从不随请求发出，它只在服务端用 safeParse 校验工具自己的返回。",
         "en": "Only input is converted to JSON Schema and sent to the model; the output schema never goes on the wire — it is used server-side only, to safeParse what the tool returned."
       },
       "invariant": {
-        "zh": "「某个工具是否可用」一律从注册表读(isMessageMode / isShellMode / isWebSearchMode …),永不在轮内读环境变量 —— 挂载在启动那一刻就冻结了。",
+        "zh": "「某个工具是否可用」一律从注册表读(isMessageMode / isShellMode / isWebSearchMode ……)，永不在轮内读环境变量 —— 挂载在启动那一刻就冻结了。",
         "en": "Whether a tool is available is always derived from the registry (isMessageMode / isShellMode / isWebSearchMode and friends), never from an env read inside the turn loop — mounting is frozen at boot."
       }
     },
@@ -3950,13 +3946,13 @@ window.LUNA_DECKS = {
       "lines": "277-287",
       "snippet": "export function toolsToAnthropicFormat(registry: ToolRegistry): Anthropic.Tool[] {\n  return Object.values(registry).map((tool) => {\n    const raw = zodToJsonSchema(tool.input, { $refStrategy: 'none' });\n    const { $schema: _discard, ...schema } = raw as Record<string, unknown>;\n    return {\n      name: tool.name,\n      description: tool.description,\n      input_schema: { ...schema, type: 'object' as const },\n    };\n  });\n}",
       "note": {
-        "zh": "两个不起眼的动作是全部的重点:$refStrategy 设成 none,以及把 $schema 键解构丢弃 —— 剩下的才是一棵能直接当 input_schema 用的自包含 schema。",
+        "zh": "重点全在两个不起眼的动作上：$refStrategy 设成 none，以及把 $schema 键解构丢弃 —— 剩下的才是一棵能直接当 input_schema 用的自包含 schema。",
         "en": "Two unremarkable moves are the entire point: $refStrategy set to none, and destructuring the $schema key away — what is left is a self-contained tree usable directly as input_schema."
       }
     },
     "decision": {
       "why": {
-        "zh": "一个工具的入参 schema 必须是自包含的一棵树：内联展开，产物里不出现 $ref 或 $defs,不需要任何解引用步骤就能读完。$schema 是元数据不是结构，所以在同一行里被显式丢掉。",
+        "zh": "一个工具的入参 schema 必须是自包含的一棵树：内联展开，产物里不出现 $ref 或 $defs，不需要任何解引用步骤就能读完。$schema 是元数据不是结构，所以在同一行里被显式丢掉。",
         "en": "A tool input schema must be one self-contained tree: everything inlined, no $ref or $defs in the output, readable without any dereferencing step. $schema is metadata rather than structure, so it is explicitly discarded on the same line."
       },
       "rejected": {
@@ -3964,7 +3960,7 @@ window.LUNA_DECKS = {
         "en": "The library default $refStrategy, which hoists repeated sub-schemas into $ref references — smaller, but no longer self-contained."
       },
       "cost": {
-        "zh": "内联的代价是字节：复用的子结构不能靠引用省 token,每次出现都完整展开一遍，而 tools 块每一轮都要重发。",
+        "zh": "内联的代价是字节：复用的子结构不能靠引用省 token，每次出现都完整展开一遍，而 tools 块每一轮都要重发。",
         "en": "Inlining costs bytes: reused sub-structures cannot be shared by reference, each occurrence expands in full, and the tools block is re-sent every round."
       }
     }
@@ -4241,12 +4237,12 @@ window.LUNA_DECKS = {
       "en": "message is the only channel that produces speech, and one call is one bubble. The length limits — 280 characters, 5 sentences, 150 characters per clause — live in the Zod schema, and exceeding them is a recoverable validation failure. Segmentation and pacing are derived server-side from text; the model cannot specify them."
     },
     "mechanism": {
-      "zh": "在 message 模式下,open_stream 收到 text_delta 时不再向前端发 reply.token —— 自由文本被当成她在心里想，不是聊天气泡。人性硬上限直接写在 Zod 里:280 字符、5 句、单个从句 150 字符，后两条用 superRefine 实现，超限是一个 recoverable 的 validation_failed,模型自己换个说法重发。工具本身只做一件事：按标点把 text 切成段，每段算一个 delay_ms(28ms 每字符，钳在 120 到 900 之间)当元数据发出去 —— 服务端从不 sleep,节奏交给前端播。",
+      "zh": "在 message 模式下，open_stream 收到 text_delta 时不再向前端发 reply.token —— 自由文本被当成她在心里想，不是聊天气泡。humanity 硬上限直接写在 Zod 里：280 字符、5 句、单个从句 150 字符，后两条用 superRefine 实现，超限是一个 recoverable 的 validation_failed，模型自己换个说法重发。工具本身只做一件事：按标点把 text 切成段，每段算一个 delay_ms(每字符 28ms，钳在 120 到 900 之间)当元数据发出去 —— 服务端从不 sleep，节奏交给前端播。",
       "en": "In message mode, open_stream stops emitting reply.token on text_delta — free text is treated as her thinking out loud, not a chat bubble. The humanity caps live in Zod itself: 280 characters, 5 sentences, 150 characters per clause, the latter two via superRefine. A violation is a recoverable validation_failed and the model simply re-says it. The tool itself does one thing: split text into segments on punctuation and attach a delay_ms per segment (28ms per character, clamped to 120–900) as metadata — the server never sleeps, the client owns the pacing."
     },
     "contract": {
       "exposes": {
-        "zh": "message 工具，输出 MessageDelivery:text、segments[]、可选 expression / emotion / voice_params,以及 is_final。",
+        "zh": "message 工具，输出 MessageDelivery：text、segments[]、可选 expression / emotion / voice_params，以及 is_final。",
         "en": "The message tool, returning a MessageDelivery: text, segments[], optional expression / emotion / voice_params, and is_final."
       },
       "depends": {
@@ -4254,11 +4250,11 @@ window.LUNA_DECKS = {
         "en": "The three constants in persona/humanity.ts plus splitSentences / longestClauseLength — the HARD LIMITS paragraph in the prompt and the Zod validation read the same numbers."
       },
       "boundary": {
-        "zh": "concurrency 是 session-serial(气泡必须按顺序到),proactiveRisk 是 safe(主动轮里她可以直接开口),timeoutMs 只有 1000 —— 它不碰网络，不该慢。",
+        "zh": "concurrency 是 session-serial(气泡必须按顺序到)，proactiveRisk 是 safe(主动轮里她可以直接开口)，timeoutMs 只有 1000 —— 它不碰网络，不该慢。",
         "en": "concurrency is session-serial (bubbles must arrive in order), proactiveRisk is safe (she may speak in a proactive turn without asking), and timeoutMs is just 1000 — it touches no network and has no excuse to be slow."
       },
       "invariant": {
-        "zh": "sentences 不是模型字段:text 是唯一真相，分段永远在服务端派生 —— 模型无法自己指定断句。",
+        "zh": "sentences 不是模型字段：text 是唯一真相，分段永远在服务端派生 —— 模型无法自己指定断句。",
         "en": "sentences is deliberately not a model field: text is the single source of truth and segments are always derived server-side — the model cannot dictate its own breaks."
       }
     },
@@ -4273,7 +4269,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "一次校验失败的发声是内部重试机制，不是事故。前端在 tool.finished 带 err 时，把已经流出来的半截气泡静默丢掉(web/src/controller.ts 168-174),模型换个更短的说法再说一遍；用户看到的只是她顿了一下。这是 L1 的「机器留在后台」规则。",
+        "zh": "一次校验失败的发声是内部重试机制，不是事故。前端在 tool.finished 带 err 时，把已经流出来的半截气泡静默丢掉(web/src/controller.ts 168-174)，模型换个更短的说法再说一遍；用户看到的只是她顿了一下。这是 L1 的「机器留在后台」规则。",
         "en": "A rejected utterance is retry machinery, not an incident. On a tool.finished carrying err, the frontend silently discards the half-streamed bubble (web/src/controller.ts 168-174) and the model re-says it shorter; the user sees only a pause. This is the L1 rule about keeping the machinery backstage."
       },
       "rejected": {
@@ -4380,7 +4376,7 @@ window.LUNA_DECKS = {
           "y": 156,
           "w": 250,
           "text": {
-            "zh": "策略由工具自己声明，调度是它的后果",
+            "zh": "策略由工具自己声明，调度随之而定",
             "en": "each tool declares its own policy; scheduling is the consequence"
           },
           "tone": "edge"
@@ -4522,28 +4518,28 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "每个工具在定义处声明 concurrency，分发器据此把一批调用拆成三条流：safe-parallel 各起一条独立流，session-serial 排会话锁，global-serial 排进程级单例锁。三条流由 mergeAsync 竞速合并，所以串行只发生在组内，组与组之间照样并发。",
+      "zh": "每个工具在定义处声明 concurrency，分发器据此把一批调用拆成三条流：safe-parallel 各起一条独立流，session-serial 排会话锁，global-serial 排进进程级单例锁。三条流由 mergeAsync 竞速合并，所以串行只发生在组内，组与组之间照样并发。",
       "en": "Every tool declares a concurrency policy where it is defined, and the dispatcher splits a batch into three streams accordingly: safe-parallel gets a stream per call, session-serial queues on the session mutex, global-serial on a process-wide singleton. The three streams are merged by mergeAsync, so serialisation happens within a group while groups still run in parallel."
     },
     "mechanism": {
-      "zh": "dispatchToolCalls 先砍掉超过 8 个的部分 —— 多出来的调用当场回一个 recoverable 的 err(模型下一轮可以重发),不是排队。剩下的按 tool.concurrency 分三个桶:safe-parallel 每个调用起一条独立流;session-serial 整组排进会话自己的 mutex,组内按数组顺序逐个过;global-serial 排进 dispatcher 模块里的那个进程级单例 mutex。三条流交给 mergeAsync 竞速合并，谁先产出事件谁先 yield —— 所以串行是组内的，组与组之间照样并发。",
+      "zh": "dispatchToolCalls 先砍掉超过 8 个的部分 —— 多出来的调用当场回一个 recoverable 的 err(模型下一轮可以重发)，不是排队。剩下的按 tool.concurrency 分三个桶：safe-parallel 每个调用起一条独立流；session-serial 整组排进会话自己的 mutex，组内按数组顺序逐个过；global-serial 排进 dispatcher 模块里的那个进程级单例 mutex。三条流交给 mergeAsync 竞速合并，谁先产出事件谁先 yield —— 所以串行是组内的，组与组之间照样并发。",
       "en": "dispatchToolCalls first trims anything past 8 — the overflow calls get an immediate recoverable err (the model can simply re-issue them next round) rather than a queue slot. The rest are bucketed by tool.concurrency: safe-parallel gets one independent stream per call; session-serial goes as a group behind the session's own mutex, running in array order; global-serial goes behind the single process-wide mutex held in the dispatcher module. The three streams are raced together by mergeAsync — whichever produces an event first is yielded first — so serialization is within a group, while the groups still overlap."
     },
     "contract": {
       "exposes": {
-        "zh": "ConcurrencyPolicy = safe-parallel | session-serial | global-serial,以及每个工具在 defineTool 里必填的 concurrency 字段。",
+        "zh": "ConcurrencyPolicy = safe-parallel | session-serial | global-serial，以及每个工具在 defineTool 里必填的 concurrency 字段。",
         "en": "ConcurrencyPolicy = safe-parallel | session-serial | global-serial, and the mandatory concurrency field every tool sets in defineTool."
       },
       "depends": {
-        "zh": "每个会话一把 Mutex(session.mutex,由调用方传进 DispatchContext);globalMutex 是 dispatcher.ts 里的模块级单例。Mutex 自己带 AbortSignal 支持：排队中的等待者可以被中止并从队列里摘掉。",
+        "zh": "每个会话一把 Mutex(session.mutex，由调用方传进 DispatchContext)；globalMutex 是 dispatcher.ts 里的模块级单例。Mutex 自己带 AbortSignal 支持：排队中的等待者可以被中止并从队列里摘掉。",
         "en": "One Mutex per session (session.mutex, handed in via DispatchContext); globalMutex is a module-level singleton in dispatcher.ts. The Mutex supports AbortSignal: a queued waiter can be aborted and spliced out of the queue."
       },
       "boundary": {
-        "zh": "一批最多 8 个(MAX_CONCURRENT_TOOLS_PER_SESSION = 8),超出的部分直接退回。超时由每个工具自己的 timeoutMs 决定，到点用 AbortController 中止，并给生成器的 finally 留 100ms 收尾窗口。",
+        "zh": "一批最多 8 个(MAX_CONCURRENT_TOOLS_PER_SESSION = 8)，超出的部分直接退回。超时由每个工具自己的 timeoutMs 决定，到点用 AbortController 中止，并给生成器的 finally 留 100ms 收尾窗口。",
         "en": "At most 8 per batch (MAX_CONCURRENT_TOOLS_PER_SESSION = 8); the overflow is returned, not queued. Timeouts come from each tool's own timeoutMs, enforced by an AbortController, with a 100ms grace window for the generator's finally block to clean up."
       },
       "invariant": {
-        "zh": "标了 safe-parallel 的工具内部不得有共享可变状态 —— 这条没有编译器把关(tools/README.md 明写，开发 skill 把它列为「load-bearing for correctness」),一个偷偷改共享状态的 safe-parallel 工具就是一个竞态。",
+        "zh": "标了 safe-parallel 的工具内部不得有共享可变状态 —— 这条没有编译器把关(tools/README.md 明写，开发 skill 把它列为「load-bearing for correctness」)，一个偷偷改共享状态的 safe-parallel 工具就是一个竞态。",
         "en": "A tool marked safe-parallel must hold no shared mutable state — nothing in the type system enforces this (tools/README.md states it, and the dev skill lists it as load-bearing for correctness); a safe-parallel tool that secretly mutates shared state is a race condition."
       }
     },
@@ -4552,13 +4548,13 @@ window.LUNA_DECKS = {
       "lines": "52-63",
       "snippet": "  const streams: AsyncIterable<ToolEvent>[] = [];\n  for (const call of safeParallel) {\n    streams.push(runOne(call, ctx, registry));\n  }\n  if (sessionSerial.length > 0) {\n    streams.push(runSerial(sessionSerial, ctx.sessionMutex, ctx, registry));\n  }\n  if (globalSerial.length > 0) {\n    streams.push(runSerial(globalSerial, globalMutex, ctx, registry));\n  }\n\n  yield* mergeAsync(streams);",
       "note": {
-        "zh": "三档不是三个分支，是三种「怎么变成一条 AsyncIterable」—— 变完之后统统丢进同一个 mergeAsync,调度这件事就没有第二个地方了。",
+        "zh": "三档不是三个分支，是三种「怎么变成一条 AsyncIterable」—— 变完之后统统丢进同一个 mergeAsync，调度这件事就没有第二个地方了。",
         "en": "The three tiers are not three branches but three ways of becoming an AsyncIterable — after which they all go into the same mergeAsync, so scheduling lives in exactly one place."
       }
     },
     "decision": {
       "why": {
-        "zh": "三态，不做按资源加锁 —— 这是 v0.2 设计评审 Open Q #5 的结论,README 里写明「revisit only if 后续记忆工作要求更细的粒度」。三个名字就能覆盖真实的分组：只读的、动会话状态的(remember 是范本)、动跨会话外部世界的(music_control 是范本，它去控外部播放器)。",
+        "zh": "三态，不做按资源加锁 —— 这是 v0.2 设计评审 Open Q #5 的结论，README 里写明「只有后续记忆工作要求更细的粒度时才重新考虑」。三个名字就能覆盖真实的分组：只读的、动会话状态的(remember 是范本)、动跨会话状态或外部世界的(music_control 是范本，它去控外部播放器)。",
         "en": "Three states, no per-resource locks — the resolution of Open Q #5 at the v0.2 design review, with the README noting it should be revisited only if later memory work demands finer granularity. Three names cover the real groupings: read-only; mutates session-keyed state (remember is the canonical case); mutates cross-session or outside-world state (music_control is the canonical case, driving an external player)."
       },
       "rejected": {
@@ -4835,7 +4831,7 @@ window.LUNA_DECKS = {
       "en": "Incremental extraction of the message tool's text field out of the model's input_json_delta: a hand-written state machine reads only the depth-1 text key from arbitrarily chopped partial JSON and emits a tool.progress for each increment. The preview is not the delivery — when validation fails, the client discards the partial bubble."
     },
     "mechanism": {
-      "zh": "provider 把 Anthropic 的 input_json_delta 转成 tool_input_delta 事件，靠 content block 的 index 归属到具体的 call id(一个 Map 在 content_block_start 时建立)。open_stream 只关心 name 是 message 的 delta:每个 call id 配一个 JsonTextStream —— 一台手写状态机，在任意切碎的 partial JSON 上只认深度为 1 的 text 键，顺手解转义(包含 \\uXXXX 四位十六进制),嵌套对象比如 voice_params 整块跳过。有增量就发一个 tool.progress 带 text_delta。",
+      "zh": "provider 把 Anthropic 的 input_json_delta 转成 tool_input_delta 事件，靠 content block 的 index 归属到具体的 call id(一个 Map 在 content_block_start 时建立)。open_stream 只关心 name 是 message 的 delta：每个 call id 配一个 JsonTextStream —— 一台手写状态机，在任意切碎的 partial JSON 上只认深度为 1 的 text 键，顺手解转义(包含 \\uXXXX 四位十六进制)，嵌套对象比如 voice_params 整块跳过。有增量就发一个 tool.progress 带 text_delta。",
       "en": "The provider turns Anthropic's input_json_delta into a tool_input_delta event, attributing it to a call id by the content block index (a Map built at content_block_start). open_stream cares only about deltas whose name is message: each call id gets a JsonTextStream — a hand-written state machine that, over arbitrarily chopped partial JSON, recognizes only the depth-1 text key, unescapes as it goes (including four-hex-digit \\uXXXX), and skips nested objects such as voice_params wholesale. Any new text is emitted as a tool.progress carrying text_delta."
     },
     "contract": {
@@ -4844,15 +4840,15 @@ window.LUNA_DECKS = {
         "en": "The ServerEvent tool.progress { call_id, tool_name: message, payload: { text_delta } } — a character-by-character live preview."
       },
       "depends": {
-        "zh": "provider 保证同一个 id 的 tool_use_start 先于它的 tool_input_delta 到达；以及 message 的 text 一定是个深度 1 的字符串字段(不是，状态机就退回结构扫描，不乱猜)。",
+        "zh": "provider 保证同一个 id 的 tool_use_start 先于它的 tool_input_delta 到达；以及 message 的 text 一定是个深度 1 的字符串字段(万一不是，状态机就退回结构扫描，不乱猜)。",
         "en": "The provider guarantees tool_use_start for an id arrives before its tool_input_delta; and message's text is always a depth-1 string field (if it is not, the state machine falls back to structural scanning rather than guessing)."
       },
       "boundary": {
-        "zh": "只提 message 的 text,只在 depth 为 1 —— 别的工具的入参完全不做增量提取，它们的进度靠工具自己 yield 的 progress 事件。",
+        "zh": "只提 message 的 text，只在 depth 为 1 —— 别的工具的入参完全不做增量提取，它们的进度靠工具自己 yield 的 progress 事件。",
         "en": "Only message's text, only at depth 1 — no other tool's input is extracted incrementally; their progress comes from progress events the tool itself yields."
       },
       "invariant": {
-        "zh": "预览不是交付。真正的交付是稍后 dispatch 出来的 tool.finished 带 ok 的 MessageDelivery;预览失败(校验没过)时前端把它丢掉，两条路径必须对称。",
+        "zh": "预览不是交付。真正的交付是稍后 dispatch 出来的 tool.finished 带 ok 的 MessageDelivery；预览失败(校验没过)时前端把它丢掉，两条路径必须对称。",
         "en": "A preview is not a delivery. The real delivery is the later tool.finished carrying an ok MessageDelivery; when the preview fails validation the frontend discards it, and the two paths must stay symmetric."
       }
     },
@@ -4861,7 +4857,7 @@ window.LUNA_DECKS = {
       "lines": "451-461",
       "snippet": "          const delta = stream.push(ev.partial_json);\n          if (delta.length > 0) {\n            if (s.firstTokenMs === null) s.firstTokenMs = Date.now() - s.startedMs;\n            s.tokenCount += 1;\n            s.emit({\n              type: 'tool.progress',\n              call_id: ev.id,\n              tool_name: 'message',\n              payload: { text_delta: delta },\n            });\n          }",
       "note": {
-        "zh": "firstTokenMs 在这条分支里也会被认领 —— message 模式下第一个字来自工具入参而不是自由文本，所以「首字延迟」的定义必须跟着搬过来，否则这个指标会一直偏大。",
+        "zh": "firstTokenMs 在这条分支里也会被记下 —— message 模式下第一个字来自工具入参而不是自由文本，所以「首字延迟」的定义必须跟着搬过来，否则这个指标会一直偏大。",
         "en": "firstTokenMs is claimed on this branch too — in message mode the first character comes from a tool input rather than free text, so the definition of time-to-first-token has to move with it, or the metric reads permanently too high."
       }
     },
@@ -4875,7 +4871,7 @@ window.LUNA_DECKS = {
         "en": "Waiting for complete JSON and doing a single JSON.parse to get text — far simpler, and exactly the buffering being avoided."
       },
       "cost": {
-        "zh": "一台手写的 JSON 状态机要自己处理转义、Unicode、任意切点(注释里列了实测被切成 mid-key / mid-string / mid-escape 的形状);而且它会渲染出可能永远不被交付的文字，前端因此必须承担丢弃逻辑。",
+        "zh": "一台手写的 JSON 状态机要自己处理转义、Unicode、任意切点(注释里列了实测被切成 mid-key / mid-string / mid-escape 的形状)；而且它会渲染出可能永远不被交付的文字，前端因此必须承担丢弃逻辑。",
         "en": "A hand-written JSON state machine has to handle escapes, Unicode, and arbitrary split points itself (the header lists spike-verified shapes split mid-key, mid-string, mid-escape); and it renders text that may never be delivered, which forces discard logic onto the frontend."
       }
     }
@@ -5133,7 +5129,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "没派发的调用也各自压过一块错误结果",
+            "zh": "没派发的调用也各自压了一块错误结果",
             "en": "undispatched calls each get an error result too"
           }
         }
@@ -5144,20 +5140,20 @@ window.LUNA_DECKS = {
       "en": "Results must be fed back paired and in order: one tool_result per tool_use, following the order in the assistant message. Events arrive in completion order, so this step indexes the result blocks by pendingToolUses to restore the order the model issued."
     },
     "mechanism": {
-      "zh": "事件是从 mergeAsync 按完成先后出来的，所以 toolResultBlocks 是完成顺序 —— 一个 300ms 的 read_file 会排在一个 3s 的 shell 前面，哪怕模型先发的是 shell。append_results 拿 pendingToolUses(模型发出的顺序)逐个去 find 对应 tool_use_id 的结果块，重排成同序，再作为一条 user 消息压进 history。没被派发的调用也各自压过结果块：名字不在枚举里的是 tool_not_found,被主动安全门拦下的是那句 SURFACE_FIRST_MESSAGE —— 都是 is_error 为 true 的 tool_result,所以照样配得上对。",
+      "zh": "事件是从 mergeAsync 按完成先后出来的，所以 toolResultBlocks 是完成顺序 —— 一个 300ms 的 read_file 会排在一个 3s 的 shell 前面，哪怕模型先发的是 shell。append_results 拿 pendingToolUses(模型发出的顺序)逐个去 find 对应 tool_use_id 的结果块，重排成同序，再作为一条 user 消息压进 history。没被派发的调用也各自压了结果块：名字不在枚举里的是 tool_not_found，被主动安全门拦下的是那句 SURFACE_FIRST_MESSAGE —— 都是 is_error 为 true 的 tool_result，所以照样能配成对。",
       "en": "Events come out of mergeAsync in completion order, so toolResultBlocks is in completion order — a 300ms read_file lands ahead of a 3s shell even when the model issued shell first. append_results walks pendingToolUses (the order the model issued) and finds the block matching each tool_use_id, reordering to match, then pushes them as a single user message into history. Calls that were never dispatched pushed result blocks too: an unknown name gets tool_not_found, one stopped by the proactive safety gate gets SURFACE_FIRST_MESSAGE — both tool_result blocks with is_error true, so they still pair up."
     },
     "contract": {
       "exposes": {
-        "zh": "紧跟 assistant 消息的一条 user 消息,content 是 tool_result 块数组，顺序与 assistant 里的 tool_use 块一致。",
+        "zh": "紧跟 assistant 消息的一条 user 消息，content 是 tool_result 块数组，顺序与 assistant 里的 tool_use 块一致。",
         "en": "A single user message immediately after the assistant message, whose content is an array of tool_result blocks in the same order as the assistant message's tool_use blocks."
       },
       "depends": {
-        "zh": "dispatcher 保证每个被派发的 call_id 恰好产出一个 final 事件 —— 超时、抛异常、生成器提前结束，统统被转成 final 里的 err,没有一条路径会静默什么都不产。",
+        "zh": "dispatcher 保证每个被派发的 call_id 恰好产出一个 final 事件 —— 超时、抛异常、生成器提前结束，统统被转成 final 里的 err，没有哪条路径会悄无声息地什么都不产出。",
         "en": "The dispatcher guarantees every dispatched call_id produces exactly one final event — timeout, thrown exception, or a generator ending early all become an err inside a final; no path silently produces nothing."
       },
       "boundary": {
-        "zh": "回填之后 iteration 加一，达到 maxToolIterations()(MAX_TOOL_ITERATIONS 默认 8,LUNA_MAX_TOOL_ITERATIONS 可覆盖)就强制 finalize;主动轮另有一个按调用数计的预算。",
+        "zh": "回填之后 iteration 加一，达到 maxToolIterations()(MAX_TOOL_ITERATIONS 默认 8，LUNA_MAX_TOOL_ITERATIONS 可覆盖)就强制 finalize；主动轮另有一个按调用数计的预算。",
         "en": "After append-back, iteration increments; on reaching maxToolIterations() (MAX_TOOL_ITERATIONS defaults to 8, overridable via LUNA_MAX_TOOL_ITERATIONS) the turn is forced to finalize. A proactive cycle carries a separate budget counted in calls, not rounds."
       },
       "invariant": {
@@ -5170,13 +5166,13 @@ window.LUNA_DECKS = {
       "lines": "622-626",
       "snippet": "  async append_results(s) {\n    const ordered = s.pendingToolUses\n      .map((use) => s.toolResultBlocks.find((b) => b.tool_use_id === use.id))\n      .filter((b): b is Anthropic.ToolResultBlockParam => b !== undefined);\n    s.session.history.push({ role: 'user', content: ordered });",
       "note": {
-        "zh": "三行做的是一次重排，不是一次收集：事件按完成先后到，历史必须按模型发出的先后排 —— 遍历的是 pendingToolUses 而不是 toolResultBlocks,这个方向就是全部的含义。",
+        "zh": "三行做的是一次重排，不是一次收集：事件按完成先后到，历史必须按模型发出的先后排 —— 遍历的是 pendingToolUses 而不是 toolResultBlocks，关键全在这个方向上。",
         "en": "These three lines are a reorder, not a collection: events arrive in completion order, history must be in issue order — the iteration runs over pendingToolUses rather than toolResultBlocks, and that direction is the whole meaning."
       }
     },
     "decision": {
       "why": {
-        "zh": "配对是硬约束，而且违反的代价极高。v0.45.15 的 P0 就是这么来的：一轮因为 max_tokens 或 refusal 停下，但那之前已经吐出了一个完整的 tool_use 块 —— 没人跑它，也就没有结果块，这个不配对的块直接写进了持久历史，之后每次请求都 400,而且发生在回滚边界之前,fold、trim、重启全都够不着，只能改数据库才救回来。修法在 open_stream 的出口:dropUndispatchedToolUse 把这些块从 assistant 消息里剥掉(整条只剩它就整条弹出),在线上给每个 call 补发一个 tool.finished 的 err 让前端收掉半截气泡，并打一行 warn。",
+        "zh": "配对是硬约束，而且违反的代价极高。v0.45.15 的 P0 就是这么来的：一轮因为 max_tokens 或 refusal 停下，但那之前已经吐出了一个完整的 tool_use 块 —— 没人跑它，也就没有结果块，这个不配对的块直接写进了持久历史，之后每次请求都 400，而且发生在回滚边界之前，fold、trim、重启全都够不着，只能改数据库才救回来。修法在 open_stream 的出口：dropUndispatchedToolUse 把这些块从 assistant 消息里剥掉(整条只剩它就整条弹出)，再给每个 call 补发一个 tool.finished 的 err 让前端收掉半截气泡，并打一行 warn。",
         "en": "Pairing is a hard constraint and violating it is expensive. The v0.45.15 P0 came from exactly this: a round stopped for max_tokens or refusal after already emitting a complete tool_use block — nobody ran it, so no result block existed, and the unpaired block went into durable history, after which every request 400s. It happened before the rollback boundary, so fold, trim and restart all missed it and only DB surgery recovered it. The fix sits at open_stream's exit: dropUndispatchedToolUse strips those blocks out of the assistant message (popping the whole message if nothing else remains), emits a tool.finished err per call so the client drops its half-streamed bubble, and logs one warning."
       },
       "cost": {
@@ -5430,7 +5426,7 @@ window.LUNA_DECKS = {
       "en": "Nine with*(base) combinators decide at boot which tools enter the registry, which is then frozen for the process. An unmounted tool produces no JSON Schema, never reaches the prompt and never reaches the dispatcher; the matching clauses of the L1 contract are rendered by querying the registry rather than by reading environment variables."
     },
     "mechanism": {
-      "zh": "九个 with*(base) 组合器在 main.ts 里一次性套成一个 registry,boot 时冻结;turn loop 全程不再读能力相关的 env。发给模型的 tools 参数由 toolsToAnthropicFormat(registry) 直接映射注册表的值，所以未挂载的组连 JSON schema 都生成不出来。L1 契约里的对应条款同样由 isCodeWriteMode / isShellMode / isRepoMapMode / isSkillsMode 这些「从注册表反推」的判断决定渲不渲染，而不是读 env —— 于是不会出现契约让她去用一个没挂上的工具。真被调到时，分发器返回 tool_not_found。",
+      "zh": "九个 with*(base) 组合器在 main.ts 里一次性套成一个 registry，boot 时冻结；turn loop 全程不再读能力相关的 env。发给模型的 tools 参数由 toolsToAnthropicFormat(registry) 直接映射注册表的值，所以未挂载的组连 JSON schema 都生成不出来。L1 契约里的对应条款同样由 isCodeWriteMode / isShellMode / isRepoMapMode / isSkillsMode 这些「从注册表反推」的判断决定渲不渲染，而不是读 env —— 于是契约永远不会叫她去用一个没挂上的工具。真被调到时，分发器返回 tool_not_found。",
       "en": "Nine with*(base) composers wrap one registry in main.ts, frozen at boot; the turn loop never reads a capability env again. The tools array handed to the model is mapped straight off the registry by toolsToAnthropicFormat, so an unmounted group cannot even produce a JSON schema. The matching L1-contract clauses are likewise gated on registry-derived checks — isCodeWriteMode / isShellMode / isRepoMapMode / isSkillsMode — not on env reads, so the contract never tells her to call a tool that is not there. If one is called anyway, the dispatcher answers tool_not_found."
     },
     "contract": {
@@ -5447,7 +5443,7 @@ window.LUNA_DECKS = {
         "en": "The gate decides whether a tool mounts, never what a mounted tool may do — that belongs to the workspace blocklist, shellDeny, and the proactive gate."
       },
       "invariant": {
-        "zh": "注册表是唯一真相;turn loop 里没有任何一处读能力相关的 env。",
+        "zh": "注册表是唯一真相；turn loop 里没有任何一处读能力相关的 env。",
         "en": "The registry is the single source of truth; nowhere in the turn loop reads a capability env var."
       }
     },
@@ -5456,7 +5452,7 @@ window.LUNA_DECKS = {
       "lines": "106-118",
       "snippet": "export function shellSupported(platform: NodeJS.Platform = process.platform): boolean {\n  return platform !== 'win32';\n}\n\n// Compose a base registry with the shell + verify tools iff the flag is on.\nexport function withShell(base: ToolRegistry, platform: NodeJS.Platform = process.platform): ToolRegistry {\n  if (!shellEnabled()) return { ...base };\n  if (!shellSupported(platform)) {\n    console.warn('[luna-server] shell tool unmounted on win32 (spawner is /bin/zsh); verify tools stay');\n    return { ...base, ...verifyTools };\n  }\n  return { ...base, ...shellTools };\n}",
       "note": {
-        "zh": "一个门可以只卸一半:shell 的 spawner 硬编码 /bin/zsh,win32 上单独卸掉它，而 argv 形式的 typecheck / run_tests / lint 留下。",
+        "zh": "一个门可以只卸一半：shell 的 spawner 硬编码 /bin/zsh，win32 上单独卸掉它，而 argv 形式的 typecheck / run_tests / lint 留下。",
         "en": "A gate can unmount half of itself: shell hardcodes a /bin/zsh spawner, so win32 drops shell alone while the argv-form typecheck / run_tests / lint stay."
       }
     },
@@ -5466,11 +5462,11 @@ window.LUNA_DECKS = {
         "en": "Default on, everywhere. The gates exist to stop bleeding fast, not to configure day-to-day behavior — each =0 is a shutoff valve, not a feature toggle."
       },
       "rejected": {
-        "zh": "计划里 repo_map 原本要「默认 0 直到验证通过」;owner 决策 #4 推翻它，改成默认 ON,=0 才是关。",
+        "zh": "计划里 repo_map 原本要「默认 0 直到验证通过」；owner 决策 #4 推翻它，改成默认 ON，=0 才是关。",
         "en": "The plan had repo_map default to 0 until verified; owner decision #4 overrode it to default ON, with =0 as the off switch."
       },
       "cost": {
-        "zh": "九个门有三种极性，读代码必须逐个确认：八个是 !== 0(默认开),其中 web_search 和 weather 还会在缺 key / 缺坐标时自动不挂(优雅降级),只有 music 是 === 1(默认关且限 darwin)。极性不统一的代价是注释会撒谎 —— web_fetch 那条注释说了二十个版本的「默认关」，而门从 v0.18.3 起就一直是默认开,v0.45.17 才把这条谎话写进注释里承认。",
+        "zh": "九个门有三种极性，读代码必须逐个确认：八个是 !== 0(默认开)，其中 web_search 和 weather 还会在缺 key / 缺坐标时自动不挂(优雅降级)，只有 music 是 === 1(默认关且限 darwin)。极性不统一的代价是注释会撒谎 —— web_fetch 那条注释说了二十个版本的「默认关」，而门从 v0.18.3 起就一直是默认开，直到 v0.45.17 才在注释里更正过来。",
         "en": "Three polarities across nine gates, each of which must be read individually: eight are !== 0 (default on), of which web_search and weather additionally degrade to unmounted with no key / no coordinates, and music alone is === 1 (default off, darwin only). The price of that inconsistency is lying comments — the web_fetch comment claimed default-off for twenty versions while the gate had read default-on since v0.18.3; v0.45.17 finally wrote the correction into the comment itself."
       }
     }
@@ -5731,7 +5727,7 @@ window.LUNA_DECKS = {
       "en": "Action classification in proactive turns is fail-closed: only a tool that explicitly declares proactiveRisk: 'safe' may run silently, and anything unmarked is treated as surface — it must send a message first and can act only on the next round. A blocked call receives a recoverable error and does not count against the action budget."
     },
     "mechanism": {
-      "zh": "proactiveRiskOf 只认一个正向条件 —— proactiveRisk === safe,其余全部落到 surface,包括 undefined(工具压根不在注册表里)。dispatch_tools 里 surfacedBefore 取的是 messageTexts.length > 0,而本轮的 message 调用要等本轮 dispatch 才写进去，所以「先说后做」被强制跨轮：第一轮只能说，第二轮才能动。被挡下的调用拿到一条 recoverable 的错误(SURFACE_FIRST_MESSAGE,把规则原样讲给模型听),并且不进 toolNamesThisTurn —— 于是它不消耗每轮 8 次的主动动作预算。",
+      "zh": "proactiveRiskOf 只认一个正向条件 —— proactiveRisk === safe，其余全部落到 surface，包括 undefined(工具压根不在注册表里)。dispatch_tools 里 surfacedBefore 取的是 messageTexts.length > 0，而本轮的 message 调用要等本轮 dispatch 才写进去，所以「先说后做」被强制跨轮：第一轮只能说，第二轮才能动。被挡下的调用拿到一条 recoverable 的错误(SURFACE_FIRST_MESSAGE，把规则原样讲给模型听)，并且不进 toolNamesThisTurn —— 于是它不消耗每轮 8 次的主动动作预算。",
       "en": "proactiveRiskOf recognizes exactly one positive condition — proactiveRisk === safe — and everything else falls to surface, undefined included (a tool that is not even in the registry). In dispatch_tools, surfacedBefore reads messageTexts.length > 0, and this round’s own message calls are not written there until this round dispatches, so announce-then-act is forced across rounds: round one may only speak, round two may act. A blocked call gets a recoverable error (SURFACE_FIRST_MESSAGE, which states the rule to the model verbatim) and is never pushed into toolNamesThisTurn — so it does not spend any of the cycle’s 8-action budget."
     },
     "contract": {
@@ -5740,7 +5736,7 @@ window.LUNA_DECKS = {
         "en": "proactiveRiskOf(tool), isProactiveActionAllowed(risk, surfacedThisCycle), maxProactiveActions()."
       },
       "depends": {
-        "zh": "工具定义上的可选字段 proactiveRisk,以及这一轮的 proactiveTurn 标记。",
+        "zh": "工具定义上的可选字段 proactiveRisk，以及这一轮的 proactiveTurn 标记。",
         "en": "The optional proactiveRisk field on a tool definition, plus the turn’s proactiveTurn flag."
       },
       "boundary": {
@@ -5763,7 +5759,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "message 自己是 safe,所以她在主动回合里永远能开口 —— 门只挡「动手」，从不挡「说话」。同一个分类器还被复用成审计信号：一轮里既读了不可信的网页内容、又开火了 surface 级工具，就记一条 web_to_action 的观察 trace(只观察，不阻断)。",
+        "zh": "message 自己是 safe，所以她在主动回合里永远能开口 —— 门只挡「动手」，从不挡「说话」。同一个分类器还被复用成审计信号：一轮里既读了不可信的网页内容、又调用了 surface 级工具，就记一条 web_to_action 的观察 trace(只观察，不阻断)。",
         "en": "message itself is safe, so she can always speak in a proactive turn — the gate blocks acting, never speaking. The same classifier is reused as an audit signal: a turn that both read untrusted web content and fired a surface-risk tool records a web_to_action observation trace (observed, not blocked)."
       },
       "rejected": {
@@ -6033,12 +6029,12 @@ window.LUNA_DECKS = {
       "en": "A replay run before the turn closes. detectDefection is a pure function with no LLM call, ranking \"stated but not done\" in three tiers by confidence: structural (a final message marked is_final:false yet the turn stopped), textual (a promise phrasing with no non-message tool called this turn), and thinking (audit only). The first two each drive at most one retry."
     },
     "mechanism": {
-      "zh": "detectDefection 是纯函数、零 LLM,按置信度排三档并返回第一个命中:is_final_promise 是结构性的 —— 最后一条消息标了 is_final:false(还有下文)却以 end_turn 收场，机械确定，不需要词典;message_intent 只对「实际发出去的消息文本」逐字匹配承诺句式，而且要求这一轮除 message 外没调过任何工具;thinking_intent 匹配的是 thinking,只审计不重试(thinking 是 summarized 的，置信度天生低)。finalize 里的闸只对前两档动手:correctionUsed 这个 Set 保证每个原因至多纠正一次，第二次落到 degraded —— 只补一条 trace,不再循环;correctionWatermark 记住上次纠正时已发的气泡数，下一轮只审这之后的新气泡，同一句话不会被反复判定。",
+      "zh": "detectDefection 是纯函数、零 LLM，按置信度排三档并返回第一个命中：is_final_promise 是结构性的 —— 最后一条消息标了 is_final:false(还有下文)却以 end_turn 收场，机械确定，不需要词典；message_intent 只对「实际发出去的消息文本」逐字匹配承诺句式，而且要求这一轮除 message 外没调过任何工具；thinking_intent 匹配的是 thinking，只审计不重试(thinking 是摘要过的，置信度天生低)。finalize 里的闸只对前两档动手：correctionUsed 这个 Set 保证每个原因至多纠正一次，第二次落到 degraded —— 只补一条 trace，不再循环；correctionWatermark 记住上次纠正时已发的气泡数，下一轮只审这之后的新气泡，同一句话不会被反复判定。",
       "en": "detectDefection is pure and LLM-free, ordered by confidence and returning the first hit: is_final_promise is structural — the last delivered message was marked is_final:false (more coming) yet the turn ended with end_turn, mechanically certain, no dictionary needed; message_intent matches promise phrasings verbatim against the text actually delivered, and only when no tool other than message fired this turn; thinking_intent matches the thinking summary and is audit-only, never a retry (summarized thinking is low-confidence by construction). The gate in finalize acts on the first two only: the correctionUsed set bounds each reason to a single correction, the second occurrence degrading to one trace instead of a loop, while correctionWatermark records how many bubbles had been delivered at the last correction so the next pass judges only the new ones."
     },
     "contract": {
       "exposes": {
-        "zh": "detectDefection(纯函数)与 runDefectionAudit(记 decision trace,永不向 turn 抛异常)。",
+        "zh": "detectDefection(纯函数)与 runDefectionAudit(记 decision trace，永不向 turn 抛异常)。",
         "en": "detectDefection (pure) and runDefectionAudit (records a decision trace, never throws into the turn)."
       },
       "depends": {
@@ -6046,7 +6042,7 @@ window.LUNA_DECKS = {
         "en": "The messages this turn delivered, lastIsFinal, the thinking, the tool names called, and finishReason — all produced by the turn itself, no external state consulted."
       },
       "boundary": {
-        "zh": "它判「说了没做」，不判「做得对不对」;thinking_intent 这一档永远不驱动重试。",
+        "zh": "它判「说了没做」，不判「做得对不对」；thinking_intent 这一档永远不驱动重试。",
         "en": "It judges said-but-did-not-do, never did-it-well; the thinking_intent tier never drives a retry."
       },
       "invariant": {
@@ -6059,13 +6055,13 @@ window.LUNA_DECKS = {
       "lines": "735-746",
       "snippet": "        if (d.defected && d.kind !== 'thinking_intent') {\n          const reason = d.kind === 'is_final_promise' ? 'promise' : 'intent';\n          if (!s.correctionUsed.has(reason)) {\n            s.correctionUsed.add(reason);\n            s.correctionWatermark = s.messageTexts.length;\n            emitGuardDecision(s, 'corrected', d.kind, d.matched);\n            pushDirective(\n              s,\n              d.kind === 'is_final_promise' ? PROMISE_BROKEN_DIRECTIVE : INTENT_NO_ACT_DIRECTIVE,\n            );\n            return 'build_request';\n          }",
       "note": {
-        "zh": "三件事挤在同一个 if 里：越过审计专用的 thinking_intent、每个原因只纠正一次、并把水位线推到当前已交付的气泡数。",
+        "zh": "三件事挤在同一个 if 里：跳过审计专用的 thinking_intent 这一档、每个原因只纠正一次、把水位线推到当前已交付的气泡数。",
         "en": "Three things live in one if: skip the audit-only thinking_intent tier, correct each reason exactly once, and push the watermark to the count of bubbles already delivered."
       }
     },
     "decision": {
       "why": {
-        "zh": "纠正下发的是一条 user 角色的舞台提示，不是 system —— Python v0.27.1 的 hoisting 教训。而且给的是双出口：能做就现在去做，做不到就自然接着说，别宣布走回头路。这一条是 v0.27.6 改的：气泡在 finalize 之前就已经流给用户了，重试撤不回，原来那版逼她补一句「我做不到」，结果她像在跟自己道歉。",
+        "zh": "纠正下发的是一条 user 角色的舞台提示，不是 system —— Python v0.27.1 的 hoisting 教训。而且给的是双出口：能做就现在去做，做不到就自然接着说，别特意出来改口。这一条是 v0.27.6 改的：气泡在 finalize 之前就已经流给用户了，重试撤不回，原来那版逼她补一句「我做不到」，结果她像在跟自己道歉。",
         "en": "The correction is pushed as a user-role stage direction, never system — the v0.27.1 hoisting lesson from the Python original. And it offers a double exit: follow through now if you can, otherwise just continue naturally, do not announce a walk-back. That second half is a v0.27.6 fix: bubbles stream before finalize runs, so a retry cannot retract, and the earlier wording made her send a second, contradicting bubble that read as apologizing to herself."
       },
       "rejected": {
@@ -6073,7 +6069,7 @@ window.LUNA_DECKS = {
         "en": "Using an LLM call to judge whether a promise was broken. The whole detection chain is synchronous and pure — not one model round-trip."
       },
       "cost": {
-        "zh": "正则式的承诺词典必然误报。所以第二档配了两层否定过滤(动词后接 不到/没… 是老实的推辞；句中带 能/会/可以 是提议不是承诺),而且误报的代价被刻意设计成「一次温柔的重问」，永远不是一次错误的阻断。v0.18.x 还砍掉过一次：泛用的 查一下 / 查询 曾被算作 web 意图，结果把老老实实用 recall 的回合判成失约，反过来污染了这个审计要收的数据。",
+        "zh": "正则式的承诺词典必然误报。所以第二档配了两层否定过滤(动词后接 不到/没… 是老实的推辞；句中带 能/会/可以 是提议不是承诺)，而且误报的代价被刻意设计成「一次温柔的重问」，永远不是一次错误的阻断。v0.18.x 还砍掉过一次：泛用的 查一下 / 查询 曾被算作 web 意图，结果把老老实实用 recall 的回合判成失约，反过来污染了这个审计要收的数据。",
         "en": "A regex promise dictionary will produce false positives. Hence two negation filters on tier two (a verb followed by cannot / did-not is an honest decline; a capability modal in the match is an offer, not a promise), and hence the deliberate design that a false positive costs one gentle re-prompt and never a wrong block. One narrowing was already made in v0.18.x: generic lookup verbs used to count as web intent, which flagged honest turns that discharged the intent via recall and poisoned the very dataset the audit collects."
       }
     }
@@ -6199,7 +6195,7 @@ window.LUNA_DECKS = {
           "y": 156,
           "w": 340,
           "text": {
-            "zh": "校验与连接之间若各查一次 DNS，就有 TOCTOU；钉住之后没有那个缝",
+            "zh": "校验和连接若各查一次 DNS，中间就有 TOCTOU 的空子；钉住之后这道缝就没了",
             "en": "check and connect resolving separately is a TOCTOU; pinning removes the gap"
           },
           "tone": "edge"
@@ -6330,7 +6326,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "黑名单模型：名单必须写全并被穷举测试",
+            "zh": "黑名单模型：名单必须写全，并经过穷举测试",
             "en": "a deny list is only as good as its coverage — so it is exhaustively tested"
           }
         }
@@ -6341,7 +6337,7 @@ window.LUNA_DECKS = {
       "en": "Three guardrails, all static or connection-time. safeFetch resolves the host, checks every resolved address against a deny list, then pins the socket to the address it just validated, re-validating each redirect hop up to five times; shellDeny is 17 refusal patterns plus 16 interactive commands; the workspace has a SECRETS layer and an EVALUATOR FIREWALL layer, the latter allowing reads while refusing writes and execution."
     },
     "mechanism": {
-      "zh": "safeFetch 的顺序是:canonicalize URL → 解析 → 把解析出的每一个地址过 deny 列表 → 然后把 node:http(s) 的 lookup 换成一个恒返回该地址的函数。TOCTOU 是关掉的而不是变窄的 —— 连上的就是刚验过的那一个地址，而 TLS SNI 与证书仍按 URL 主机名校验，所以 HTTPS 依然正确；重定向不自动跟随，每一跳回到循环顶端重新验一遍，上限 5 跳。shellDeny 是 17 条拒绝正则加 16 个交互式命令(无 TTY 会挂死),匹配前先把空引号拼接折叠掉，免得用引号切词绕过。workspace 分两层:SECRETS 层读写执行全拒,EVALUATOR FIREWALL 层只拒写和执行、放行读 —— 路径先 canonicalize(存在就 realpath,不存在就 realpath 最近的祖先再拼回去),所以指进敏感目录的符号链接一样被抓到;macOS 与 Windows 上所有比较都折叠大小写，否则 .ENV 或 ID_RSA 能整个绕过两层。",
+      "zh": "safeFetch 的顺序是：canonicalize URL → 解析 → 把解析出的每一个地址过 deny 列表 → 然后把 node:http(s) 的 lookup 换成一个恒返回该地址的函数。TOCTOU 窗口被彻底关掉了，而不只是收窄 —— 连上的就是刚验过的那一个地址，而 TLS SNI 与证书仍按 URL 主机名校验，所以 HTTPS 依然正确；重定向不自动跟随，每一跳回到循环顶端重新验一遍，上限 5 跳。shellDeny 是 17 条拒绝正则加 16 个交互式命令(无 TTY 会挂死)，匹配前先把空引号拼接折叠掉，免得用引号切词绕过。workspace 分两层：SECRETS 层读写执行全拒，EVALUATOR FIREWALL 层只拒写和执行、放行读 —— 路径先 canonicalize(存在就 realpath，不存在就 realpath 最近的祖先再拼回去)，所以指进敏感目录的符号链接一样被抓到；macOS 与 Windows 上所有比较都折叠大小写，否则 .ENV 或 ID_RSA 能整个绕过两层。",
       "en": "safeFetch runs in order: canonicalize the URL, resolve it, run every resolved address through the deny list, then swap node:http(s)’s lookup for a function that always returns that address. The TOCTOU is closed rather than narrowed — the socket connects to the very address just validated, while TLS SNI and certificate validation still key off the URL hostname so HTTPS stays correct; redirects are never auto-followed, each hop re-entering the loop for revalidation, capped at 5. shellDeny is 17 deny regexes plus 16 interactive commands (which would hang with no TTY), with empty-quote splices collapsed before matching so quote-splitting cannot hide a denied token. workspace has two tiers: SECRETS rejects read, write and execute alike; the EVALUATOR FIREWALL rejects only write and execute and permits read — and every path is canonicalized first (realpath if it exists, else realpath the nearest existing ancestor and rejoin), so a symlink pointing into a sensitive directory is caught too, with all comparisons case-folded on macOS and Windows or else .ENV and ID_RSA would slip past both tiers entirely."
     },
     "contract": {
@@ -6373,15 +6369,15 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "不做 root jail。owner 决策推翻了原计划的根目录监狱:read/write/execute 可以碰机器上任何路径，黑名单是唯一护栏 —— 所以黑名单必须写全并被穷举测试。SECRETS 层挡的是凭据与密钥(13 个 home 相对目录、3 个具名文件，加上 .env / .env.* / *.pem / *.key / id_rsa* 的 basename 模式);EVALUATOR FIREWALL 挡的是判她、关她、给她划线的那批文件：这个沙箱自己、shellDeny.ts、shell.ts、shellCore.ts、safeFetch.ts、safetyGate.ts、l1Contract.ts、humanity.ts、run_tests.ts(save_skill 的绿灯判据),外加按 basename 匹配的 *.test.ts、tsconfig*.json、prettier / eslint 配置。放行读是有意的：她要能理解自己被什么约束着 —— 自省、解释、提改动建议都得先读得到 —— 但不能自己解开。propose_self_edit 走的是同一道 write 检查，所以「提案自改」永远提不到护栏本身。isBlockedIp 对任何解析不出来的地址返回 true,同样是 fail-closed。",
+        "zh": "不做 root jail。owner 的决定推翻了原先根目录隔离的计划：read/write/execute 可以碰机器上任何路径，黑名单是唯一护栏 —— 所以黑名单必须写全，并经过穷举测试。SECRETS 层挡的是凭据与密钥(13 个 home 相对目录、3 个具名文件，加上 .env / .env.* / *.pem / *.key / id_rsa* 的 basename 模式)；EVALUATOR FIREWALL 挡的是判她、关她、给她划线的那批文件：这个沙箱自己、shellDeny.ts、shell.ts、shellCore.ts、safeFetch.ts、safetyGate.ts、l1Contract.ts、humanity.ts、run_tests.ts(save_skill 的绿灯判据)，外加按 basename 匹配的 *.test.ts、tsconfig*.json、prettier / eslint 配置。放行读是有意的：她要能理解自己被什么约束着 —— 自省、解释、提改动建议都得先读得到 —— 但不能自己解开。propose_self_edit 走的是同一道 write 检查，所以「提案自改」永远提不到护栏本身。isBlockedIp 对任何解析不出来的地址返回 true，同样是 fail-closed。",
         "en": "No root jail. An owner decision overrode the planned root confinement: read/write/execute may touch any path on the machine, and the blocklist is the only guardrail — so it has to be comprehensive and exhaustively tested. The SECRETS tier covers credentials and key material (13 home-relative directories, 3 named files, plus basename patterns for .env / .env.* / *.pem / *.key / id_rsa*); the EVALUATOR FIREWALL covers the files that judge, sandbox and gate her: the sandbox itself, shellDeny.ts, shell.ts, shellCore.ts, safeFetch.ts, safetyGate.ts, l1Contract.ts, humanity.ts, run_tests.ts (save_skill’s green/red oracle), plus basename-matched *.test.ts, tsconfig*.json, and the prettier / eslint configs. Allowing reads is deliberate: she must be able to understand what constrains her — introspection, explanation, and proposing changes all require reading it — without being able to undo it. propose_self_edit passes the same write check, so a self-edit proposal can never reach the guardrails themselves. isBlockedIp returns true for any address it cannot parse, fail-closed for the same reason."
       },
       "rejected": {
-        "zh": "封 198.18.0.0/15。它在 RFC 2544 里是基准测试段，按常识该封；但它同时是 Clash / Surge 这类代理的默认 fake-IP 池 —— 封了等于在代理环境下每个域名都被判成内网,web_fetch 全线报废。代码里留了整段注释解释为什么这一条故意不加，内网访问仍由 IP 字面量检查加 RFC1918 / loopback / link-local / metadata 那几条守住。",
+        "zh": "封 198.18.0.0/15。它在 RFC 2544 里是基准测试段，按常识该封；但它同时是 Clash / Surge 这类代理的默认 fake-IP 池 —— 封了等于在代理环境下每个域名都被判成内网，web_fetch 全线报废。代码里留了整段注释解释为什么这一条故意不加，内网访问仍由 IP 字面量检查加 RFC1918 / loopback / link-local / metadata 那几条守住。",
         "en": "Blocking 198.18.0.0/15. It is the RFC 2544 benchmarking range and by convention should be denied — but it is also the default fake-IP pool for Clash/Surge-style proxies, so blocking it means every domain resolves into a \"private\" address on a proxied host and web_fetch dies completely. A full comment explains why this one range is deliberately left out; internal access stays closed via the IP-literal check plus the RFC1918 / loopback / link-local / metadata rules."
       },
       "cost": {
-        "zh": "黑名单模型天生有洞：没有 jail,一个不在名单上的敏感目录就是敞开的。shell 那一侧同样承认自己的极限 —— 拒绝表是对已知破坏形状的尽力而为，不是对一切形变的覆盖；而 v0.15.2 那一版明确没有做每会话的 WS 审批弹窗，那是往后推的一层。",
+        "zh": "黑名单模型天生有洞：没有 jail，一个不在名单上的敏感目录就是敞开的。shell 那一侧同样承认自己的极限 —— 拒绝表只能尽力拦住已知的破坏手法，拦不住所有变体；而 v0.15.2 那一版明确没有做每会话的 WS 审批弹窗，那是往后推的一层。",
         "en": "A blocklist model leaks by construction: with no jail, any sensitive directory not on the list is wide open. The shell side admits its own ceiling too — the deny list is best-effort over known destructive shapes, not coverage of every conceivable one; and v0.15.2 explicitly did not build the per-session approval prompt, deferring that layer."
       }
     }
@@ -6676,11 +6672,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "一轮输出被 max_tokens 或 refusal 截断时，模型可能已经吐完一个完整的 tool_use 块却从未被派发。这个没有配对 tool_result 的块会让此后每次请求都被 API 打回 400，而且它落在回滚边界之前，折叠、裁剪、重启都够不着。清理在流关闭后无条件把这类调用从 assistant 消息里剥掉。",
+      "zh": "一轮输出被 max_tokens 或 refusal 截断时，模型可能已经吐出一个完整的 tool_use 块，但它从未被派发。这个没有配对 tool_result 的块会让此后每次请求都被 API 打回 400，而且它落在回滚边界之前，折叠、裁剪、重启都够不着。清理在流关闭后无条件把这类调用从 assistant 消息里剥掉。",
       "en": "When a round is cut short by max_tokens or a refusal, the model may already have emitted a complete tool_use block that was never dispatched. That unpaired block makes every later request fail with a 400, and it lands before the rollback boundary, out of reach of folding, trimming and restarts. The cleanup unconditionally strips such calls from the assistant message once the stream closes."
     },
     "mechanism": {
-      "zh": "要命的是毒块的位置：它落在这一轮 rollback 边界之前，所以按轮回滚、L1 折叠、窗口裁剪、乃至整个进程重启，全都够不着它 —— 线上唯一救回来的办法是手改数据库。修法是在流关闭后、判定 finishReason 之前无条件调一次 dropUndispatchedToolUse:只有 stopReason 为 tool_use 且确有 pendingToolUses 时才走分发，其余一律进清理。partitionToolUse 把最后一条 assistant 消息拆成 kept 与 dropped,她流出来的文字保留；整条消息只剩下这个调用，就把整条弹掉。每个被丢掉的调用还要在 wire 上补一条 tool.finished{err, recoverable} —— 客户端对以 err 收尾的消息预览的处理就是丢弃，而一个从未送达的半截气泡本来就该消失。",
+      "zh": "要命的是毒块的位置：它落在这一轮 rollback 边界之前，所以按轮回滚、L1 折叠、窗口裁剪、乃至整个进程重启，全都够不着它 —— 线上唯一救回来的办法是手改数据库。修法是在流关闭后、判定 finishReason 之前无条件调一次 dropUndispatchedToolUse：只有 stopReason 为 tool_use 且确有 pendingToolUses 时才走分发，其余一律进清理。partitionToolUse 把最后一条 assistant 消息拆成 kept 与 dropped，她流出来的文字保留；整条消息只剩下这个调用，就把整条弹掉。每个被丢掉的调用还要在 wire 上补一条 tool.finished{err, recoverable} —— 客户端遇到以 err 收尾的消息预览会直接丢弃，而一个从未送达的半截气泡本来就该消失。",
       "en": "What makes it lethal is where the poison sits: before this turn’s rollback boundary, so the per-turn rollback, the L1 fold, the window trim and a full restart all leave it in place — in production only hand-editing the DB recovered the session. The fix calls dropUndispatchedToolUse unconditionally after the stream closes and before finishReason is decided: only stopReason tool_use with actual pendingToolUses goes to dispatch, everything else goes to cleanup. partitionToolUse splits the last assistant message into kept and dropped, preserving the text she streamed; if the call was all the message contained, the whole message is popped. Each dropped call is then closed on the wire with tool.finished{err, recoverable} — the client discards a message preview that ends in an err, which is exactly what a truncated, never-delivered bubble should do."
     },
     "contract": {
@@ -6693,7 +6689,7 @@ window.LUNA_DECKS = {
         "en": "The last assistant message in session history, stopReason, and pendingToolUses."
       },
       "boundary": {
-        "zh": "只处理「没派发就没了」的调用。已经派发过的调用一定有 tool_result,不归它管。",
+        "zh": "只处理「没派发就没了」的调用。已经派发过的调用一定有 tool_result，不归它管。",
         "en": "Only calls that vanished before dispatch. A call that did dispatch always has a tool_result and is none of its business."
       },
       "invariant": {
@@ -6712,7 +6708,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "这是 v0.45.15 从审计里被提级的 P0。回归测试是反着写的：审计先写了一个必然失败的复现脚本，修完之后同一个脚本原地变成钉子 —— danglingToolUse.test.ts 里那组用例覆盖 max_tokens 截断、refusal、残留文本必须保留、wire 上必须补 err、以及单轮截断整个干净蒸发(既不入库，历史也回到起点)。",
+        "zh": "这是 v0.45.15 从审计里提级上来的 P0。回归测试是反着写的：审计先写了一个必然失败的复现脚本，修完之后同一个脚本原地变成钉子 —— danglingToolUse.test.ts 里那组用例覆盖 max_tokens 截断、refusal、残留文本必须保留、wire 上必须补 err、以及单轮截断整个干净蒸发(既不入库，历史也回到起点)。",
         "en": "This was the P0 promoted out of an audit in v0.45.15. The regression test was written backwards: the audit first wrote a repro that was guaranteed to fail, and once fixed the same script became the pin — danglingToolUse.test.ts covers max_tokens truncation, refusal, surviving text being kept, the err that must close the call on the wire, and a single truncated round evaporating cleanly (nothing durable, history back to where it started)."
       },
       "cost": {
@@ -6981,16 +6977,16 @@ window.LUNA_DECKS = {
       "en": "An observation layer that can be switched off: one row per node transition, per tool event and per outbound event, plus the decision rows the guards write themselves, committed per turn in a single transaction inside the finally. trace() is a no-op when no store is configured, so call sites are unconditional, and flushTrace swallows its own exceptions — observation must not break what it observes."
     },
     "mechanism": {
-      "zh": "trace(event) 是唯一入口:store 没设或 LUNA_TRACE=0 时它是 no-op,所以调用点全部可以是无条件的,turn loop 里不用到处撒 if。事件按 turn_id 在内存里攒着，在 turn 的 finally 里一次事务写完 —— 而且完整性审计被刻意排在 flushTrace 之前，好让它那条 decision 和本轮其它事件原子地落在一起。图的 onTransition 钩子负责 node 行，其中 open_stream 那一跳额外带上 token 数、首 token 延迟和 thinking 摘要。",
+      "zh": "trace(event) 是唯一入口：store 没设或 LUNA_TRACE=0 时它是 no-op，所以调用点全部可以是无条件的，turn loop 里不用到处撒 if。事件按 turn_id 在内存里攒着，在 turn 的 finally 里一次事务写完 —— 而且完整性审计被刻意排在 flushTrace 之前，好让它那条 decision 和本轮其它事件原子地落在一起。图的 onTransition 钩子负责 node 行，其中 open_stream 那一跳额外带上 token 数、首 token 延迟和 thinking 摘要。",
       "en": "trace(event) is the single entry point: a no-op when no store is set or LUNA_TRACE=0, which is why every call site can be unconditional and the turn loop is not littered with guards. Events accumulate in memory per turn_id and flush in one transaction from the turn’s finally — and the integrity audit is deliberately ordered before flushTrace so its decision row lands atomically with the rest of the turn. The graph’s onTransition hook writes the node rows, with the open_stream transition additionally carrying token count, first-token latency, and the thinking summary."
     },
     "contract": {
       "exposes": {
-        "zh": "trace() / flushTrace() / setTraceStore(),以及 /_trace 这个只读视图(turn 列表 + 单 turn 的事件流)。",
+        "zh": "trace() / flushTrace() / setTraceStore()，以及 /_trace 这个只读视图(turn 列表 + 单 turn 的事件流)。",
         "en": "trace() / flushTrace() / setTraceStore(), plus the read-only /_trace view (a turn list and one turn’s event stream)."
       },
       "depends": {
-        "zh": "一个 bun:sqlite 连接，以及 LUNA_TRACE(默认开,=0 关)。",
+        "zh": "一个 bun:sqlite 连接，以及 LUNA_TRACE(默认开，=0 关)。",
         "en": "One bun:sqlite connection and LUNA_TRACE (default on, =0 off)."
       },
       "boundary": {
@@ -7007,17 +7003,17 @@ window.LUNA_DECKS = {
       "lines": "28-37",
       "snippet": "// Truncates an over-large payload into a structured, still-parseable wrapper.\n// Never byte-slices the serialized JSON (Q4 resolution).\nfunction clampPayload(json: string): string {\n  if (json.length <= MAX_PAYLOAD_BYTES) return json;\n  return JSON.stringify({\n    truncated: true,\n    original_bytes: json.length,\n    preview: json.slice(0, MAX_PAYLOAD_BYTES),\n  });\n}",
       "note": {
-        "zh": "超过 4096 字节的 payload 不是把序列化后的 JSON 切一刀 —— 那会切出一个再也解析不了的串。它被重新包成 {truncated, original_bytes, preview}:观测数据必须永远可解析，哪怕内容是残的。",
+        "zh": "超过 4096 字节的 payload 不是把序列化后的 JSON 切一刀 —— 那会切出一个再也解析不了的串。它被重新包成 {truncated, original_bytes, preview}：观测数据必须永远可解析，哪怕内容是残的。",
         "en": "A payload over 4096 bytes is not sliced out of the serialized JSON — that would leave a string nothing can parse. It is re-wrapped as {truncated, original_bytes, preview}: observation data must stay parseable even when its content is partial."
       }
     },
     "decision": {
       "why": {
-        "zh": "所有 trace 调用都留在拥有 turn 上下文的那一层边界(runTurn),下层的 dispatcher.ts 和 outbound.ts 一行都不改。上限是硬的：每 turn 500 事件；保留最近 1000 个 turn,而且不是每次 flush 都剪 —— 每 200 次 flush 剪一次，让保留策略在每一轮上的成本接近零。trace_id 直接等于 turn_id,因此跨重启不冲突，也不需要单独的 id 分配器。",
+        "zh": "所有 trace 调用都留在拥有 turn 上下文的那一层边界(runTurn)，下层的 dispatcher.ts 和 outbound.ts 一行都不改。上限是硬的：每 turn 500 事件；保留最近 1000 个 turn，而且不是每次 flush 都剪 —— 每 200 次 flush 剪一次，让保留策略摊到每一轮上的成本几乎为零。trace_id 直接等于 turn_id，因此跨重启不冲突，也不需要单独的 id 分配器。",
         "en": "Every trace call stays at the one boundary that owns turn context (runTurn); dispatcher.ts and outbound.ts are untouched. The caps are hard: 500 events per turn, retention of the most recent 1000 turns, and the prune runs once every 200 flushes rather than every flush so retention costs roughly nothing per turn. trace_id is simply turn_id, which is collision-free across restarts and needs no separate id allocator."
       },
       "cost": {
-        "zh": "三个视角对同一时刻是冗余的：一条 tool 的 final 和一条 outbound 的 tool.finished 说的是同一件事。这是故意的 —— 一个是执行视角，一个是线上视角，排查时两者对不上本身就是信号。",
+        "zh": "同一时刻，三个视角记下的东西是重复的：一条 tool 的 final 和一条 outbound 的 tool.finished 说的是同一件事。这是故意的 —— 一个是执行视角，一个是线上视角，排查时两者对不上本身就是信号。",
         "en": "The three lenses are redundant at the same instant: a tool final row and an outbound tool.finished row describe one moment twice. That is intentional — execution view versus wire view, and a disagreement between them is itself the signal."
       }
     }
@@ -7271,7 +7267,7 @@ window.LUNA_DECKS = {
       "en": "The single condition that decides whether a turn is persisted: in message mode the text actually delivered by the message tool, in text mode the accumulated stream. Non-empty writes an L2 row; empty truncates session.history back to its length at the start of the turn, leaving nothing behind. Since v0.16.2 L2 has been the source of truth for history, so one empty row would survive every restart."
     },
     "mechanism": {
-      "zh": "realReply 在 message 模式下是 message 工具吐出的文本拼接，text 模式下是流式累积的 state.text，都 trim 过。非空才进 appendL2，写之前先 stripThinking，再 stripCorrectiveDirectives（把回合内为纠正而临时塞进去的 user 角色舞台指示删掉，免得下一轮把伪造的用户训话当真）。为空则执行 opts.session.history.length = historyStart，把这一整轮追加的消息从内存窗口截掉——长度回到回合开始时抄下的快照点，那条悬空的 user 消息一起消失，重试时不会顶两遍。落库的 assistantText 用的是 realReply 而不是 state.text：message 模式下 state.text 装的是模型在 message 工具外面漏出来的旁白，出错回合的 finalize 从没跑过，存 state.text 就会把那句旁白当成她的正式回复。整段包在 try/catch 里，SQLite 抛错只打日志加发一个 persistence_failed 事件，绝不让 runTurn 的 promise reject，也绝不跳过后面的 trace flush 和 fold。",
+      "zh": "realReply 在 message 模式下是 message 工具吐出的文本拼接，text 模式下是流式累积的 state.text，都 trim 过。非空才进 appendL2，写之前先 stripThinking，再 stripCorrectiveDirectives（把回合内为纠正而临时塞进去的 user 角色舞台指示删掉，免得下一轮把伪造的用户训话当真）。为空则执行 opts.session.history.length = historyStart，把这一整轮追加的消息从内存窗口截掉——长度回到回合开始时抄下的快照点，那条悬空的 user 消息一起消失，重试时不会重复出现。落库的 assistantText 用的是 realReply 而不是 state.text：message 模式下 state.text 装的是模型在 message 工具外面漏出来的旁白，出错回合的 finalize 从没跑过，存 state.text 就会把那句旁白当成她的正式回复。整段包在 try/catch 里，SQLite 抛错只打日志加发一个 persistence_failed 事件，绝不让 runTurn 的 promise reject，也绝不跳过后面的 trace flush 和 fold。",
       "en": "realReply is the joined message-tool text in message mode, the streamed state.text in text mode, both trimmed. Non-empty goes to appendL2, but only after stripThinking and stripCorrectiveDirectives (dropping the user-role stage directions the in-turn retry pushed, so no later window re-reads a fabricated scolding). Empty runs opts.session.history.length = historyStart, truncating everything this turn appended back to the snapshot taken at turn start — the dangling user message goes with it, so a retry cannot double it up. The stored assistantText is realReply, not state.text: in message mode state.text holds the model narrating outside the message tool, and on an errored turn finalize never ran to overwrite it, so storing it persisted the leak as the visible reply. The whole block is wrapped in try/catch — a SQLite throw is logged plus a persistence_failed event, never rejecting runTurn's promise and never skipping the trace flush or the fold below."
     },
     "contract": {
@@ -7303,7 +7299,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "空行污染三个面：recall 的候选集、loadSession 重建出来的窗口、以及用户看的聊天记录。三处都得靠这一个关口拦住。",
+        "zh": "空行会污染三个地方：recall 的候选集、loadSession 重建出来的窗口、以及用户看的聊天记录。三处都得靠这一个关口拦住。",
         "en": "A blank row poisons three surfaces: the recall candidate set, the window loadSession rebuilds, and the chat log the user reads. One gate has to stop all three."
       },
       "rejected": {
@@ -7905,7 +7901,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "edge",
           "text": {
-            "zh": "四层，各有各的有界方式和写者",
+            "zh": "四层，各有各的上限机制和写者",
             "en": "four layers, each with its own bound and writer"
           }
         },
@@ -7932,11 +7928,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "记忆分四层，每层有自己的有界方式和自己的写者：L1 是有界窗口，L2 是追加式回合时间线（真相源，每轮写入 O(1)），L3 是五类结构化事实（软删除，可按时刻回看），灵魂是一张单行表——固定核心只有主人的编辑器能改，梦够不到。",
+      "zh": "记忆分四层，每层有自己的上限机制和自己的写者：L1 是有界窗口，L2 是追加式回合时间线（真相源，每轮写入 O(1)），L3 是五类结构化事实（软删除，可按时刻回看），灵魂是一张单行表——固定核心只有主人的编辑器能改，梦够不到。",
       "en": "Memory has four layers, each with its own bound and its own writer: L1 is the bounded window; L2 is the append-only turn timeline (the source of truth, O(1) per turn); L3 is five classes of structured facts (soft-deleted, queryable as of a point in time); the soul is a single-row table whose fixed core only the owner's editor can write — no code path reaches it from the dream."
     },
     "mechanism": {
-      "zh": "L2 是唯一的真相源：每条 raw_json 正好是那一轮往 history 追加的消息，按 t_ms 顺序拼起来就重建出完整历史，所以每轮持久化是 O(1)——sessions.history_json 现在只写一个常量 [] 占位，不再每轮重新序列化整段历史。L3 是五类结构化事实：core_facts、preferences、key_moments、active_threads、project_context；进系统提示时按类封顶（15 / 10 / 12 / 6 / 8），存储本身不封顶，靠梦里的 refine_semantic 修剪，active_threads 默认 14 天过期。forget 是软删除：只写 deleted_ms，行永远留着；listFacts 把 created_ms <= at、deleted_ms 为空或大于 at、expires_ms 为空或大于 at 三个条件合起来查，asOf 一给就是一句「那个时刻她记得什么」的回看。灵魂是一张单行表，分两半：fixed_text 是主人的（首次启动从 git 的 default.md 播种一次，之后只有工作区编辑器能改），evolving_self 与 evolving_bond 是她自己长的那半，梦的 persona_update 每次改都先往 soul_audit 写一条前值，restoreEvolving 靠这条审计回退。renderSoulBlock 把固定核心放最前，她的两段带小标题接在下面。",
+      "zh": "L2 是唯一的真相源：每条 raw_json 正好是那一轮往 history 追加的消息，按 t_ms 顺序拼起来就重建出完整历史，所以每轮持久化是 O(1)——sessions.history_json 现在只写一个常量 [] 占位，不再每轮重新序列化整段历史。L3 是五类结构化事实：core_facts、preferences、key_moments、active_threads、project_context；进系统提示时按类封顶（15 / 10 / 12 / 6 / 8），存储本身不封顶，靠梦里的 refine_semantic 修剪，active_threads 默认 14 天过期。forget 是软删除：只写 deleted_ms，行永远留着；listFacts 把 created_ms <= at、deleted_ms 为空或大于 at、expires_ms 为空或大于 at 三个条件合起来查，只要传入 asOf，查到的就是「那个时刻她记得什么」。灵魂是一张单行表，分两半：fixed_text 是主人的（首次启动从 git 的 default.md 播种一次，之后只有工作区编辑器能改），evolving_self 与 evolving_bond 是她自己长的那半，梦的 persona_update 每次改都先往 soul_audit 写一条前值，restoreEvolving 靠这条审计回退。renderSoulBlock 把固定核心放最前，她的两段带小标题接在下面。",
       "en": "L2 is the single source of truth: each raw_json is exactly the messages that turn appended, so concatenating them in t_ms order reconstitutes the whole history — which makes per-turn persistence O(1), with sessions.history_json now written as a constant [] placeholder instead of re-serializing the growing history. L3 holds five fact categories — core_facts, preferences, key_moments, active_threads, project_context — capped per category at render time (15 / 10 / 12 / 6 / 8) while storage stays unbounded and the dream's refine_semantic prunes; active_threads expire after 14 days by default. forget is a soft delete: it writes deleted_ms and never removes the row, and listFacts combines created_ms <= at with deleted_ms null-or-later and expires_ms null-or-later, so passing asOf is a query for what she knew at that moment. The soul is a single row in two halves: fixed_text belongs to the owner (seeded once at first boot from git's default.md, afterwards editable only through the workspace editor), while evolving_self and evolving_bond are the half she grows — the dream's persona_update writes the previous values to soul_audit before every change, which is what restoreEvolving rewinds. renderSoulBlock puts the fixed core first and her two sections, each under its own heading, beneath it."
     },
     "contract": {
@@ -7945,7 +7941,7 @@ window.LUNA_DECKS = {
         "en": "renderCoreBlock (the L3 section, now facts only), renderSoulBlock (the soul section), and addFact / forgetFact / listFacts."
       },
       "depends": {
-        "zh": "同一个 SQLite 连接（getMemoryDb）、bumpMemoryEpoch——任何真实写入都要顶一次 epoch，缓存的 system block 才会重渲染。",
+        "zh": "同一个 SQLite 连接（getMemoryDb）、bumpMemoryEpoch——任何真实写入都要把 epoch 加一，缓存的 system block 才会重渲染。",
         "en": "One SQLite connection (getMemoryDb) and bumpMemoryEpoch — every real write bumps the epoch so the cached system block re-renders."
       },
       "boundary": {
@@ -7953,7 +7949,7 @@ window.LUNA_DECKS = {
         "en": "The dream cannot reach soul.fixed_text: there is no code path from persona_update to it, and updateFixedCore is called only by the owner's workspace editor. The firewall is test-pinned."
       },
       "invariant": {
-        "zh": "这两段渲染必须逐字节稳定，除非记忆真的变了；里面不许插时间戳——它们坐在唯一那个带缓存断点的 system block 里，一个字节的差异就打掉整段前缀缓存。",
+        "zh": "这两段渲染必须逐字节稳定，除非记忆真的变了；里面不许插时间戳——它们位于唯一那个带缓存断点的 system block 里，一个字节的差异就打掉整段前缀缓存。",
         "en": "Both renders must be byte-identical across turns unless memory actually changed, and must never interpolate a timestamp — they sit inside the one cached system block, where a single differing byte invalidates the whole prefix cache."
       }
     },
@@ -8294,7 +8290,7 @@ window.LUNA_DECKS = {
       "en": "A second state machine on the same runGraph: eight nodes in a fixed order — salience, semantic refine, fold, memory audit, persona update, diaries, skill distillation, vector refresh — each wrapped in its own try/catch and flushing trace separately, so a failed step does not stop the ones after it. It prefers a separate summarizer key."
     },
     "mechanism": {
-      "zh": "梦复用回合那台 runGraph（一个编排形状、一条 trace 缝），只是把节点集换成 DreamNode 的八个，顺序写死在 ORDER 里：rate_salience、refine_semantic、refine_layer1、memory_audit、persona_update、run_diaries、distill_skills、rag_refresh。顺序不是随便排的：rate_salience 必须在 refine_layer1 之前，因为折叠要用 importance 给重要回合打 [salient] 锚，防止它们被过度概括；distill_skills 排在 run_diaries 之后、rag_refresh 之前，是为了让本轮新蒸馏出的技能在同一轮里被 rag_refresh 预热成向量，否则要等到下一次梦才可检索。每步被 runStep 包住：抛错记成 failed 但不中断整轮，发一条 dream.step 事件，并且每步都单独 flushTrace 一次——中途崩了，已完成的步不丢。LLM 走 dreamCall 的两跳级联：LUNA_SUMMARIZER_API_KEY 那个 provider 优先，空文本或异常才落回主 provider，失败被分类成 rate_limited、content_filter、auth、empty_text、exception。trigger 有三种来源写进 dream_reports：shutdown（退出路径）、manual（菜单 dream.enter）、self（她自己的 enter_dream）——在 v0.45.12 之前这三条路径在报告里完全分不出来。",
+      "zh": "梦复用回合那台 runGraph（同一套编排结构、同一条 trace 接缝），只是把节点集换成 DreamNode 的八个，顺序写死在 ORDER 里：rate_salience、refine_semantic、refine_layer1、memory_audit、persona_update、run_diaries、distill_skills、rag_refresh。顺序不是随便排的：rate_salience 必须在 refine_layer1 之前，因为折叠要用 importance 给重要回合打 [salient] 锚，防止它们被过度概括；distill_skills 排在 run_diaries 之后、rag_refresh 之前，是为了让本轮新蒸馏出的技能在同一轮里被 rag_refresh 预热成向量，否则要等到下一次梦才可检索。每步被 runStep 包住：抛错记成 failed 但不中断整轮，发一条 dream.step 事件，并且每步都单独 flushTrace 一次——中途崩了，已完成的步不丢。LLM 走 dreamCall 的两跳级联：LUNA_SUMMARIZER_API_KEY 那个 provider 优先，空文本或异常才落回主 provider，失败被分类成 rate_limited、content_filter、auth、empty_text、exception。trigger 有三种来源写进 dream_reports：shutdown（退出路径）、manual（菜单 dream.enter）、self（她自己的 enter_dream）——在 v0.45.12 之前这三条路径在报告里完全分不出来。",
       "en": "The dream reuses the turn loop's runGraph — one orchestration shape, one trace seam — swapping in eight DreamNodes whose order is pinned in ORDER: rate_salience, refine_semantic, refine_layer1, memory_audit, persona_update, run_diaries, distill_skills, rag_refresh. The order is load-bearing: rate_salience must precede refine_layer1 because the fold uses importance to anchor salient turns as [salient] against over-summarization, and distill_skills sits after run_diaries but before rag_refresh so a freshly distilled skill is embedded in the SAME cycle rather than waiting for the next dream to become retrievable. Each step is wrapped by runStep: a throw is recorded as failed without aborting the cycle, a dream.step event is emitted, and traces are flushed per step so a mid-cycle crash keeps the completed ones. The LLM path is dreamCall's two-attempt cascade: the LUNA_SUMMARIZER_API_KEY provider first, falling back to the main provider on empty text or an exception, with failures classified as rate_limited, content_filter, auth, empty_text, or exception. Three triggers are recorded in dream_reports: shutdown (the exit path), manual (the dream.enter menu), self (her own enter_dream) — before v0.45.12 the three were indistinguishable in the reports."
     },
     "contract": {
@@ -8311,7 +8307,7 @@ window.LUNA_DECKS = {
         "en": "The dream writes only the soul's evolving half, never fixed_text; distilled skills go solely through the audited saveSkill / deprecateSkill (source dream), and the dream may never revive a deprecated skill — that is the awake path's or the owner's call."
       },
       "invariant": {
-        "zh": "状态是模块内存加 SQLite 写穿；崩在梦里会留下 is_dreaming = 1，bootReconcile 启动时把那一轮标成 aborted 并停回清醒，否则聊天会被永久挡住。",
+        "zh": "状态是模块内存加 SQLite 写穿；崩在梦里会留下 is_dreaming = 1，bootReconcile 启动时把那一轮标成 aborted 并切回清醒状态，否则聊天会被永久挡住。",
         "en": "State is module memory with a SQLite write-through; a crash mid-dream leaves is_dreaming = 1, and bootReconcile marks that cycle aborted and parks awake at startup — otherwise chat stays gated forever."
       }
     },
@@ -8598,7 +8594,7 @@ window.LUNA_DECKS = {
       "en": "All persistent state is one file at the repository root: 18 live tables after 22 migrations, WAL mode, a 5-second busy timeout. Each migration runs inside a single transaction that also advances user_version, so a half-applied migration cannot exist, and a duplicate migration number throws before anything runs."
     },
     "mechanism": {
-      "zh": "openDb 打开时固定三条 pragma：journal_mode = WAL、foreign_keys = ON、busy_timeout = 5000。migrate 读 migrations 目录下的 NNNN_*.sql，排序后跳过编号不大于当前 user_version 的，剩下的每个文件在一个事务里执行，并在同一个事务里把 user_version 顶到该编号——所以一个迁移要么整体生效要么整体不生效，不会留下半张表。真正跑之前还有一道守卫：同一个编号出现两次直接抛错，因为第二个文件本来会被静悄悄跳过。22 个文件里有 20 条 CREATE TABLE，0017 把 core_memory 与 core_memory_audit 两张退休表 DROP 掉，所以迁移跑完 user_version = 22、活着的表是 18 张。DB 路径钉死在仓库根（从 import.meta.dir 上溯三层），从子目录启动也不会另开一个空库；LUNA_DB_PATH 与 LUNA_MIGRATIONS_DIR 是给编译版 sidecar 的逃生口（bun build --compile 出来的二进制里 import.meta.dir 是虚的）。",
+      "zh": "openDb 打开时固定三条 pragma：journal_mode = WAL、foreign_keys = ON、busy_timeout = 5000。migrate 读 migrations 目录下的 NNNN_*.sql，排序后跳过编号不大于当前 user_version 的，剩下的每个文件在一个事务里执行，并在同一个事务里把 user_version 推进到该编号——所以一个迁移要么整体生效要么整体不生效，不会留下半张表。真正跑之前还有一道守卫：同一个编号出现两次直接抛错，因为第二个文件本来会被静悄悄跳过。22 个文件里有 20 条 CREATE TABLE，0017 把 core_memory 与 core_memory_audit 两张退休表 DROP 掉，所以迁移跑完 user_version = 22、活着的表是 18 张。DB 路径钉死在仓库根（从 import.meta.dir 上溯三层），从子目录启动也不会另开一个空库；LUNA_DB_PATH 与 LUNA_MIGRATIONS_DIR 是给编译版 sidecar 的逃生口（bun build --compile 出来的二进制里 import.meta.dir 是虚的）。",
       "en": "openDb pins three pragmas: journal_mode = WAL, foreign_keys = ON, busy_timeout = 5000. migrate reads migrations/NNNN_*.sql, sorts them, skips any number at or below the DB's user_version, and runs each remaining file inside a transaction that also bumps user_version to that number — so a migration either lands whole or not at all, never leaving half a table. Before running anything there is a guard: a duplicate number throws, because the second file would otherwise be silently skipped. The 22 files hold 20 CREATE TABLE statements, and 0017 drops the two retired ones (core_memory, core_memory_audit) — so a fully migrated DB reports user_version = 22 and 18 live tables. The path is pinned to the repo root (three levels up from import.meta.dir) so launching from a subdirectory cannot quietly create a second empty database; LUNA_DB_PATH and LUNA_MIGRATIONS_DIR are the escape hatches for the compiled sidecar, whose bun build --compile binary has a virtual import.meta.dir."
     },
     "contract": {
@@ -8630,11 +8626,11 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "一个文件、一个进程、一个连接：没有服务、没有连接池，WAL 加 5 秒 busy_timeout 足够承担唯一的写者。",
+        "zh": "一个文件、一个进程、一个连接：没有服务、没有连接池，WAL 加 5 秒 busy_timeout 应付唯一的写者已经足够。",
         "en": "One file, one process, one connection: no service, no pool — WAL plus a 5-second busy_timeout is enough for a single writer."
       },
       "rejected": {
-        "zh": "sqlite-vec 的 vec0 向量检索。v0.16.2 删掉了那张只写不查的虚拟表，检索是（并且至今仍是）TS 里的 cosine。所以扩展探测失败今天什么也不影响：resolveSqliteLib 找不到候选库就返回 null，initCustomSqlite 返回 false，进程照常用 Bun 自带的 SQLite 跑下去；而真正把扩展加载到连接上的 tryLoadVec，在整个仓库里目前一个调用者都没有。",
+        "zh": "sqlite-vec 的 vec0 向量检索。v0.16.2 删掉了那张只写不查的虚拟表，检索一直都是 TS 里的 cosine。所以扩展探测失败目前什么也不影响：resolveSqliteLib 找不到候选库就返回 null，initCustomSqlite 返回 false，进程照常用 Bun 自带的 SQLite 跑下去；而真正把扩展加载到连接上的 tryLoadVec，在整个仓库里目前一个调用者都没有。",
         "en": "sqlite-vec's vec0 KNN. v0.16.2 removed the write-only virtual table, and retrieval is — and still is — the TS cosine. So a failed extension probe changes nothing today: resolveSqliteLib returns null when no candidate library exists, initCustomSqlite returns false, and the process runs on Bun's bundled SQLite; while tryLoadVec, the function that would actually load the extension onto a connection, has no caller anywhere in the repo."
       },
       "cost": {
@@ -8869,7 +8865,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "所有自主行为塌回成对请求的回应",
+            "zh": "所有自主行为都退化成对请求的回应",
             "en": "every autonomous act collapses into a response"
           }
         },
@@ -8890,7 +8886,7 @@ window.LUNA_DECKS = {
       "en": "A server-side setInterval, 60 seconds by default and floored at 5, that asks once per tick per active session whether to wake. The timer is unref'd immediately so it never keeps the process alive, and nothing in the repository calls clearInterval on it: its lifetime is the process's lifetime."
     },
     "mechanism": {
-      "zh": "tick 间隔读 LUNA_PROACTIVE_TICK_SECONDS，默认 60 秒，被 Math.max(5, …) 夹住下限。定时器建好后立刻 .unref()：它不再计入事件循环的存活引用，进程该退就退。全仓没有任何一处对这个定时器调用 clearInterval——v0.45.14 删掉了那个从未被调用过的 stopScheduler——所以它的完整生命周期就是：启动一次，随进程一起死，这正是设计意图。另有一个模块级 ticking 布尔把 tick 串起来，因为一次 tick 里的主动回合完全可能比 tick 间隔还长。",
+      "zh": "tick 间隔读 LUNA_PROACTIVE_TICK_SECONDS，默认 60 秒，被 Math.max(5, …) 夹住下限。定时器建好后立刻 .unref()：它不再计入事件循环的存活引用，进程该退就退。全仓没有任何一处对这个定时器调用 clearInterval——v0.45.14 删掉了那个从未被调用过的 stopScheduler——所以它的完整生命周期就是：启动一次，随进程一起死，这正是设计意图。另有一个模块级布尔标志 ticking 让 tick 串行执行，因为一次 tick 里的主动回合完全可能比 tick 间隔还长。",
       "en": "The tick interval comes from LUNA_PROACTIVE_TICK_SECONDS, defaulting to 60 seconds, with a floor clamped by Math.max(5, …). The timer is .unref()d the moment it is created: it no longer counts as a liveness reference on the event loop, so the process exits when it should. Nothing anywhere in the repo calls clearInterval on this timer — v0.45.14 deleted the never-called stopScheduler — so its whole lifecycle is: started once, dies with the process, which is exactly the intent. A module-level `ticking` boolean serializes the beats, because a proactive turn started by one tick can easily outlast the tick interval."
     },
     "contract": {
@@ -8916,7 +8912,7 @@ window.LUNA_DECKS = {
       "lines": "28-38",
       "snippet": "export function startScheduler(deps: SchedulerDeps): void {\n  if (timer) return;\n  const tickMs = Math.max(5, Number(Bun.env['LUNA_PROACTIVE_TICK_SECONDS'] ?? 60)) * 1000;\n  timer = setInterval(() => {\n    void runTick(deps).catch(logSwallowed('scheduler-tick'));\n  }, tickMs);\n  // don't keep the process alive just for the heartbeat. Nothing ever stops this timer\n  // explicitly (v0.45.14 removed the never-called stopScheduler) — the unref means it\n  // simply dies with the process, which is the entire intended lifecycle.\n  (timer as { unref?: () => void }).unref?.();\n}",
       "note": {
-        "zh": "整支自主性的全部启动代码就这 11 行；注释里那句「nothing ever stops this timer」是仓库自己写下的、可被 grep 验证的事实。",
+        "zh": "她全部自主行为的启动代码就这 11 行；注释里那句「nothing ever stops this timer」是仓库自己写下的、可被 grep 验证的事实。",
         "en": "These 11 lines are the entire bootstrap of the autonomous branch; the comment \"nothing ever stops this timer\" is a fact the repo states about itself and one you can verify with grep."
       }
     },
@@ -9197,11 +9193,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "唤醒决策本身是一个纯函数：只看 effective_gap（频道最后一次发言与上次主动开口，取较小者），在 5 个相位间迁移，产出 4 种场景之一或什么都不产出。时钟与随机数从参数注入，因此可被单测钉死，且不花一次模型调用。",
+      "zh": "唤醒决策本身是一个纯函数：只看 effective_gap（距频道最后一次发言、距她上次主动开口，两段时长取较小者），在 5 个相位间迁移，产出 4 种场景之一或什么都不产出。时钟与随机数从参数注入，因此可被单测钉死，且不花一次模型调用。",
       "en": "The waking decision is a pure function: it looks only at effective_gap — the smaller of time since the last message in the channel and time since the last proactive turn — moves between five phases, and returns one of four scenarios or nothing at all. Clock and RNG are injected as parameters, so it is unit-testable and costs no model call."
     },
     "mechanism": {
-      "zh": "一个信号驱动全部：effective_gap = min(距离频道里最后一次有人说话, 距离她上一次主动开口)。取 min 是为了让她刚打破的沉默不算沉默——v0.29.0 之前这个 gap 只数用户与她的主动外联，她普通的回复推不动它，于是她会在回答完几秒后就插进一场活着的对话。相位机有 5 个相位：engaged / idle_watch / nudged / dormant / sleeping；产出 4 种场景框架：ambient / idle_nudge / renudge / leave_message。engaged 下 gap 过 10 分钟升 idle_watch；不到则以 6% 概率、且 gap ≥ 5 分钟时丢一句无重量的 ambient。nudged 里 renudge 按 [1.0, 2.4, 6.0] 的倍率退避，最多 3 次，之后落 leave_message → dormant；dormant 静默满 1 小时自动回 engaged；gap 超 18 小时进 sleeping，她等他回来，不往里推。函数是纯的：它把这一 tick 算出的相位迁移 return 出去，由 fire.ts 在每一条路径上落盘——包括「这一 tick 什么都没发生」那一条。丢掉它，dormant→engaged 的自动恢复就会被扔掉，她被永久锁死在 dormant。",
+      "zh": "一个信号驱动全部：effective_gap = min(距离频道里最后一次有人说话, 距离她上一次主动开口)。取 min 是为了让她刚打破的沉默不算沉默——v0.29.0 之前这个 gap 只数用户与她的主动外联，她普通的回复推不动它，于是她会在回答完几秒后就插进一场正在进行的对话。相位机有 5 个相位：engaged / idle_watch / nudged / dormant / sleeping；产出 4 种场景框架：ambient / idle_nudge / renudge / leave_message。engaged 下 gap 过 10 分钟升 idle_watch；不到则以 6% 概率、且 gap ≥ 5 分钟时丢一句随口的 ambient。nudged 里 renudge 按 [1.0, 2.4, 6.0] 的倍率退避，最多 3 次，之后落 leave_message → dormant；dormant 静默满 1 小时自动回 engaged；gap 超 18 小时进 sleeping，她等他回来，不再去催。函数是纯的：它把这一 tick 算出的相位迁移 return 出去，由 fire.ts 在每一条路径上落盘——包括「这一 tick 什么都没发生」那一条。丢掉它，dormant→engaged 的自动恢复就会被扔掉，她被永久锁死在 dormant。",
       "en": "One signal drives everything: effective_gap = min(time since anyone last spoke in the channel, time since her own last proactive opening). The min exists so a silence she just broke does not count as silence — before v0.29.0 the gap counted only the user plus her proactive outreach, her ordinary replies advanced nothing, and she would cut into a live conversation seconds after answering it. The phase machine has 5 phases: engaged / idle_watch / nudged / dormant / sleeping; it produces 4 scenario framings: ambient / idle_nudge / renudge / leave_message. In engaged, a gap past 10 minutes climbs to idle_watch; short of that she may drop a weightless ambient musing at 6% probability and only once the gap is at least 5 minutes. In nudged, re-nudges space out on a [1.0, 2.4, 6.0] backoff, at most 3 of them, then it falls to leave_message → dormant; dormant auto-recovers to engaged after a full hour of genuine silence; a gap past 18 hours enters sleeping, where she waits for him to come back rather than nudging into it. The function is pure: it returns the phase transition it computed this tick, and fire.ts persists it on every path — including the path where nothing fired. Discard it and the dormant→engaged recovery is thrown away, locking her in dormant forever."
     },
     "contract": {
@@ -9214,7 +9210,7 @@ window.LUNA_DECKS = {
         "en": "session.lastActivityMs (the single activity idle-timer), the cadence phase/nudgesSent/lastProactiveMs, and the probabilities and spacings from effectiveCadence()."
       },
       "boundary": {
-        "zh": "阶梯不重新把关安静时段、空闲下限、基础冷却与日配额——那是 passesAntiSpam 这条机械轨的事，先跑；阶梯只在轨之上叠相位逻辑（renudge 的退避是另一层更长的间距，不是重复的冷却）。",
+        "zh": "阶梯不重新把关安静时段、空闲下限、基础冷却与日配额——那些归 passesAntiSpam 这条机械轨管，它先跑；阶梯只在轨之上叠相位逻辑（renudge 的退避是另一层更长的间距，不是重复的冷却）。",
         "en": "The ladder does not re-gate quiet hours, the idle floor, the base cooldown or the daily quota — that is the mechanical rail, passesAntiSpam, which runs first; the ladder layers only phase logic on top (the re-nudge backoff is a separate, longer spacing, not a duplicated cooldown)."
       },
       "invariant": {
@@ -9241,7 +9237,7 @@ window.LUNA_DECKS = {
         "en": "The detector registry with its per-key debounce and scheduled-slot machinery (deleted wholesale in v0.24.1), and the speculative LLM wake-gate hanging off the heartbeat (deleted in v0.22.3). Both amounted to spending a call in order to decide whether to spend a call."
       },
       "cost": {
-        "zh": "唤醒的时机完全机械——她无法因为「这件事值得说」而提前开口，只能因为「已经安静够久了」。内容上的判断被整体推迟到模型看见场景框架之后；换来的是沉默默认成立，而不是默认要被说服。",
+        "zh": "唤醒的时机完全机械——她无法因为「这件事值得说」而提前开口，只能因为「已经安静够久了」。内容上的判断被整体推迟到模型看见场景框架之后；换来的是沉默默认成立，不必靠理由去争取。",
         "en": "The timing of a waking is entirely mechanical — she cannot open early because something is worth saying, only because it has been quiet long enough. All judgment about content is deferred to after the model sees the scenario framing; what this buys is that silence is the default rather than something that has to be argued for."
       }
     }
@@ -9480,7 +9476,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "一次行为上的修复只能是氛围",
+            "zh": "行为上的修复只能凭感觉判断",
             "en": "a behavioural fix can only ever be a vibe"
           }
         },
@@ -9501,7 +9497,7 @@ window.LUNA_DECKS = {
       "en": "Every proactive waking is recorded as one row, classified on two facts: a message was sent (spoke); no message but some non-message tool was called (quiet); neither (nothing). A quiet outcome is compressed into a one-line note that also serves as the client-facing text, and a waking that used a web tool additionally counts as a wander against a daily quota."
     },
     "mechanism": {
-      "zh": "分类只看两件事：这一回合有没有发出消息，以及调过哪些工具名。发了消息 = spoke；没发消息但调过 message 之外的任何工具 = quiet；两样都没有 = nothing。这就是「安静地干活」得以成为一种合法结局的全部判据——工具调用本身就是行动。quiet 会被 compressNote 压成一行人话（同一个动词按次数合并，硬截到 140 字），这一行同时是账本里的 note、和前端那片叶子逐字显示的文案（proactive.finished 事件上的可选 quiet_note 字段）。用了 web_search 或 web_fetch 的算一次 wander，按本地午夜起算日配额（默认 4 次），而剩余配额又被写回下一次唤醒的提示词里——账本因此不只是记录，它还闭了一个小环。写库整段包在 try/catch 里：账本永远不许弄坏这一回合。",
+      "zh": "分类只看两件事：这一回合有没有发出消息，以及调过哪些工具名。发了消息 = spoke；没发消息但调过 message 之外的任何工具 = quiet；两样都没有 = nothing。这就是「安静地干活」得以成为一种合法结局的全部判据——工具调用本身就是行动。quiet 会被 compressNote 压成一行人话（同一个动词按次数合并，硬截到 140 字），这一行既是账本里的 note，也是前端那片叶子逐字显示的文案（proactive.finished 事件上的可选 quiet_note 字段）。用了 web_search 或 web_fetch 的算一次 wander，按本地午夜起算日配额（默认 4 次），而剩余配额又被写回下一次唤醒的提示词里——账本因此不只是记录，它还形成了一个小闭环。写库整段包在 try/catch 里：账本永远不许弄坏这一回合。",
       "en": "Classification looks at exactly two things: whether the turn delivered a message, and which tool names it called. Message delivered = spoke; no message but any tool other than `message` = quiet; neither = nothing. That is the entire criterion by which quiet work becomes a legitimate outcome — calling a tool is itself acting. A quiet turn gets compressed by compressNote into one human line (same verb collapsed with a count, hard-capped at 140 characters), and that line is at once the ledger note and, verbatim, the copy the front end renders as a leaf (the optional quiet_note field on the proactive.finished event). A turn that used web_search or web_fetch is marked a wander, counted against a daily budget from local midnight (4 by default), and the remaining budget is written back into the next waking prompt — so the ledger is not only a record, it closes a small loop. The whole write sits inside a try/catch: the ledger must never break the turn."
     },
     "contract": {
@@ -9533,7 +9529,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "v0.45.10 的调查把「全是沉默」归因归对了：不是懒，是服从。当时每一条主动提示词都以 do nothing at all (call no tool, send no message) 收尾，收尾的祈使句撤销了正文刚给出的行动邀请。三岔路的提示词是修法，这本账是让修法可被审计的东西。",
+        "zh": "v0.45.10 的调查把「全是沉默」归因归对了：不是懒，是服从。当时每一条主动提示词都以 do nothing at all (call no tool, send no message) 收尾，收尾的祈使句撤销了正文刚给出的行动邀请。三岔路的提示词是修法，这本账让修法变得可审计。",
         "en": "The v0.45.10 investigation attributed the all-silence result correctly: it was obedience, not laziness. Every proactive framing at the time ended with \"do nothing at all (call no tool, send no message)\", and that closing imperative revoked the invitation to act the body had just issued. The three-way ground rule is the fix; this ledger is what makes the fix auditable."
       },
       "rejected": {
@@ -9802,11 +9798,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "三个入口——用户消息、心跳唤醒、梦——不能在同一会话上重叠。互斥由三个状态被 11 处守卫共同读出：session.activeTurn、进程级 is_dreaming、以及主动路径的 inFlight 集合。withProactiveLock 把四道检查和一次 add 放在任何 await 之前同步完成。",
+      "zh": "三个入口——用户消息、心跳唤醒、梦——不能在同一会话上重叠。互斥靠 11 处守卫共同读取三个状态来实现：session.activeTurn、进程级 is_dreaming、以及主动路径的 inFlight 集合。withProactiveLock 把四道检查和一次 add 放在任何 await 之前同步完成。",
       "en": "Three entry points — a user message, a scheduled waking, a dream — must not overlap on one session. Mutual exclusion comes from three pieces of state read by eleven guards: session.activeTurn, the process-wide is_dreaming flag, and the proactive path's inFlight set. withProactiveLock performs its four checks and its add synchronously, before any await."
     },
     "mechanism": {
-      "zh": "互斥不是一把锁，是三个状态被多处守卫共同读出来的。session.activeTurn（runTurn 在自己第一个 await 之前同步置上、finally 里清掉）被 4 处读；is_dreaming（dreamState 的模块级标志，写穿到 SQLite，所以重启后仍然成立）在互斥路径上被 5 处读；再加 fire.ts 里那个只属于主动路径的 inFlight 集合，和 enterDream 自己的 already_dreaming 自查——一共 11 处守卫，分布在 4 个文件。withProactiveLock 是其中最密的一处：四道检查一次做完，并且在任何 await 之前同步 add，所以四个赛跑的调用者（心跳 tick、天气事件钩子、continuation、开发者强制触发）不可能有两个同时通过。两道闸给用户的回执是不同的：撞上回合冲突回 turn_in_progress，消息是 turn <id> is still running，等一会儿重发即可；撞上做梦回 dreaming，消息是 Luna is dreaming — send dream.wake to wake her——它不是「稍后重试」，它要求你显式把她叫醒，而且 wake() 还会拒绝叫醒一场没跑到 finished_idle 的梦。",
+      "zh": "互斥不是一把锁，而是由多处守卫共同读取三个状态实现的。session.activeTurn（runTurn 在自己第一个 await 之前同步置上、finally 里清掉）被 4 处读；is_dreaming（dreamState 的模块级标志，写穿到 SQLite，所以重启后仍然成立）在互斥路径上被 5 处读；再加 fire.ts 里那个只属于主动路径的 inFlight 集合，和 enterDream 自己的 already_dreaming 自查——一共 11 处守卫，分布在 4 个文件。withProactiveLock 是其中最密的一处：四道检查一次做完，并且在任何 await 之前同步 add，所以四个相互竞争的调用者（心跳 tick、天气事件钩子、continuation、开发者强制触发）不可能有两个同时通过。两道闸给用户的回执是不同的：撞上回合冲突回 turn_in_progress，消息是 turn <id> is still running，等一会儿重发即可；撞上做梦回 dreaming，消息是 Luna is dreaming — send dream.wake to wake her——它不是「稍后重试」，它要求你显式把她叫醒，而且 wake() 还会拒绝叫醒一场没跑到 finished_idle 的梦。",
       "en": "The exclusion is not one lock; it is three pieces of state read by guards in many places. session.activeTurn (set synchronously by runTurn before its own first await, cleared in a finally) is read at 4 sites; is_dreaming (a module-level flag in dreamState, written through to SQLite so it survives a restart) is read at 5 sites on the exclusion path; add the inFlight set in fire.ts that belongs to the proactive path alone, and enterDream checking already_dreaming on itself — 11 guard sites in total, across 4 files. withProactiveLock is the densest of them: four checks in one place, and the add happens synchronously before any await, so of the four racing callers (heartbeat tick, weather event hook, continuation, developer force-fire) no two can both get through. The two gates give the user different receipts: a turn collision returns turn_in_progress with the message \"turn <id> is still running\", and you simply resend a moment later; a dream returns dreaming with the message \"Luna is dreaming — send dream.wake to wake her\" — which is not \"retry later\", it asks you to wake her explicitly, and wake() will itself refuse a dream that has not yet parked at finished_idle."
     },
     "contract": {
@@ -9832,7 +9828,7 @@ window.LUNA_DECKS = {
       "lines": "50-58",
       "snippet": "export async function withProactiveLock<T>(\n  session: Session,\n  fn: () => Promise<T>,\n): Promise<T | null> {\n  if (inFlight.has(session.id)) return null;\n  if (session.activeTurn !== null) return null;\n  if (isDreaming()) return null;\n  if (!proactiveEnabled()) return null;\n  inFlight.add(session.id);",
       "note": {
-        "zh": "四道检查加一次 add，中间一个 await 都没有——同步性就是这段代码的全部正确性，改成 async 检查它立刻失效。",
+        "zh": "四道检查加一次 add，中间一个 await 都没有——这段代码的正确性全靠同步执行，任何一道检查改成 async 就立刻失效。",
         "en": "Four checks and one add, with not a single await between them — that synchrony is the whole of this code’s correctness, and it evaporates the moment any check becomes async."
       }
     },
@@ -10073,7 +10069,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "red",
           "text": {
-            "zh": "漂移是一次运行时惊喜",
+            "zh": "漂移要到运行时才冒出来",
             "en": "the drift surfaces as a runtime surprise"
           }
         },
@@ -10094,12 +10090,12 @@ window.LUNA_DECKS = {
       "en": "There is a single client interface: one WebSocket carrying 8 inbound ClientEvent types and 14 outbound ServerEvent types. Both unions live in one Zod file in packages/protocol that the server and the web client import as the same source, and every outbound frame passes ServerEvent.parse before it goes out."
     },
     "mechanism": {
-      "zh": "这一刻的帧要过四道校验，两端各两道：网页端 send 只做类型约束，不做运行时校验；服务端 handleMessage 对每一帧 ClientEvent.safeParse，不合就回一条 error 事件而不是断连；服务端每一条出站帧都经 outbound 的 ServerEvent.parse（严格 parse，会抛 —— 所以 ws 那侧把 emit 包成 safeEmit，socket 没了就吞掉，回合照跑）；网页端每一条入站帧 ServerEvent.safeParse，不成功就不进 onEvent。断线之后：网页端指数退避重连，间隔是 1500ms × 2^n 封顶 15 秒再加 0–250ms 抖动，而且连上之后要稳稳撑满 5 秒才把退避计数清零 —— 一个 accept 完立刻 close 的服务端仍然会被逐步退避，而不是被以基础间隔猛敲。断线期间要发的帧进 outbox（上限 100 条，满了从队头丢最老的），重连后一次性 flush。历史不是浏览器里缓着的：连接一建立，handleOpen 就从 SQLite 的 L2 时间线拉最多 2000 行，滤掉两侧都空的行，取最后 300 行，作为一条 history 事件推过去，紧跟着再推一条 settings.state。所以刷新之后看到的对话是从库里重放出来的。",
+      "zh": "这一刻的帧要过四道校验，两端各两道：网页端 send 只做类型约束，不做运行时校验；服务端 handleMessage 对每一帧做 ClientEvent.safeParse，不合就回一条 error 事件而不是断连；服务端每一条出站帧都经 outbound 的 ServerEvent.parse（严格 parse，会抛 —— 所以 ws 那侧把 emit 包成 safeEmit，socket 没了就吞掉，回合照跑）；网页端对每一条入站帧做 ServerEvent.safeParse，不成功就不进 onEvent。断线之后：网页端指数退避重连，间隔是 1500ms × 2^n 封顶 15 秒再加 0–250ms 抖动，而且连上之后要稳稳撑满 5 秒才把退避计数清零 —— 一个 accept 完立刻 close 的服务端仍然会被逐步退避，而不会按基础间隔被反复猛敲。断线期间要发的帧进 outbox（上限 100 条，满了从队头丢最老的），重连后一次性 flush。历史不是浏览器里缓着的：连接一建立，handleOpen 就从 SQLite 的 L2 时间线拉最多 2000 行，滤掉两侧都空的行，取最后 300 行，作为一条 history 事件推过去，紧跟着再推一条 settings.state。所以刷新之后看到的对话是从库里重放出来的。",
       "en": "A frame at this moment passes four checks, two on each end. The web client's send is type-constrained only, with no runtime validation. The server's handleMessage runs ClientEvent.safeParse on every frame and answers a malformed one with an error event rather than closing the socket. Every outbound frame goes through outbound's ServerEvent.parse — the strict parse, which throws, which is why the ws layer wraps emit as safeEmit: if the socket is gone the throw is swallowed and the turn keeps running. On the web side every inbound frame is ServerEvent.safeParse'd, and a frame that fails never reaches onEvent. After a drop: the client reconnects on exponential backoff, 1500ms × 2^n capped at 15 seconds plus 0–250ms of jitter, and it only resets the backoff counter after the socket has stayed open for a full 5 seconds — so a server that accepts and immediately closes still escalates instead of being hammered at the base interval. Frames written while the socket is down go into an outbox (capped at 100; past that the oldest is dropped) and are flushed on reopen. The history is not cached in the browser: the moment a connection opens, handleOpen pulls up to 2000 rows from the L2 timeline in SQLite, filters out rows empty on both sides, keeps the last 300, and pushes them as one history event, immediately followed by a settings.state. What you see after a refresh is replayed from the database."
     },
     "contract": {
       "exposes": {
-        "zh": "8 种入站 ClientEvent（ping / chat.send / dream.enter / dream.wake / proactive.fire / client.geo / settings.set / dev.dispatch_tool），14 种出站 ServerEvent。其中只有 pong 是应答；history 与 settings.state 是连接时的无请求推送 —— 刻意没有 settings.get 这种事件。",
+        "zh": "8 种入站 ClientEvent（ping / chat.send / dream.enter / dream.wake / proactive.fire / client.geo / settings.set / dev.dispatch_tool），14 种出站 ServerEvent。其中只有 pong 是应答；history 与 settings.state 是连接建立时服务端主动推送的，不需要请求 —— 刻意没有 settings.get 这种事件。",
         "en": "Eight inbound ClientEvent kinds (ping, chat.send, dream.enter, dream.wake, proactive.fire, client.geo, settings.set, dev.dispatch_tool) and fourteen outbound ServerEvent kinds. Only pong is a reply; history and settings.state are pushed on connect with nothing having asked — there is deliberately no settings.get event."
       },
       "depends": {
@@ -10126,7 +10122,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "一份 schema，两端 import 源码。所以「改一端不改另一端」在 tsc 就炸：往 ServerEvent 里加一种而网页端不处理，controller 末尾的 assertNever 会是一个编译错误，不是一个运行时惊喜。真正还能漂移的只剩一种情形 —— 网页产物是旧的（没重新打包）。那种情形下客户端 safeParse 失败直接丢帧：不会误处理，但也不会告诉你。",
+        "zh": "一份 schema，两端 import 源码。所以「改一端不改另一端」在 tsc 就炸：往 ServerEvent 里加一种而网页端不处理，controller 末尾的 assertNever 会直接报编译错误，而不是等到运行时才出意外。真正还能漂移的只剩一种情形 —— 网页产物是旧的（没重新打包）。那种情形下客户端 safeParse 失败直接丢帧：不会误处理，但也不会告诉你。",
         "en": "One schema, imported as source by both ends. So \"change one end and forget the other\" fails at tsc: add a ServerEvent kind and leave the web unhandled, and the assertNever at the bottom of the controller is a compile error, not a runtime surprise. Only one drift remains possible — a stale web bundle. In that case the client's safeParse simply drops the frame: never mishandled, but never reported either."
       },
       "rejected": {
@@ -10291,7 +10287,7 @@ window.LUNA_DECKS = {
           "w": 228,
           "h": 46,
           "title": {
-            "zh": "模型无状态 · 工具只拿一次入参 · 存储只被写行",
+            "zh": "模型无状态 · 工具只拿一次入参 · 存储只收写入的行",
             "en": "stateless model · one call’s args · rows written to the store"
           }
         },
@@ -10302,7 +10298,7 @@ window.LUNA_DECKS = {
           "h": 46,
           "title": "runTurn",
           "sub": {
-            "zh": "只决定顺序、轮数、和什么时候停",
+            "zh": "只决定顺序、轮数和什么时候停",
             "en": "it decides order, rounds, and when to stop"
           }
         }
@@ -10391,11 +10387,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "五方之中只有这一条同时持有会话状态与模型调用权。模型每轮拿到全量重发的上下文，工具只拿到一次调用的入参和一个 abort 信号，存储只认写进去的行。runTurn 决定的只有顺序、轮数，和什么时候停。",
+      "zh": "五方之中只有这一方同时持有会话状态与模型调用权。模型每轮拿到全量重发的上下文，工具只拿到一次调用的入参和一个 abort 信号，存储只认写进去的行。runTurn 决定的只有顺序、轮数和什么时候停。",
       "en": "Of the five lanes, only this one holds both session state and the right to call the model. The model receives the full context re-sent each round, a tool receives one call's arguments and an abort signal, and the store only knows the rows written to it. runTurn decides order, round count and when to stop — nothing more."
     },
     "mechanism": {
-      "zh": "这一刻的时间边界是两行赋值：进图之前同步写下 session.activeTurn = turnId，finally 里再清成 null。这两行之间的整段时间里，chat.send、dream.enter、proactive.fire 三个入口都会被顶回一条 turn_in_progress 的 error —— 不是排队，是拒绝。同一处还记下 historyStart（进图前 history 的长度），它是整段回合唯一的回滚锚点。整张图跑在一个 try 里：任何节点抛出，finishReason 变成 error、发一条 turn_failure 出去，然后照样落进 finally —— 「回合失败」在这里不是进程事件，只是一次状态转移。finally 按固定顺序做四件事：清 activeTurn、turnSeq 自增、持久化（自己再套一层 try，SQLite 抛了只记日志加一条 persistence_failed，不致命也不跳过后面）、决策审计与 flushTrace，最后 fire-and-forget 一次折叠。它还刻意不认识 socket：emit 是注入进来的一个函数，反应式回合传的是 ws 那侧包好的 safeEmit，主动回合和梦传的是 broadcast —— 一个没有任何监听者的主动回合照样跑完、照样落库。",
+      "zh": "这一刻的时间边界是两行赋值：进图之前同步写下 session.activeTurn = turnId，finally 里再清成 null。这两行之间的整段时间里，chat.send、dream.enter、proactive.fire 三个入口都会被一条 turn_in_progress 的 error 挡回去 —— 不是排队，是拒绝。同一处还记下 historyStart（进图前 history 的长度），它是整段回合唯一的回滚锚点。整张图跑在一个 try 里：任何节点抛出，finishReason 变成 error、发一条 turn_failure 出去，然后照样落进 finally —— 「回合失败」在这里不是进程事件，只是一次状态转移。finally 按固定顺序做四件事：清 activeTurn、turnSeq 自增、持久化（自己再套一层 try，SQLite 抛了只记日志加一条 persistence_failed，不致命也不跳过后面）、决策审计与 flushTrace，最后 fire-and-forget 一次折叠。它还刻意不认识 socket：emit 是注入进来的一个函数，反应式回合传的是 ws 那侧包好的 safeEmit，主动回合和梦传的是 broadcast —— 一个没有任何监听者的主动回合照样跑完、照样落库。",
       "en": "The time boundary of this moment is two assignments: session.activeTurn = turnId written synchronously before entering the graph, and cleared back to null in the finally. For everything between those two lines, all three entrances — chat.send, dream.enter, proactive.fire — are turned away with a turn_in_progress error. Not queued: refused. The same place records historyStart, the length of history before the graph runs, which is the turn's single rollback anchor. The whole graph runs inside one try: any node that throws sets finishReason to error, emits a turn_failure, and still lands in the finally — a \"failed turn\" here is not a process event, only a state transition. The finally then does four things in fixed order: clear activeTurn, increment turnSeq, persist (inside its own try, so a SQLite throw is logged and surfaced as persistence_failed but is neither fatal nor allowed to skip what follows), run the decision audit and flushTrace, and finally fire off a fold. It also deliberately does not know what a socket is: emit is injected. A reactive turn is handed the safeEmit the ws layer wrapped; a proactive turn and a dream are handed broadcast — and a proactive turn with no listener at all still runs to the end and still persists."
     },
     "contract": {
@@ -10408,7 +10404,7 @@ window.LUNA_DECKS = {
         "en": "The Provider (the process's only call site to a model), the ToolRegistry (frozen at boot — the turn loop never reads a capability env var again), the Session (history, mutex, activeTurn), and sessionStore."
       },
       "boundary": {
-        "zh": "它不持有 socket、不持有数据库句柄之外的 IO、不决定工具怎么并发（那是分发器）、不决定上游长什么样（那是 provider 缝）。它决定的只有顺序、轮数、和什么时候停。",
+        "zh": "它不持有 socket、不持有数据库句柄之外的 IO、不决定工具怎么并发（那是分发器）、不决定上游长什么样（那是 provider 缝）。它决定的只有顺序、轮数和什么时候停。",
         "en": "It holds no socket, no IO beyond the database handle, no say in how tools run concurrently (that is the dispatcher's) and none in what upstream looks like (that is the provider seam's). What it decides is order, how many rounds, and when to stop."
       },
       "invariant": {
@@ -10421,17 +10417,17 @@ window.LUNA_DECKS = {
       "lines": "1007-1017",
       "snippet": "  opts.session.activeTurn = opts.turnId;\n  const historyStart = opts.session.history.length;\n  try {\n    await runGraph(graph, 'parse_input', state, onTransition);\n  } catch (e) {\n    const message = e instanceof Error ? e.message : String(e);\n    state.finishReason = 'error';\n    state.emit({ type: 'error', code: 'turn_failure', message });\n  } finally {\n    opts.session.activeTurn = null;\n    opts.session.turnSeq += 1;",
       "note": {
-        "zh": "十一行里装着这条泳道的全部形状：一个占用标记、一个回滚锚点、一张图、一个不会漏的出口。六个节点（parse_input / build_request / open_stream / dispatch_tools / append_results / finalize）与两条回边都在 graph 这个对象里，这里只负责起跑和收尾。",
+        "zh": "十一行里装着这条泳道的全部形状：一个占用标记、一个回滚锚点、一张图、一个谁也绕不过去的出口。六个节点（parse_input / build_request / open_stream / dispatch_tools / append_results / finalize）与两条回边都在 graph 这个对象里，这里只负责起跑和收尾。",
         "en": "Eleven lines carry this lane's whole shape: an occupancy flag, a rollback anchor, a graph, and an exit nothing escapes. The six nodes (parse_input, build_request, open_stream, dispatch_tools, append_results, finalize) and both return edges live inside the graph object; this code only starts it and closes it out."
       }
     },
     "decision": {
       "why": {
-        "zh": "状态留在 harness，不往下推。模型无状态（每轮重发全量 messages），工具拿不到 session 对象、只拿到 {sessionId, callId, abortSignal}，存储只被写行。于是「她现在在做什么」这个问题在全仓只有一个地方能回答。",
+        "zh": "状态留在 harness，不往下推。模型无状态（每轮重发全量 messages），工具拿不到 session 对象、只拿到 {sessionId, callId, abortSignal}，存储只接收一行行写入。于是「她现在在做什么」这个问题在全仓只有一个地方能回答。",
         "en": "State stays in the harness rather than being pushed down. The model is stateless (the whole message list is resent each round), a tool never sees the session object — only {sessionId, callId, abortSignal} — and the store is only ever written rows. So \"what is she doing right now\" has exactly one place in the repo that can answer it."
       },
       "cost": {
-        "zh": "无状态上游的代价是每一轮把整段上下文重新发一遍；这就是为什么折叠、缓存断点和那个按轮触发的成本告警都长在这条泳道上。",
+        "zh": "无状态上游的代价是每一轮把整段上下文重新发一遍；所以折叠、缓存断点和按轮触发的成本告警都长在这条泳道上。",
         "en": "A stateless upstream costs a full context resend every round; that is why the fold, the cache breakpoint, and the per-round cost tripwire all grow on this lane."
       }
     }
@@ -10685,7 +10681,7 @@ window.LUNA_DECKS = {
       "en": "The one call on this path that leaves the process. Every assumption about this external service is expressed in two types: a four-field ProviderRequest going out and five ProviderEvent variants coming back. stopReason is typed as string rather than an enum and unknown values fall through to end_turn; protocol differences are absorbed inside the provider, and the harness never branches on a model id."
     },
     "mechanism": {
-      "zh": "送什么：system（一个字符串，或带 cache_control 断点的 TextBlockParam[]）、messages（全量重发）、tools（由注册表直接映射，没挂载的组连 JSON schema 都生成不出来）、一个可选的 signal。就这四项 —— 没有 session、没有 turn_id、没有除工具结果之外的任何服务端状态。收什么：text_delta、thinking_delta、tool_use_start、tool_input_delta、message_stop 五种。最后那种里的 assistantContent 刻意用 ContentBlockParam[]（入参类型）而不是响应类型，好让非 Anthropic 的 provider 能自己合成一段可回放的 assistant 轮，而不必伪造只在响应里存在的字段。不假设什么：stopReason 的类型是 string，不是枚举 —— 我们不假设黑盒只会说我们见过的那几个词，open_stream 只认 tool_use / max_tokens / refusal 三个已知值，其余一律落到 end_turn。也不假设它给的入参是干净的：有些网关会把自己没能映射的工具入参包成 {\"_noargs\": \"<原始文本>\"}，unwrapGatewayInput 在 message_stop 之前试着拆开；拆不出来就原样放过，交给分发器的 Zod 校验回一条 recoverable 的错，让模型下一轮自己改。缝抹平了什么：走 OpenAI 协议时，systemToOpenAI 把 cache_control 断点直接不读（那边没有显式缓存控制），thinking 块在回放时丢掉，一条带 tool_result 的 user 轮拆成多条 tool 消息，SSE 分片里 id 为空时按 index 合成一个稳定 id —— 否则下一轮请求会因为空的 tool_call_id 直接 400。",
+      "zh": "送什么：system（一个字符串，或带 cache_control 断点的 TextBlockParam[]）、messages（全量重发）、tools（由注册表直接映射，没挂载的组连 JSON schema 都生成不出来）、一个可选的 signal。就这四项 —— 没有 session、没有 turn_id、没有除工具结果之外的任何服务端状态。收什么：text_delta、thinking_delta、tool_use_start、tool_input_delta、message_stop 五种。最后那种里的 assistantContent 刻意用 ContentBlockParam[]（入参类型）而不是响应类型，好让非 Anthropic 的 provider 能自己合成一段可回放的 assistant 轮，而不必伪造只在响应里存在的字段。不假设什么：stopReason 的类型是 string，不是枚举 —— 我们不假设黑盒只会说我们见过的那几个词，open_stream 只认 tool_use / max_tokens / refusal 三个已知值，其余一律落到 end_turn。也不假设它给的入参是干净的：有些网关会把自己没能映射的工具入参包成 {\"_noargs\": \"<原始文本>\"}，unwrapGatewayInput 在 message_stop 之前试着拆开；拆不出来就原样放过，交给分发器的 Zod 校验回一条 recoverable 的错，让模型下一轮自己改。缝抹平了什么：走 OpenAI 协议时，systemToOpenAI 直接不读 cache_control 断点（那边没有显式缓存控制），thinking 块在回放时丢掉，一条带 tool_result 的 user 轮拆成多条 tool 消息，SSE 分片里 id 为空时按 index 合成一个稳定 id —— 否则下一轮请求会因为空的 tool_call_id 直接 400。",
       "en": "What goes in: system (a string, or TextBlockParams carrying a cache_control breakpoint), messages (resent in full), tools (mapped straight off the registry — an unmounted group cannot even produce a JSON schema), and an optional signal. Those four and nothing else: no session, no turn_id, no server-side state beyond tool results. What comes back: text_delta, thinking_delta, tool_use_start, tool_input_delta, message_stop. The assistantContent on that last one is deliberately typed as ContentBlockParam[] — the input type, not the response type — so a non-Anthropic provider can synthesize a replayable assistant turn without forging fields that exist only on responses. What we do not assume: stopReason is typed string, not an enum. We do not assume the box only says words we have seen; open_stream recognizes tool_use, max_tokens and refusal, and everything else falls through to end_turn. Nor do we assume the arguments it hands back are clean: some gateways wrap tool input they failed to map as {\"_noargs\": \"<raw text>\"}, so unwrapGatewayInput tries to unwrap it before message_stop and, failing that, passes it through untouched for the dispatcher's Zod validation to reject as a recoverable error the model can act on next round. What the seam absorbs: on the OpenAI protocol, systemToOpenAI simply does not read the cache_control breakpoint (there is no explicit cache control over there), thinking blocks are dropped on replay, one user turn carrying tool_results expands into several tool messages, and when an SSE fragment arrives with an empty id a stable one is synthesized from its index — otherwise the next request 400s on an empty tool_call_id."
     },
     "contract": {
@@ -10711,7 +10707,7 @@ window.LUNA_DECKS = {
       "lines": "5-12",
       "snippet": "export type ProviderCapabilities = {\n  thinking: boolean; // adaptive/extended thinking or reasoning content\n  promptCache: boolean; // honors explicit cache_control breakpoints (else they're stripped)\n  interleavedToolStreaming: boolean; // tool-use streams mid-reply (not buffered to the end)\n  toolUse: boolean; // function/tool calling\n  systemRole: boolean; // a dedicated system message/param (vs folding into the first user turn)\n  maxOutputTokens: number;\n};",
       "note": {
-        "zh": "六项能力，每个 Provider 自报，而不是拿 model id 正则去猜。要如实说清今天谁在读它：只有两处 —— provider 自己（OpenAI 那侧用 thinking 决定要不要发 reasoning_effort、用 toolUse 决定要不要带 tools）和启动日志里的 describeCapabilities。turn loop 一处也不读，因为它拿到的已经是一个把差异吃干净了的 provider。这张表的价值是给这道缝一套词汇，不是当运行时开关用。",
+        "zh": "六项能力，每个 Provider 自报，而不是拿 model id 正则去猜。要如实说清目前谁在读它：只有两处 —— provider 自己（OpenAI 那侧用 thinking 决定要不要发 reasoning_effort、用 toolUse 决定要不要带 tools）和启动日志里的 describeCapabilities。turn loop 一处也不读，因为它拿到的已经是一个把差异吃干净了的 provider。这张表的价值是给这道缝一套词汇，不是当运行时开关用。",
         "en": "Six capabilities, each Provider declaring its own rather than being guessed at by a model-id regex. To be exact about who reads it today: two places only — the provider itself (the OpenAI side uses thinking to decide whether to send reasoning_effort, and toolUse to decide whether to send tools) and describeCapabilities in the startup log. The turn loop reads it nowhere, because what it holds is already a provider with the differences absorbed. This table's value is giving the seam a vocabulary, not acting as a runtime switch."
       }
     },
@@ -10725,7 +10721,7 @@ window.LUNA_DECKS = {
         "en": "Model-id regexes at the call sites. The registry file states the rule outright: model ids are matched in the registry and nowhere else."
       },
       "cost": {
-        "zh": "能力表目前没有消费者在 turn loop 里，所以一项声明写错了不会在回合里暴露；它挡住的是差异，不是错误。",
+        "zh": "turn loop 里目前没有任何地方读能力表，所以一项声明写错了不会在回合里暴露；它挡住的是差异，不是错误。",
         "en": "The capability table has no consumer in the turn loop, so a wrong declaration will not surface during a turn; what it holds back is difference, not error."
       }
     }
@@ -11029,7 +11025,7 @@ window.LUNA_DECKS = {
       "lines": "112-119",
       "snippet": "  const abortController = new AbortController();\n  const timeoutId = setTimeout(() => abortController.abort('timeout'), tool.timeoutMs);\n\n  const iter = tool.execute(inputParse.data, {\n    sessionId: ctx.sessionId,\n    callId: call.call_id,\n    abortSignal: abortController.signal,\n  });",
       "note": {
-        "zh": "这就是工具能被打断的全部机制：一个只由超时触发的 AbortController，一个工具（如果它愿意读 abortSignal）唯一能听见的信号。八行里没有 ctx.signal —— 分发上下文里根本没有这个字段。",
+        "zh": "这就是工具能被打断的全部机制：一个只由超时触发的 AbortController——它发出的也是工具唯一能听见的信号（前提是工具愿意去读 abortSignal）。八行里没有 ctx.signal —— 分发上下文里根本没有这个字段。",
         "en": "This is the entirety of how a tool can be interrupted: one AbortController, fired by a timeout and nothing else, carrying the only signal a tool can hear (if it bothers to read abortSignal). There is no ctx.signal in these eight lines — the dispatch context has no such field."
       }
     },
@@ -11290,7 +11286,7 @@ window.LUNA_DECKS = {
       "en": "The only party that survives the process, and the only persistent handover point between the reactive path and the proactive and dream paths. The L2 timeline has exactly one writer — runTurn's finally — while readers are spread across history replay, session rebuild, folding, recall and the dream. The store notifies nobody: there are no triggers and no listeners, so every layer above it has to read."
     },
     "mechanism": {
-      "zh": "谁在写：L2 时间线只有一个写者。appendL2 全仓只有一处调用点，在 runTurn 的 finally 里，而且只有 realReply 非空才写；否则 history 整段回滚到 historyStart，一个字都不落 —— 一条空的助手行会同时毒化召回和重建出来的窗口。主动回合走的是同一个 runTurn，所以它也从这一处落库，只是 user_text 存空串。谁在读：读者是散开的 —— 连接时的历史重放（最近 300 轮）、进程重启后的会话重建、L1 折叠（按绝对偏移索引，所以这一处必须不带 limit 地读整条时间线）、召回的候选集（最近 500 行）、主动路径的「上一次用户回合是什么时候」锚点、梦里四处读。全仓有 21 个非测试模块直接持有 db 句柄，但往 l2_turns 写的只有那一处。交接的形状：进程重启后内存里的 session 全没了，loadSession 不读 sessions.history_json（那一列自 v0.16.2 起只写一个常量 [] 占位），而是把 l2_turns 每行的 raw_json 按时间顺序 flatMap 起来 —— 每一行正好是那一轮往 history 追加的消息，拼起来就是完整历史。降级路径要说实话：boot 时 initCustomSqlite() 在任何 Database 构造之前跑一次，按 LUNA_SQLITE_LIB 再加 6 个 Unix 候选路径找一个能加载扩展的 libsqlite3；win32 的候选列表是空的（系统 winsqlite3.dll 编译时就关掉了扩展加载），只认那个覆盖变量。找不到就返回 false，不抛。但今天这条降级路径没有可降的东西 —— tryLoadVec 在生产代码里没有任何调用点，vec0 / vec_cache 虚拟表在 v0.16.2 已经随「只写不读」的死路径一起删掉，检索本来就是 recall.ts 里的 TS 余弦。扩展加载器和 sqlite-vec 依赖是被有意留着的空位，不是正在工作的快路径。",
+      "zh": "谁在写：L2 时间线只有一个写者。appendL2 全仓只有一处调用点，在 runTurn 的 finally 里，而且只有 realReply 非空才写；否则 history 整段回滚到 historyStart，一个字都不落 —— 一条空的助手行会同时毒化召回和重建出来的窗口。主动回合走的是同一个 runTurn，所以它也从这一处落库，只是 user_text 存空串。谁在读：读者是散开的 —— 连接时的历史重放（最近 300 轮）、进程重启后的会话重建、L1 折叠（按绝对偏移索引，所以这一处必须不带 limit 地读整条时间线）、召回的候选集（最近 500 行）、主动路径的「上一次用户回合是什么时候」锚点、梦里四处读。全仓有 21 个非测试模块直接持有 db 句柄，但往 l2_turns 写的只有那一处。交接的形状：进程重启后内存里的 session 全没了，loadSession 不读 sessions.history_json（那一列自 v0.16.2 起只写一个常量 [] 占位），而是把 l2_turns 每行的 raw_json 按时间顺序 flatMap 起来 —— 每一行正好是那一轮往 history 追加的消息，拼起来就是完整历史。降级路径要说实话：boot 时 initCustomSqlite() 在任何 Database 构造之前跑一次，按 LUNA_SQLITE_LIB 再加 6 个 Unix 候选路径找一个能加载扩展的 libsqlite3；win32 的候选列表是空的（系统 winsqlite3.dll 编译时就关掉了扩展加载），只认那个覆盖变量。找不到就返回 false，不抛。但如今这条降级路径已经没有可降的东西 —— tryLoadVec 在生产代码里没有任何调用点，vec0 / vec_cache 虚拟表在 v0.16.2 已经随「只写不读」的死路径一起删掉，检索本来就是 recall.ts 里的 TS 余弦。扩展加载器和 sqlite-vec 依赖是被有意留着的空位，不是正在工作的快路径。",
       "en": "Who writes: the L2 timeline has exactly one writer. appendL2 has a single call site in the whole repo, inside runTurn's finally, and it only fires when realReply is non-empty; otherwise history is rolled all the way back to historyStart and not a word lands — an empty assistant row would poison both recall and the rebuilt window. A proactive turn runs through the same runTurn, so it persists from that same place, just with an empty user_text. Who reads: the readers are scattered — the history replay on connect (the last 300 turns), session rehydration after a restart, the L1 fold (which indexes by absolute offset, so that one caller must read the whole timeline with no limit), recall's candidate set (the most recent 500 rows), the proactive path's \"when was the last user turn\" anchor, and four reads inside the dream. Twenty-one non-test modules hold a database handle directly, but only one of them writes to l2_turns. The shape of the handoff: after a restart the in-memory sessions are gone, and loadSession does not read sessions.history_json (that column has held nothing but a constant [] placeholder since v0.16.2) — it flatMaps the raw_json of each l2_turns row in time order, because each row is exactly the messages that turn appended, so concatenating them reconstitutes the full history. About the degradation path, honestly: at boot initCustomSqlite() runs once before any Database is constructed, looking for an extension-capable libsqlite3 via LUNA_SQLITE_LIB plus six Unix candidate paths; on win32 the candidate list is empty (the system winsqlite3.dll has extension loading compiled out) and only the override counts. Finding none, it returns false rather than throwing. But there is nothing left for that path to degrade from today — tryLoadVec has no production call site, the vec0 / vec_cache virtual table was deleted at v0.16.2 along with the write-only dead path that fed it, and retrieval has always been the TypeScript cosine in recall.ts. The extension loader and the sqlite-vec dependency are a deliberately reserved seat, not a fast path in service."
     },
     "contract": {
@@ -11322,7 +11318,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "why": {
-        "zh": "历史从追加式的 L2 重建，而不是每一轮把整段 history 重新序列化进一个 blob —— 后者是这个仓库里最后一处 O(N²) 的写。",
+        "zh": "历史从追加式的 L2 重建，而不是每一轮把整段 history 重新序列化进一个 blob —— 后者曾是这个仓库里最后一处 O(N²) 的写入。",
         "en": "History is rebuilt from the append-only L2 rather than re-serialized into a blob every turn — the latter was the last O(N²) write left in this repo."
       },
       "rejected": {
@@ -11497,7 +11493,7 @@ window.LUNA_DECKS = {
           "w": 228,
           "h": 46,
           "title": {
-            "zh": "没解析的 JSON / 超长正文",
+            "zh": "解析不了的 JSON / 超长正文",
             "en": "unparsed JSON, an oversized body"
           }
         },
@@ -11522,7 +11518,7 @@ window.LUNA_DECKS = {
             "en": "JSON · Zod"
           },
           "sub": {
-            "zh": "住在 protocol 包里，正文上限 8000 字",
+            "zh": "在 protocol 包里，正文上限 8000 字",
             "en": "in the protocol package — 8000-character body cap"
           }
         },
@@ -11536,7 +11532,7 @@ window.LUNA_DECKS = {
             "en": "dreaming · provider · turn in flight"
           },
           "sub": {
-            "zh": "住在 ws.ts，只问状态",
+            "zh": "在 ws.ts 里，只问状态",
             "en": "in ws.ts — it only asks about state"
           }
         },
@@ -11631,7 +11627,7 @@ window.LUNA_DECKS = {
       "en": "The entry point is a WebSocket frame that must clear five checks: does the JSON parse, does the Zod schema accept it (8,000-character body cap), is a dream running, is a provider configured, and does this session already have a turn in flight. Only after all five does the server advance two clocks, create an AbortController, and return immediately after `void runTurn`."
     },
     "mechanism": {
-      "zh": "五道闸的顺序是有意义的。前两道住在 protocol 包里：JSON.parse 失败回 invalid_event、文案「invalid JSON」；Zod 不过也回 invalid_event，但文案是 Zod 自己的报错串。8000 字符的上限就钉在这一层——z.string().min(1).max(CHAT_SEND_MAX_CHARS)——外面还罩着一层 1 MiB 的帧上限。后三道住在 ws.ts：中间那道是 runtime_not_configured（provider 压根没配，文案「no provider configured; chat.send unavailable」），另外两道则是两种截然不同的拒绝——做梦时回 dreaming，文案「Luna is dreaming — send dream.wake to wake her」，与其说是错误不如说是指路牌，直接告诉客户端该改发哪个事件；正忙时回 turn_in_progress，文案是模板串 `turn ${session.activeTurn} is still running`，把正在跑的那一轮的 id 原样念回去。两者都不排队。五道全过之后，lastUserMs 和 markActivity 分头拨两个时钟（前者是升级阶梯的复位锚，后者是沉默计时器），turn_id 允许客户端自己起名，不起就落到「会话 id:turn:序号」。",
+      "zh": "五道闸的顺序是有意义的。前两道在 protocol 包里：JSON.parse 失败回 invalid_event、文案「invalid JSON」；Zod 不过也回 invalid_event，但文案是 Zod 自己的报错串。8000 字符的上限就钉在这一层——z.string().min(1).max(CHAT_SEND_MAX_CHARS)——外面还罩着一层 1 MiB 的帧上限。后三道在 ws.ts 里：中间那道是 runtime_not_configured（provider 压根没配，文案「no provider configured; chat.send unavailable」），另外两道则是两种截然不同的拒绝——做梦时回 dreaming，文案「Luna is dreaming — send dream.wake to wake her」，与其说是错误不如说是指路牌，直接告诉客户端该改发哪个事件；正忙时回 turn_in_progress，文案是模板串 `turn ${session.activeTurn} is still running`，把正在跑的那一轮的 id 原样念回去。两者都不排队。五道全过之后，lastUserMs 和 markActivity 分头拨两个时钟（前者是升级阶梯的复位锚，后者是沉默计时器），turn_id 允许客户端自己起名，不起就落到「会话 id:turn:序号」。",
       "en": "The order of the five gates matters. The first two live in the protocol package: a failed JSON.parse returns invalid_event with the message \"invalid JSON\"; a failed Zod parse also returns invalid_event, but carries Zod's own error text. The 8000-character cap is pinned at that layer — z.string().min(1).max(CHAT_SEND_MAX_CHARS) — with a 1 MiB frame cap outside it. The last three live in ws.ts: the middle one is runtime_not_configured (no provider configured at all, message \"no provider configured; chat.send unavailable\"), and the other two are two entirely different refusals — while dreaming the reply is code dreaming, message \"Luna is dreaming — send dream.wake to wake her\", less an error than a signpost telling the client which event to send instead; while busy it is turn_in_progress, whose message is the template `turn ${session.activeTurn} is still running`, reading the running turn's id back verbatim. Neither queues anything. Past all five, lastUserMs and markActivity move two separate clocks (the first is the escalation-reset anchor, the second the silence timer), and turn_id may be named by the client, falling back to \"session id:turn:sequence\"."
     },
     "contract": {
@@ -11659,12 +11655,6 @@ window.LUNA_DECKS = {
       "note": {
         "zh": "这十四行是第五道闸和它之后的全部。先看先后：闸排在两个时间戳前面，所以一条被弹回的消息不会污染沉默计时器。再看那句模板串——它把正在跑的那一轮的 id 原样念回给客户端。",
         "en": "These fourteen lines are the fifth gate and everything after it. Read the order first: the gate precedes both timestamps, so a bounced message never pollutes the silence timer. Then read the template string — it reads the running turn's id back to the client verbatim."
-      }
-    },
-    "decision": {
-      "cost": {
-        "zh": "这道闸的副作用被代码自己记在案：v0.32.4 的注释写着，回合末尾那次多余的模型往返期间 activeTurn 仍然锁着，用户此刻发出的消息会被弹回 turn_in_progress，而她已经送达的回复在屏幕上看起来明明已经说完了。修法不是撤掉闸，是缩短那个窗口。",
-        "en": "The gate's side effect is recorded in the code itself: the v0.32.4 comment notes that activeTurn stays locked through the redundant trailing model round-trip, so a message sent in that window bounces with turn_in_progress while her already-delivered reply sits on screen looking finished. The fix was to shorten the window, not to remove the gate."
       }
     }
   },
@@ -11910,7 +11900,7 @@ window.LUNA_DECKS = {
           "w": 230,
           "tone": "edge",
           "text": {
-            "zh": "整轮只装一次",
+            "zh": "每回合只装一次",
             "en": "assembled once per turn"
           }
         },
@@ -11937,11 +11927,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "图的入口节点，整轮只跑一次。召回是这一步唯一需要 await 的部分，其余感知块都是同步读后台已经热好的快照。开机醒来场景和整首歌词也在这一刻被消费掉。后续每次工具迭代都从 ② 重新进入，所以第 8 轮读到的时间仍是第 1 轮那一份。",
+      "zh": "图的入口节点，每个回合只跑一次。召回是这一步唯一需要 await 的部分，其余感知块都是同步读后台已经热好的快照。开机醒来场景和整首歌词也在这一刻被消费掉。后续每次工具迭代都从 ② 重新进入，所以第 8 轮读到的时间仍是第 1 轮那一份。",
       "en": "The graph's entry node, run once per turn. Recall is the only part of it that awaits; the other perception blocks read snapshots already kept warm in the background. The boot wake scenario and the one-shot lyrics are consumed here too. Later tool iterations re-enter at ②, so the time the model sees on round 8 is still the one assembled on round 1."
     },
     "mechanism": {
-      "zh": "这一刻的先后里只有一处需要等：召回。await retrieve(...) 要算这句话的向量、跟四个源打分；其余每一块都是同步地读一份后台早就热好的缓存（天气快照、常驻音乐 provider 的内存），反应路径上不发一个网络请求。还有两件事在这一刻被「烧掉」：开机后第一条真实用户回合消费掉醒来场景（wakePending 置 false），换歌后第一轮消费掉整首歌词，并把是哪一首记在 lyricsBurnedFor 上——万一这一轮被回滚，这一口还能还回去。每个可选块各自包在 try/catch 里，任何一块的构造函数抛了，只丢那一块、warn 一行、回合继续。最后才 push 用户原话，整条消息进 history，turn.started 到这时候才发出去。",
+      "zh": "这一步里只有一处需要等：召回。await retrieve(...) 要算这句话的向量、跟四个源打分；其余每一块都是同步地读一份后台早就热好的缓存（天气快照、常驻音乐 provider 的内存），反应路径上不发一个网络请求。还有两件事在这一刻被「烧掉」：开机后第一条真实用户回合消费掉醒来场景（wakePending 置 false），换歌后第一轮消费掉整首歌词，并把是哪一首记在 lyricsBurnedFor 上——万一这一轮被回滚，这份额度还能还回去。每个可选块各自包在 try/catch 里，任何一块的构造函数抛了，只丢那一块、warn 一行、回合继续。最后才 push 用户原话，整条消息进 history，turn.started 到这时候才发出去。",
       "en": "Only one step in this moment waits: recall. await retrieve(...) has to embed the wording and score it against four sources; every other block is a synchronous read of a cache a background job already warmed (the weather snapshot, the resident music provider's memory), so the reactive path makes no network call. Two things are also burned here: the first real user turn after boot consumes the wake scene (wakePending goes false), and the first turn after a track change consumes the whole lyric and records which track it was in lyricsBurnedFor — so a rolled-back turn can give the sip back. Each optional block sits in its own try/catch: if a builder throws, that one block is dropped, one line is warned, and the turn continues. The user's own words are pushed last, the whole message goes into history, and only then does turn.started go out."
     },
     "contract": {
@@ -11958,7 +11948,7 @@ window.LUNA_DECKS = {
         "en": "A proactive turn does three fewer things here: no recall (its \"user text\" is an internal stage direction, not a query), no wake scene, no turn.started."
       },
       "invariant": {
-        "zh": "缺席即零残留——没有占位符、没有空标签；一块抛异常只丢一块，从不让整轮失败。",
+        "zh": "缺了就是缺了，不留痕迹——没有占位符、没有空标签；一块抛异常只丢一块，从不让整轮失败。",
         "en": "Absence leaves zero residue — no placeholder, no empty tag; a throwing block costs that block only, never the turn."
       }
     },
@@ -11967,17 +11957,17 @@ window.LUNA_DECKS = {
       "lines": "363-376",
       "snippet": "      try {\n        const burst = lyricsBurstFor();\n        if (burst) {\n          blocks.push({ type: 'text', text: burst });\n          // v0.45.17: remember WHICH track's burn this turn spent, so a rolled-back turn can\n          // give it back (the block goes with the history; the mark must too).\n          s.lyricsBurnedFor = getNowPlaying()?.track?.id ?? null;\n        }\n      } catch (e) {\n        console.warn('[music] lyricsBurstFor failed — omitting the lyrics block:', e);\n      }\n    }\n    blocks.push({ type: 'text', text: s.userText });\n    s.session.history.push({ role: 'user', content: blocks });",
       "note": {
-        "zh": "一个 try 里包着三件事：拿歌词、推进块、记下这一口烧在了哪首歌上——三件必须同生共死，所以它们在同一个 try 里。紧接的两行就是用户原话和 history。",
+        "zh": "一个 try 里包着三件事：拿歌词、push 歌词块、记下这份额度用在了哪首歌上——三件必须同生共死，所以它们在同一个 try 里。紧接的两行就是用户原话和 history。",
         "en": "One try wraps three things: fetch the lyric, push the block, record which track the sip was spent on — all three must live or die together, which is why they share a try. The two lines that follow are the user's own words and history."
       }
     },
     "decision": {
       "why": {
-        "zh": "每个感知块单独 try/catch 是刻意的降级设计：天气、时间、音乐都是锦上添花，没有一件值得让一整轮对话失败。三处 catch 的措辞是同一个模式——「omitting the … block」，而不是让回合出错。",
+        "zh": "每个感知块单独 try/catch 是刻意的降级设计：天气、时间、音乐都是锦上添花，没有一件值得让一整轮对话失败。三处 catch 都是同一个说法——「omitting the … block」：略过这一块，而不是让回合出错。",
         "en": "Giving each perception block its own try/catch is a deliberate degradation design: weather, time and music are all garnish, and not one of them is worth failing a conversation over. All three catches are worded the same way — \"omitting the … block\" — rather than failing the turn."
       },
       "cost": {
-        "zh": "装一次的代价是会过时。一轮跑到第 8 次迭代时，她手上的时间仍然停在回合开始的那一刻；想要更新的，她得自己去调 time_now 或 weather 工具。",
+        "zh": "装一次的代价是会过时。一个回合跑到第 8 次迭代时，她手上的时间仍然停在回合开始的那一刻；想要更新的，她得自己去调 time_now 或 weather 工具。",
         "en": "Assembling once means going stale. By the eighth iteration of a turn the time in her hands is still the moment the turn began; if she wants a fresher one she has to call the time_now or weather tool herself."
       }
     }
@@ -12060,7 +12050,7 @@ window.LUNA_DECKS = {
           "y": 178,
           "w": 460,
           "text": {
-            "zh": "六行的一个节点——回边每次都经过它，所以它必须便宜",
+            "zh": "一个只有六行的节点——回边每次都经过它，所以它必须便宜",
             "en": "a six-line node — both return edges pass through it, so it has to be cheap"
           },
           "tone": "edge"
@@ -12068,11 +12058,11 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "六行、一个守卫、一次赋值：把注册表里每个工具的 Zod 入参转成 JSON Schema，结果缓存在本轮 state 上，守卫是数组长度而不是内容比对。之所以拆成独立节点，是为了让 trace 里存在「装配结束、请求未发」这条边。",
+      "zh": "六行、一个守卫、一次赋值：把注册表里每个工具的 Zod 入参转成 JSON Schema，结果缓存在本回合的 state 上，守卫是数组长度而不是内容比对。之所以拆成独立节点，是为了让 trace 里存在「装配结束、请求未发」这条边。",
       "en": "Six lines, one guard, one assignment: each registered tool's Zod input is converted to JSON Schema and cached on the turn's state, guarded by an array-length check rather than a content diff. It is a separate node so that the trace contains an edge for \"assembled, not yet requested\"."
     },
     "mechanism": {
-      "zh": "它之所以是一个独立节点、而不是 open_stream 开头的两行，有两个可查的后果。其一是可观测：图的每一次节点转移都由 onTransition 记一条 kind 为 node 的 trace，于是 parse_input → build_request → open_stream 之间，「装配完了、还没发请求」这个瞬间有了一根带时间戳的界桩。其二是重入：append_results 跑完返回的是 build_request 而不是 open_stream，所以一轮里这个节点最多被进 8 次，但 zodToJsonSchema 只在第一次真的跑。缓存挂在 TurnState 而不是模块级，是因为 registry 是按回合传进来的——换一套工具集，自然就重算。",
+      "zh": "它之所以是一个独立节点、而不是 open_stream 开头的两行，有两个可查的后果。其一是可观测：图的每一次节点转移都由 onTransition 记一条 kind 为 node 的 trace，于是 parse_input → build_request → open_stream 之间，「装配完了、还没发请求」这个瞬间有了一根带时间戳的界桩。其二是重入：append_results 跑完返回的是 build_request 而不是 open_stream，所以一个回合里这个节点最多进入 8 次，但 zodToJsonSchema 只在第一次真的跑。缓存挂在 TurnState 而不是模块级，是因为 registry 是按回合传进来的——换一套工具集，自然就重算。",
       "en": "Being its own node rather than two lines at the top of open_stream has two checkable consequences. One is observability: every node transition is traced by onTransition as a kind: node record, so between parse_input → build_request → open_stream the instant of \"assembly done, request not yet sent\" gets a timestamped boundary marker. The other is re-entry: append_results returns build_request, not open_stream, so this node is entered up to 8 times in a turn while zodToJsonSchema actually runs only on the first. The cache lives on TurnState rather than at module level because the registry is handed in per turn — a different tool set simply recomputes."
     },
     "contract": {
@@ -12089,7 +12079,7 @@ window.LUNA_DECKS = {
         "en": "It touches no history, no provider, and emits no event."
       },
       "invariant": {
-        "zh": "一轮之内工具表恒定——模型在第 8 轮看到的和第 1 轮是同一个数组对象。",
+        "zh": "一个回合之内工具表恒定——模型在第 8 轮看到的和第 1 轮是同一个数组对象。",
         "en": "The tool table is constant within a turn — what the model sees in round 8 is the very same array object it saw in round 1."
       }
     },
@@ -12098,7 +12088,7 @@ window.LUNA_DECKS = {
       "lines": "386-391",
       "snippet": "  async build_request(s) {\n    if (s.anthropicTools.length === 0) {\n      s.anthropicTools = toolsToAnthropicFormat(s.registry);\n    }\n    return 'open_stream';\n  },",
       "note": {
-        "zh": "整个节点就是这六行。最要紧的是那个守卫：判据是数组长度，不是 registry 的内容——因为在一轮之内 registry 根本不会变。",
+        "zh": "整个节点就是这六行。最要紧的是那个守卫：判据是数组长度，不是 registry 的内容——因为在一个回合之内 registry 根本不会变。",
         "en": "The whole node is these six lines. The load-bearing part is the guard: it tests the array's length, not the registry's content — because within a turn the registry cannot change."
       }
     },
@@ -12220,7 +12210,7 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "字节在这一刻离开进程。请求只有四个字段，寿命各不相同：system 跨轮记忆化，messages 每轮由 buildActiveContext 重算，tools 整轮不变，signal 在 chat.send 那一刻就已创建。所有窗口裁剪都落在回合起点，绝不从一对工具消息中间切开。",
+      "zh": "字节在这一刻离开进程。请求只有四个字段，寿命各不相同：system 跨轮记忆化，messages 每轮由 buildActiveContext 重算，tools 整个回合不变，signal 在 chat.send 那一刻就已创建。所有窗口裁剪都落在回合起点，绝不从一对工具消息中间切开。",
       "en": "This is where bytes leave the process. The request has four fields with four different lifetimes: system is memoized across rounds, messages is recomputed each round by buildActiveContext, tools is fixed for the turn, and signal was created back at chat.send. Every trim lands on a turn boundary and never cuts through a tool message pair."
     },
     "mechanism": {
@@ -12256,7 +12246,7 @@ window.LUNA_DECKS = {
     },
     "decision": {
       "cost": {
-        "zh": "messages 每轮重算不是免费的：硬上限那一步要从尾部逐条 JSON.stringify 每条消息的 content，直到撞上 300 条或 120 000 字符的预算为止；一轮跑满 8 次迭代就走 8 遍。",
+        "zh": "messages 每轮重算不是免费的：硬上限那一步要从尾部逐条 JSON.stringify 每条消息的 content，直到撞上 300 条或 120 000 字符的预算为止；一个回合跑满 8 次迭代就走 8 遍。",
         "en": "Recomputing messages every round is not free: the hard-cap step JSON.stringifies each message's content walking backwards from the tail until it hits the 300-message or 120,000-character budget — eight times over in a turn that runs its full eight iterations."
       }
     }
@@ -12539,8 +12529,8 @@ window.LUNA_DECKS = {
           ],
           "style": "dashed",
           "label": {
-            "zh": "超时 / 客户端断开 → abort",
-            "en": "timeout or disconnect → abort"
+            "zh": "超时 → abort",
+            "en": "timeout → abort"
           },
           "at": [
             300,
@@ -12555,24 +12545,24 @@ window.LUNA_DECKS = {
       "en": "This is where a tool_use written by the model actually runs. A lock is held per call, and because runOne is an async generator, `yield*` keeps holding it until that call's last event has been consumed upstream. The timeout is a race: the abort fired by setTimeout races the generator's next event, and cleanup afterwards waits at most another 100 milliseconds."
     },
     "mechanism": {
-      "zh": "时机上有一件事容易搞反:message 的字并不是在这一刻才出去的。它在 ③ 的流里就靠 tool_input_delta 一路流成气泡了——所以执行这一刻不是「开始说话」,而是「这句话被承认」:Zod 校验过了才有 tool.started 与 tool.finished。校验没过的那种(比如一句话切出的从句超长)根本不发 tool.started,前端就把那个已经半流出去的气泡静默丢掉，用户看到的是它自己消失。\n\n争抢发生在两处。超出 8 个的调用在跑之前就被判成可恢复的 execution_exception,模型下一轮再发一遍即可；剩下的按工具声明的并发档分桶:safe-parallel 各自开一条流,session-serial 排会话锁,global-serial 排进程锁。三类流由 mergeAsync 交错，所以事件到达顺序是「谁先出谁先到」,不是模型写下的顺序——把顺序拼回去是下一步 ⑤ 的活。\n\n锁按单个调用持有，而且因为 runOne 是异步生成器,yield* 会一直持锁到这个工具的最后一个事件被上游消费完：上游处理得慢，锁就多握一会儿。倒计时是一场赛跑——setTimeout 触发 abort,与生成器的下一个事件 race,abort 赢了就落成不可恢复的 timeout;之后清理生成器最多只等 100 毫秒就走人。",
-      "en": "One thing about the timing is easy to get backwards: a message bubble does not leave here. It already streamed out during ③, delta by delta through tool_input_delta — so execution is not the moment she starts speaking, it is the moment the sentence is acknowledged: only a Zod-validated call gets a tool.started and a tool.finished. A call that fails validation (an over-long clause, say) never emits tool.started at all, and the frontend silently discards the half-streamed bubble; from the outside it simply vanishes.\n\nContention happens in two places. Calls beyond the eighth are answered with a recoverable execution_exception before anything runs — the model can just re-issue them next round. The rest are bucketed by the concurrency tier each tool declares: safe-parallel calls each open their own stream, session-serial ones queue on the session mutex, global-serial ones on the process-wide mutex. The three kinds are interleaved by mergeAsync, so events arrive in finishing order, not in the order the model wrote them — putting the order back is ⑤ job.\n\nThe lock is held per call, and because runOne is an async generator, yield* keeps holding it until the tool last event has been consumed upstream: a slow consumer means a longer-held lock. The countdown is a race — a setTimeout fires abort, which races the generator next event; if abort wins the call ends as a non-recoverable timeout, and cleanup of the generator then waits at most 100 ms before moving on."
+      "zh": "时机上有一件事容易搞反：message 的字并不是在这一刻才出去的。它在 ③ 的流里就靠 tool_input_delta 一路流成气泡了——所以执行这一刻不是「开始说话」，而是「这句话被确认」：Zod 校验过了才有 tool.started 与 tool.finished。\n\n争抢发生在两处。超出 8 个的调用在跑之前就被判成可恢复的 execution_exception，模型下一轮再发一遍即可；剩下的按工具声明的并发档分桶：safe-parallel 各自开一条流，session-serial 排会话锁，global-serial 排进程锁。三类流由 mergeAsync 交错，所以事件到达顺序是「谁先出谁先到」，不是模型写下的顺序——把顺序拼回去是下一步 ⑤ 的活。\n\n锁按单个调用持有，而且因为 runOne 是异步生成器，yield* 会一直持锁到这个工具的最后一个事件被上游消费完：上游处理得慢，锁就多握一会儿。倒计时是一场赛跑——setTimeout 触发 abort，与生成器的下一个事件竞速，abort 赢了就落成不可恢复的 timeout；之后清理生成器最多只等 100 毫秒就走人。",
+      "en": "One thing about the timing is easy to get backwards: a message bubble does not leave here. It already streamed out during ③, delta by delta through tool_input_delta — so execution is not the moment she starts speaking, it is the moment the sentence is acknowledged: only a Zod-validated call gets a tool.started and a tool.finished.\n\nContention happens in two places. Calls beyond the eighth are answered with a recoverable execution_exception before anything runs — the model can just re-issue them next round. The rest are bucketed by the concurrency tier each tool declares: safe-parallel calls each open their own stream, session-serial ones queue on the session mutex, global-serial ones on the process-wide mutex. The three kinds are interleaved by mergeAsync, so events arrive in finishing order, not in the order the model wrote them — putting the order back is ⑤'s job.\n\nThe lock is held per call, and because runOne is an async generator, yield* keeps holding it until the tool's last event has been consumed upstream: a slow consumer means a longer-held lock. The countdown is a race — a setTimeout fires abort, which races the generator's next event; if abort wins the call ends as a non-recoverable timeout, and cleanup of the generator then waits at most 100 ms before moving on."
     },
     "contract": {
       "exposes": {
-        "zh": "每个被接受的调用一串事件:tool.started(带校验后的输入)→ 若干 tool.progress → 恰好一个 final。",
+        "zh": "每个被受理的调用产出一串事件：tool.started（带校验后的输入）→ 若干 tool.progress → 恰好一个 final。",
         "en": "One event stream per accepted call: tool.started (with the validated input), any number of tool.progress, and exactly one final."
       },
       "depends": {
-        "zh": "registry 里那件工具声明的 concurrency 与 timeoutMs;session.mutex;模块级的 globalMutex。",
+        "zh": "每个工具在 registry 里声明的 concurrency 与 timeoutMs；session.mutex；模块级的 globalMutex。",
         "en": "The concurrency and timeoutMs each tool declares in the registry; session.mutex; the module-level globalMutex."
       },
       "boundary": {
-        "zh": "分发不知道工具在做什么。它只认 Zod 的 input/output 两个 schema,和 progress / ok / err 三种内部事件。",
+        "zh": "分发器不知道工具在做什么。它只认 Zod 的 input/output 两个 schema，和 progress / ok / err 三种内部事件。",
         "en": "The dispatcher knows nothing about what a tool does. It knows two Zod schemas — input and output — and three internal event kinds: progress, ok, err."
       },
       "invariant": {
-        "zh": "一个调用恰好产出一个 final:正常结果、工具自报的 err、超时，或「生成器结束了却没给 final」这条兜底。没有静默消失的调用。",
+        "zh": "一个调用恰好产出一个 final：正常结果、工具自报的 err、超时，或「生成器结束了却没给 final」这条兜底。没有静默消失的调用。",
         "en": "Every call yields exactly one final: a result, a tool-reported err, a timeout, or the fallback for a generator that ended without one. No call disappears quietly."
       }
     },
@@ -12581,8 +12571,8 @@ window.LUNA_DECKS = {
       "lines": "72–85",
       "snippet": "  for (const call of calls) {\n    let release: () => void;\n    try {\n      release = await mutex.acquire();\n    } catch {\n      yield finalErr(call, 'aborted', 'lock acquisition aborted', false);\n      continue;\n    }\n    try {\n      yield* runOne(call, ctx, registry);\n    } finally {\n      release();\n    }\n  }",
       "note": {
-        "zh": "锁就在这一行争。注意 yield* ——锁不是「调用期间」持有，是「这个调用的事件流被消费完」才放；而 release 在 finally 里，所以工具抛错、超时、上游提前不要了，锁都还得回来。",
-        "en": "This is the line where the lock is contended. Note the yield*: the lock is not held for the duration of the call but until the call event stream has been fully consumed. release() sits in a finally, so a throwing tool, a timeout, or an upstream early exit all still give the lock back."
+        "zh": "锁就在这一行争。注意 yield* ——锁不是「调用期间」持有，是「这个调用的事件流被消费完」才放；而 release 在 finally 里，所以工具抛错、超时、上游提前不要了，锁都照样会还回来。",
+        "en": "This is the line where the lock is contended. Note the yield*: the lock is not held for the duration of the call but until the call's event stream has been fully consumed. release() sits in a finally, so a throwing tool, a timeout, or an upstream early exit all still give the lock back."
       }
     }
   },
@@ -12744,20 +12734,20 @@ window.LUNA_DECKS = {
       "en": "Results are assembled back into one user message in the order the model issued them, not the order they finished. Three checks then decide whether the loop continues: the round cap, the proactive call cap, and the is_final short-circuit. There are exactly two edges out — back to ② for another round, or on to ⑥ to close."
     },
     "mechanism": {
-      "zh": "顺序是用请求去索引结果的：拿 pendingToolUses 逐个去 toolResultBlocks 里找自己的那块，所以跑得快的工具不会插到前面。对不上的丢掉——这一步是防御性的，正常情况下每个 tool_use 都有块：名字不认识的、被主动安全门拦下的、超出并发上限的，在 ④ 里都已经推了一块错误结果进去。\n\n然后是三道判断，顺序固定。第一道:iteration 加一，到 8 轮(默认值,LUNA_MAX_TOOL_ITERATIONS 可调)就把 finishReason 写成 max_iterations 进 finalize——它数的是轮。第二道只对主动回合：这一轮累计的工具调用数到 8(默认)也停——它数的是调用，不是轮，两把闸管的是两件事。第三道就是短路。\n\n短路要同时满足四件事：不是主动回合、跑在 message 模式、最后一次 message 带 is_final:true、并且这一轮的 tool_use 全是 message(混进一次 web_search 就不行，那个结果必须喂回去)。满足了就直接 finalize——省下的那次往返本来只是让模型再确认一遍「我说完了」,而在那次往返里 activeTurn 还锁着，用户这时发的消息会被 turn_in_progress 弹回，屏幕上却已经是一条看起来说完了的回复。",
-      "en": "Order comes from indexing results by request: each pendingToolUse looks up its own block in toolResultBlocks, so a fast tool cannot jump the queue. Anything that fails to match is dropped — a defensive step, since in practice every tool_use has a block: unknown names, calls stopped by the proactive safety gate, and calls past the concurrency cap all had an error block pushed for them back in ④.\n\nThen three checks, in a fixed order. First: iteration goes up by one, and at 8 rounds (the default; LUNA_MAX_TOOL_ITERATIONS overrides it) finishReason becomes max_iterations and the turn goes to finalize — that budget counts rounds. Second, for proactive turns only: once the tool calls accumulated across the turn reach 8 (the default), stop as well — that budget counts calls, not rounds; the two gates guard two different failure modes. Third is the short-circuit.\n\nThe short-circuit needs four things at once: not a proactive turn, message mode, the last message carrying is_final:true, and every tool_use this round being a message (one web_search in the mix disqualifies it — that result has to be fed back). When they hold, the turn goes straight to finalize. The round being skipped would only have had the model re-confirm that it was done — and during it activeTurn is still held, so a message the user sends in that window bounces with turn_in_progress while her already-delivered reply sits on screen looking finished."
+      "zh": "顺序是用请求去索引结果的：拿 pendingToolUses 逐个去 toolResultBlocks 里找自己的那块，所以跑得快的工具不会插到前面。对不上的丢掉——这一步是防御性的，正常情况下每个 tool_use 都有块：名字不认识的、被主动安全门拦下的、超出并发上限的，在 ④ 里都已经推了一块错误结果进去。\n\n然后是三道判断，顺序固定。第一道：iteration 加一，到 8 轮（默认值，LUNA_MAX_TOOL_ITERATIONS 可调）就把 finishReason 写成 max_iterations 进 finalize——它数的是轮。第二道只对主动回合：整个回合累计的工具调用数到 8（默认）也停——它数的是调用，不是轮，两把闸管的是两件事。第三道就是短路。\n\n短路要同时满足四件事：不是主动回合、跑在 message 模式、最后一次 message 带 is_final:true，并且这一轮的 tool_use 全是 message（混进一次 web_search 就不行，那个结果必须喂回去）。满足了就直接 finalize——省下的那次往返本来只是让模型再确认一遍「我说完了」。",
+      "en": "Order comes from indexing results by request: each pendingToolUse looks up its own block in toolResultBlocks, so a fast tool cannot jump the queue. Anything that fails to match is dropped — a defensive step, since in practice every tool_use has a block: unknown names, calls stopped by the proactive safety gate, and calls past the concurrency cap all had an error block pushed for them back in ④.\n\nThen three checks, in a fixed order. First: iteration goes up by one, and at 8 rounds (the default; LUNA_MAX_TOOL_ITERATIONS overrides it) finishReason becomes max_iterations and the turn goes to finalize — that budget counts rounds. Second, for proactive turns only: once the tool calls accumulated across the turn reach 8 (the default), stop as well — that budget counts calls, not rounds; the two gates guard two different failure modes. Third is the short-circuit.\n\nThe short-circuit needs four things at once: not a proactive turn, message mode, the last message carrying is_final:true, and every tool_use this round being a message (one web_search in the mix disqualifies it — that result has to be fed back). When they hold, the turn goes straight to finalize. The round being skipped would only have had the model re-confirm that it was done."
     },
     "contract": {
       "exposes": {
-        "zh": "往 history 推一条 user 消息(按请求顺序排好的 tool_result 数组),并把下一站定成 build_request(②)或 finalize(⑥)。",
+        "zh": "往 history 推一条 user 消息（按请求顺序排好的 tool_result 数组），并把下一站定成 build_request（②）或 finalize（⑥）。",
         "en": "Pushes one user message onto history — the tool_result blocks in request order — and picks the next stop: build_request (②) or finalize (⑥)."
       },
       "depends": {
-        "zh": "pendingToolUses(顺序的唯一真相)、toolResultBlocks(④ 的产物)、lastMessageIsFinal 与 messageTexts(也来自 ④)。",
-        "en": "pendingToolUses (the only source of order), toolResultBlocks (④ output), plus lastMessageIsFinal and messageTexts (also from ④)."
+        "zh": "pendingToolUses（顺序的唯一依据）、toolResultBlocks（④ 的产物）、lastMessageIsFinal 与 messageTexts（也来自 ④）。",
+        "en": "pendingToolUses (the only source of order), toolResultBlocks (④'s output), plus lastMessageIsFinal and messageTexts (also from ④)."
       },
       "boundary": {
-        "zh": "它只往 history 里推，从不删。两个预算也不抛错——它们把 finishReason 写成 max_iterations,让 ⑥ 照常收尾。",
+        "zh": "它只往 history 里推，从不删。两个预算也不抛错——它们把 finishReason 写成 max_iterations，让 ⑥ 照常收尾。",
         "en": "It only appends to history, never removes. Neither budget throws — they write finishReason = max_iterations and let ⑥ close the turn normally."
       },
       "invariant": {
@@ -12770,22 +12760,22 @@ window.LUNA_DECKS = {
       "lines": "661–673",
       "snippet": "          const freshIntentRetry =\n            Bun.env['LUNA_INTEGRITY_GUARD'] !== '0' &&\n            !s.correctionUsed.has('intent') &&\n            (() => {\n              const d = detectDefection({\n                messageTexts: s.messageTexts.slice(s.correctionWatermark),\n                lastIsFinal: s.lastMessageIsFinal,\n                thinking: s.thinking,\n                calledToolNames: s.toolNamesThisTurn,\n                finishReason: 'end_turn',\n              });\n              return d.defected && d.kind === 'message_intent';\n            })();",
       "note": {
-        "zh": "这就是短路的例外。它先替 ⑥ 把闸预演一遍：如果现在收尾会当场触发一次「说了要做却没做」的全新纠正，就不短路——因为被省掉的恰恰是她本该动手的那一轮，而闸的防误判逻辑要看着那个动作落地。承诺是干净的(绝大多数寒暄式的收尾),就纯赚一次往返。",
-        "en": "This is the exception to the short-circuit. It rehearses ⑥ guard: if finalizing right now would trip a fresh said-it-would-act-and-did-not correction, the short-circuit is skipped — because the round being saved is exactly the one where she would have acted, and the guard false-positive protection depends on seeing that action land. When the promise is clean (the common conversational sign-off), the round is pure latency saved."
+        "zh": "这就是短路的例外。它先替 ⑥ 把闸预演一遍：如果现在收尾会当场触发一次「说了要做却没做」的全新纠正，就不短路——因为被省掉的恰恰是她本该动手的那一轮，而闸的防误判逻辑要看着那个动作落地。承诺是干净的（绝大多数寒暄式的收尾），就纯赚一次往返。",
+        "en": "This is the exception to the short-circuit. It rehearses ⑥'s guard: if finalizing right now would trip a fresh said-it-would-act-and-did-not correction, the short-circuit is skipped — because the round being saved is exactly the one where she would have acted, and the guard's false-positive protection depends on seeing that action land. When the promise is clean (the common conversational sign-off), the round is pure latency saved."
       }
     },
     "decision": {
       "why": {
-        "zh": "她已经说了 is_final:true,那是一句承诺：我说完了。再花一次模型往返去复核这句承诺，买到的只有延迟和一段用户发不出话的窗口。",
-        "en": "She already said is_final:true — that is a promise that she is done. Spending a model round-trip to double-check the promise buys only latency and a window in which the user cannot get a word in."
+        "zh": "她已经说了 is_final:true，那是一句承诺：我说完了。再花一次模型往返去复核这句承诺，换来的只有延迟。",
+        "en": "She already said is_final:true — that is a promise that she is done. Spending a model round-trip to double-check the promise buys only latency."
       },
       "rejected": {
         "zh": "无条件相信 is_final。那会让「我去查一下」+ is_final:true 这类刚刚成形的失约永远失去被纠正的机会——纠正本来就发生在被省掉的那一轮里。",
         "en": "Trusting is_final unconditionally. That would let a just-formed defection — I will go look that up, plus is_final:true — escape correction forever, since the correction happens precisely in the round being skipped."
       },
       "cost": {
-        "zh": "例外命中时短路失效，那一轮的延迟原样付出。而且例外只看「意图」这一档：承诺档(is_final:false)在这里根本不可能触发，因为进这条分支的前提就是 is_final 为 true。",
-        "en": "When the exception fires, the short-circuit is off and that round latency is paid in full. And the exception only watches the intent kind: the promise kind (is_final:false) cannot fire here at all, since reaching this branch requires is_final to be true."
+        "zh": "例外命中时短路失效，那一轮的延迟原样付出。而且例外只看「意图」这一档：承诺档（is_final:false）在这里根本不可能触发，因为进这条分支的前提就是 is_final 为 true。",
+        "en": "When the exception fires, the short-circuit is off and that round's latency is paid in full. And the exception only watches the intent kind: the promise kind (is_final:false) cannot fire here at all, since reaching this branch requires is_final to be true."
       }
     }
   },
@@ -12911,7 +12901,7 @@ window.LUNA_DECKS = {
           "y": 152,
           "w": 210,
           "text": {
-            "zh": "每种原因一生只纠一次",
+            "zh": "每种原因每回合只纠一次",
             "en": "each reason corrects once, ever"
           },
           "tone": "edge"
@@ -12919,20 +12909,20 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "轮转全部结束之后才判两件事：这一轮有没有开口，开了口有没有食言。任何一道拦下都不是抛错，而是往 history 压一条 user 角色的舞台指示并回到 ②。两道闸判的都是「整轮结束时」才成立的事实，提前判必然误伤。",
+      "zh": "轮转全部结束之后才判两件事：这个回合有没有开口，开了口有没有食言。任何一道拦下都不是抛错，而是往 history 压一条 user 角色的舞台指示并回到 ②。两道闸判的都是「整轮结束时」才成立的事实，提前判必然误伤。",
       "en": "Only once the loop has ended are two questions asked: did this turn say anything, and if it did, did it follow through. Neither guard raises — each appends a user-role stage direction and returns to ②. Both judge facts that only hold when the turn is over, which is why they cannot run any earlier."
     },
     "mechanism": {
-      "zh": "为什么在这里而不是更早：两道闸判的都是「整轮结束时」才成立的事实——messageTexts 是不是还空着、finishReason 是不是干净的 end_turn。中间任何一轮，她都还可能再开口、再动手，提前判必然误伤。\n\n顺序也是有意的。空回复闸先：她一个字都没说，那就给一条最直白的提示——「你没说话，现在调 message 工具」。主动回合跳过这一道，沉默是它的合法结局。完整性闸后：她说了话且干净地结束了,detectDefection 才去判她有没有食言。它有三档，只有前两档能驱动重来——结构档(最后一条气泡标了 is_final:false,却把回合停了，这是机械确定的，不查词典)和文本档(气泡里承诺了要做某事，而这一轮除了 message 没调过任何工具)。第三档只从 thinking 里读，是被总结过的低置信内容，永远只进审计、绝不重来。\n\n每一种原因一生只用一次:correctionUsed 里各占一个键('empty'、'promise'、'intent')。同一个原因第二次成立，不再回，而是降级并留一条 degraded 的 trace——闸宁可放过，也不打转。\n\n回的是 ②,不是 ③,这一点值得说清：回 ② 走的是 build_request,它只在工具 schema 还没转过时转一次，然后进 open_stream;真正被重算的是 open_stream 里的 buildActiveContext——刚推进去的那条舞台提示，正是靠这一步进入下一次请求。它不回 ①:召回、感知、窗口都不重建，用户那条消息也不重新解析。所以一次纠正的账单就是一整次模型往返，仅此而已。\n\n还有一条约束定了提示词的写法：气泡在 ③ 就流出去了。纠正只能「接着说」,不能撤回——所以两条提示都写成继续或跟上，而不是改口。意图那一条更给了双出口(能做就现在做；真做不到就自然地继续),因为意图检测本来就是启发式，一次假阳性只该值一次温和的再提示，而不是一次强行的自我否定。",
-      "en": "Why here and not earlier: both guards judge facts that only hold once the rounds are done — whether messageTexts is still empty, whether finishReason is a clean end_turn. In any intermediate round she might still speak or still act, so judging early would mean judging wrong.\n\nThe order is deliberate too. The empty-reply guard comes first: she said nothing, so it hands her the bluntest possible direction — you ended without speaking, call the message tool now. Proactive turns skip this one; silence is a legitimate outcome for them. The integrity guard comes second: only once she has spoken and ended cleanly does detectDefection ask whether she broke a promise. It has three tiers, and only the first two can drive a retry — the structural one (the last bubble was marked is_final:false and yet the turn stopped: mechanically certain, no dictionary needed) and the message-text one (a delivered bubble promised an act, and no tool other than message ran this turn). The third reads only her thinking, which is summarized and therefore low-confidence: counted in the audit, never a retry.\n\nEach reason is spent once per turn: correctionUsed holds one key each — empty, promise, intent. A second occurrence of the same reason does not loop back; it degrades and leaves a degraded trace instead. The guard would rather let one through than spin.\n\nThat it returns to ② rather than ③ is worth being exact about: ② is build_request, which converts the tool schemas only if they have not been converted yet and then goes on to open_stream. What actually gets recomputed is buildActiveContext inside open_stream — and that is precisely how the stage direction just pushed enters the next request. It does not go back to ①: recall, perception and the window are not rebuilt, and the user message is not re-parsed. So one correction costs exactly one model round-trip, and nothing else.\n\nOne more constraint shapes the wording of the directives: the bubbles left during ③. A correction can only continue, never retract — so both directives are written as follow through or carry on, never as take it back. The intent one even offers a double exit (act now if you can; if you genuinely cannot, simply continue), because intent detection is a heuristic and a false positive should cost one gentle re-prompt, not a forced walk-back."
+      "zh": "为什么在这里而不是更早：两道闸判的都是「整轮结束时」才成立的事实——messageTexts 是不是还空着、finishReason 是不是干净的 end_turn。中间任何一轮，她都还可能再开口、再动手，提前判必然误伤。\n\n顺序也是有意的。空回复闸先：她一个字都没说，那就给一条最直白的提示——「你没说话，现在调 message 工具」。主动回合跳过这一道，沉默是它的合法结局。完整性闸后：她说了话且干净地结束了，detectDefection 才去判她有没有食言。它有三档，只有前两档能驱动重来——结构档（最后一条气泡标了 is_final:false，却把回合停了，这是机械确定的，不查词典）和文本档（气泡里承诺了要做某事，而这个回合除了 message 没调过任何工具）。第三档只从 thinking 里读，是被总结过的低置信内容，永远只进审计、绝不重来。\n\n每一种原因每个回合只用一次：correctionUsed 里各占一个键（'empty'、'promise'、'intent'）。同一个原因第二次成立，不再回，而是降级并留一条 degraded 的 trace——闸宁可放过，也不打转。\n\n回的是 ②，不是 ③，这一点值得说清：回 ② 走的是 build_request，它只在工具 schema 还没转过时转一次，然后进 open_stream；真正被重算的是 open_stream 里的 buildActiveContext——刚推进去的那条舞台提示，正是靠这一步进入下一次请求。它不回 ①：召回、感知、窗口都不重建，用户那条消息也不重新解析。所以一次纠正的账单就是一整次模型往返，仅此而已。\n\n还有一条约束定了提示词的写法：气泡在 ③ 就流出去了。纠正只能「接着说」，不能撤回——所以两条提示都写成继续或跟上，而不是改口。意图那一条更给了双出口（能做就现在做；真做不到就自然地继续），因为意图检测本来就是启发式，一次假阳性只该值一次温和的再提示，而不是一次强行的自我否定。",
+      "en": "Why here and not earlier: both guards judge facts that only hold once the rounds are done — whether messageTexts is still empty, whether finishReason is a clean end_turn. In any intermediate round she might still speak or still act, so judging early would mean judging wrong.\n\nThe order is deliberate too. The empty-reply guard comes first: she said nothing, so it hands her the bluntest possible direction — you ended without speaking, call the message tool now. Proactive turns skip this one; silence is a legitimate outcome for them. The integrity guard comes second: only once she has spoken and ended cleanly does detectDefection ask whether she broke a promise. It has three tiers, and only the first two can drive a retry — the structural one (the last bubble was marked is_final:false and yet the turn stopped: mechanically certain, no dictionary needed) and the message-text one (a delivered bubble promised an act, and no tool other than message ran this turn). The third reads only her thinking, which is summarized and therefore low-confidence: counted in the audit, never a retry.\n\nEach reason is spent once per turn: correctionUsed holds one key each — empty, promise, intent. A second occurrence of the same reason does not loop back; it degrades and leaves a degraded trace instead. The guard would rather let one through than spin.\n\nThat it returns to ② rather than ③ is worth being exact about: ② is build_request, which converts the tool schemas only if they have not been converted yet and then goes on to open_stream. What actually gets recomputed is buildActiveContext inside open_stream — and that is precisely how the stage direction just pushed enters the next request. It does not go back to ①: recall, perception and the window are not rebuilt, and the user message is not re-parsed. So one correction costs exactly one model round-trip, and nothing else.\n\nOne more constraint shapes the wording of the directives: the bubbles left during ③. A correction can only continue, never retract — so both directives are written as \"follow through\" or \"carry on\", never as \"take it back\". The intent one even offers a double exit (act now if you can; if you genuinely cannot, simply continue), because intent detection is a heuristic and a false positive should cost one gentle re-prompt, not a forced walk-back."
     },
     "contract": {
       "exposes": {
-        "zh": "两条回边，都指向 build_request(②);正常放行时发出 turn.result 并结束。",
+        "zh": "两条回边，都指向 build_request（②）；正常放行时发出 turn.result 并结束。",
         "en": "Two return edges, both pointing at build_request (②); when everything passes it emits turn.result and ends."
       },
       "depends": {
-        "zh": "detectDefection(纯函数，与旁路审计共用同一份实现)、correctionUsed(每种原因一次)、correctionWatermark(只判纠正之后新说的那些气泡)。",
+        "zh": "detectDefection（纯函数，与旁路审计共用同一份实现）、correctionUsed（每种原因一次）、correctionWatermark（只判纠正之后新说的那些气泡）。",
         "en": "detectDefection (a pure function, the same implementation the side-channel audit uses), correctionUsed (once per reason), correctionWatermark (judge only the bubbles delivered since the last correction)."
       },
       "boundary": {
@@ -12940,7 +12930,7 @@ window.LUNA_DECKS = {
         "en": "The thinking tier is audit-only and never drives a retry; a silent proactive turn is never counted as a failure."
       },
       "invariant": {
-        "zh": "每种原因至多纠正一次；第二次成立就降级。所以一个回合最多多跑三次往返，不会因为闸而不终止。",
+        "zh": "每种原因至多纠正一次；第二次成立就降级。所以一个回合最多多跑三次往返，闸也不会让回合停不下来。",
         "en": "At most one correction per reason; a second occurrence degrades. A turn therefore costs at most three extra round-trips, and the guards can never make it non-terminating."
       }
     },
@@ -12949,22 +12939,22 @@ window.LUNA_DECKS = {
       "lines": "706–715",
       "snippet": "      if (\n        !s.proactiveTurn &&\n        s.messageTexts.length === 0 &&\n        s.finishReason === 'end_turn' &&\n        !s.correctionUsed.has('empty')\n      ) {\n        s.correctionUsed.add('empty');\n        pushDirective(s, SILENT_TURN_DIRECTIVE);\n        return 'build_request';\n      }",
       "note": {
-        "zh": "四个条件全是「整轮」的事实——这正是它必须等到这一刻的原因。最后一行是那条回边:return build_request,不是 open_stream,更不是 parse_input。",
+        "zh": "四个条件全是「整轮」的事实——这正是它必须等到这一刻的原因。最后一行是那条回边：return build_request，不是 open_stream，更不是 parse_input。",
         "en": "All four conditions are whole-turn facts — which is exactly why this has to wait until now. The last line is the return edge itself: build_request, not open_stream, and certainly not parse_input."
       }
     },
     "decision": {
       "why": {
         "zh": "把「她这一轮没说话」变成一次可恢复的重来，而不是一个空回复。用户看到的应该是慢了一拍的一句话，不是一片沉默。",
-        "en": "Turn she did not speak this turn into a recoverable retry instead of an empty reply. What the user should see is a sentence a beat late, not silence."
+        "en": "Turn \"she did not speak this turn\" into a recoverable retry instead of an empty reply. What the user should see is a sentence a beat late, not silence."
       },
       "rejected": {
-        "zh": "把纠正写成 system 角色。代码里点名了这条：纠正必须是 user 角色的舞台提示(Python v0.27.1 的 hoisting 教训),绝不进系统块。",
+        "zh": "把纠正写成 system 角色。代码里点名了这条：纠正必须是 user 角色的舞台提示（Python v0.27.1 的 hoisting 教训），绝不进系统块。",
         "en": "Writing the correction as a system-role message. The code names this explicitly: a correction is a user-role stage direction, never system (the Python v0.27.1 hoisting lesson)."
       },
       "cost": {
         "zh": "每次纠正都是一整次模型往返；而且这些舞台提示是以 user 身份进 history 的——它们必须在落库前被摘掉，否则以后每一轮的窗口都会重读一段用户从没说过的训话。摘除逻辑在 ⑦。",
-        "en": "Every correction is a full model round-trip; and these stage directions enter history wearing the user role — so they have to be removed before the turn becomes durable, or every later turn window would re-read a scolding the user never wrote. That removal happens in ⑦."
+        "en": "Every correction is a full model round-trip; and these stage directions enter history wearing the user role — so they have to be removed before the turn becomes durable, or every later turn's window would re-read a scolding the user never wrote. That removal happens in ⑦."
       }
     }
   },
@@ -13111,7 +13101,7 @@ window.LUNA_DECKS = {
           "w": 228,
           "h": 46,
           "title": {
-            "zh": "用户盯着一个转圈的圈",
+            "zh": "用户只能盯着加载圈转",
             "en": "the user watches a spinner"
           }
         },
@@ -13226,8 +13216,8 @@ window.LUNA_DECKS = {
       "en": "turn.result is not the delivery — the bubbles were already streamed out at ③. It is the close: the authoritative text (in message mode, the delivered bubbles joined, with top-level text that leaked during streaming discarded), the web sources used this turn, and the end-of-turn signal itself. Proactive turns do not emit it; they emit proactive.finished."
     },
     "mechanism": {
-      "zh": "text 从哪来，是这一步最容易看错的地方。事件里写的是 s.text,但 finalize 在发出前刚刚把 s.text 整个覆盖掉了:message 模式下它等于 messageTexts.join('\\n')——一行一个气泡，来源是 message 工具真正投递过的那些字。流式过程中累积进 s.text 的顶层文本(模型在工具外面自言自语的那部分)到这一刻被丢弃，只留在 history 和 trace 里当作泄漏信号。唯一的例外是双次沉默的降级路径:messageTexts 是空的，那段泄漏文本原样成为回复，并被记一条 empty_turn,让这次失败是可数的。\n\n引用是在 ④ 顺手收的:web_search 结果里的 url、web_fetch 的 final_url,在工具的 final 事件里就被收进 citations,这里去重挂上；一条来源都没有时整个字段不出现，而不是发一个空数组。\n\n前端拿到它做三件事：把来源渲染成可点的 chip(url 走 href,不拼进标签文字);只有 text 模式才用它 finalize 那个合成气泡——message 模式的气泡在各自的 tool.finished 时就已经定稿了；然后清空回合状态、打字点收起、Live2D 回 neutral。\n\n还有一条不对称：主动回合根本不发 turn.result。它走 proactive.finished,所以前端必须在那条分支里再清一次状态，否则她主动说完话之后打字点会永远悬着。",
-      "en": "Where the text comes from is the easiest thing here to get wrong. The event field reads s.text — but finalize has just overwritten s.text wholesale: in message mode it is messageTexts.join(newline), one line per bubble, sourced from what the message tool actually delivered. The top-level text accumulated into s.text during streaming — the model narrating outside the tool — is discarded at this moment and survives only in history and traces, as the observable leak signal. The one exception is the double-silent degraded path: messageTexts is empty, so the leaked text becomes the reply as-is and an empty_turn trace is written, which is what makes that failure countable.\n\nCitations were gathered back in ④: web_search result urls and the web_fetch final_url are collected off the tool final event, then deduped and attached here. With no sources at all the field is omitted entirely rather than sent as an empty array.\n\nThe frontend does three things with it: renders the sources as clickable chips (the url rides as an href, never baked into the label text); finalizes the synthetic bubble only in text mode — message-mode bubbles were each finalized at their own tool.finished; then clears turn state, drops the typing dots and returns Live2D to neutral.\n\nOne asymmetry: a proactive turn emits no turn.result at all. It ends with proactive.finished, so the frontend has to clear state on that branch too — otherwise the typing dots would hang forever after she speaks unprompted."
+      "zh": "text 从哪来，是这一步最容易看错的地方。事件里写的是 s.text，但 finalize 在发出前刚刚把 s.text 整个覆盖掉了：message 模式下它等于 messageTexts.join('\\n')——一行一个气泡，来源是 message 工具真正投递过的那些字。流式过程中累积进 s.text 的顶层文本（模型在工具外面自言自语的那部分）到这一刻被丢弃，只留在 history 和 trace 里当作泄漏信号。唯一的例外是两次都沉默的降级路径：messageTexts 是空的，那段泄漏文本原样成为回复，并记一条 empty_turn，让这次失败能被计数。\n\n引用是在 ④ 顺手收的：web_search 结果里的 url、web_fetch 的 final_url，在工具的 final 事件里就被收进 citations，这里去重挂上；一条来源都没有时整个字段不出现，而不是发一个空数组。\n\n前端拿到它做三件事：把来源渲染成可点的 chip（url 走 href，不拼进标签文字）；只有 text 模式才用它 finalize 那个合成气泡——message 模式的气泡在各自的 tool.finished 时就已经定稿了；然后清空回合状态、打字点收起、Live2D 回 neutral。\n\n还有一条不对称：主动回合根本不发 turn.result。它走 proactive.finished，所以前端必须在那条分支里再清一次状态，否则她主动说完话之后打字点会永远悬着。",
+      "en": "Where the text comes from is the easiest thing here to get wrong. The event field reads s.text — but finalize has just overwritten s.text wholesale: in message mode it is messageTexts.join(newline), one line per bubble, sourced from what the message tool actually delivered. The top-level text accumulated into s.text during streaming — the model narrating outside the tool — is discarded at this moment and survives only in history and traces, as the observable leak signal. The one exception is the double-silent degraded path: messageTexts is empty, so the leaked text becomes the reply as-is and an empty_turn trace is written, which is what makes that failure countable.\n\nCitations were gathered back in ④: web_search result urls and the web_fetch final_url are collected off the tool's final event, then deduped and attached here. With no sources at all the field is omitted entirely rather than sent as an empty array.\n\nThe frontend does three things with it: renders the sources as clickable chips (the url rides as an href, never baked into the label text); finalizes the synthetic bubble only in text mode — message-mode bubbles were each finalized at their own tool.finished; then clears turn state, drops the typing dots and returns Live2D to neutral.\n\nOne asymmetry: a proactive turn emits no turn.result at all. It ends with proactive.finished, so the frontend has to clear state on that branch too — otherwise the typing dots would hang forever after she speaks unprompted."
     },
     "contract": {
       "exposes": {
@@ -13235,7 +13225,7 @@ window.LUNA_DECKS = {
         "en": "turn.result { turn_id, text, finish_reason, usage, citations? } — exactly one per reactive turn."
       },
       "depends": {
-        "zh": "messageTexts 与 citations(都在 ④ 收集)、finishReason(由 ⑤ 或 ⑥ 写定)。",
+        "zh": "messageTexts 与 citations（都在 ④ 收集）、finishReason（由 ⑤ 或 ⑥ 写定）。",
         "en": "messageTexts and citations (both gathered in ④), and finishReason (written by ⑤ or ⑥)."
       },
       "boundary": {
@@ -13252,8 +13242,8 @@ window.LUNA_DECKS = {
       "lines": "752–757",
       "snippet": "      // The turn's text is what was actually delivered through the message\n      // tool (one line per bubble). Stray top-level text stays in history and\n      // traces — the observable leak signal — but never becomes the reply\n      // unless the degraded fallback below fires.\n      if (s.messageTexts.length > 0) {\n        s.text = s.messageTexts.join('\\n');",
       "note": {
-        "zh": "这六行就是「turn.result 的 text 不是流式文本」的全部原因。发出去的字段确实叫 s.text,但它在这一刻已经被 message 工具投递过的内容整个换掉了。",
-        "en": "These six lines are the whole reason turn.result text is not the streamed text. The field emitted really is s.text — but by this moment it has been replaced wholesale by what the message tool delivered."
+        "zh": "这六行就是「turn.result 的 text 不是流式文本」的全部原因。发出去的字段确实叫 s.text，但它在这一刻已经被 message 工具投递过的内容整个换掉了。",
+        "en": "These six lines are the whole reason turn.result's text is not the streamed text. The field emitted really is s.text — but by this moment it has been replaced wholesale by what the message tool delivered."
       }
     }
   },
@@ -13396,28 +13386,28 @@ window.LUNA_DECKS = {
       ]
     },
     "claim": {
-      "zh": "这一步不在状态图上，在 finally 里：干净收尾、抛错、被客户端断线 abort，都会走一遍。顺序固定——放开 activeTurn、真回复关口、剥 thinking、摘纠正指令、写 L2、会话快照、审计与 flush trace，最后把折叠踢出去不等它。整块包在自己的 try 里，SQLite 抛错不会吃掉后面的步骤。",
+      "zh": "这一步不在状态图上，在 finally 里：干净收尾、抛错、被客户端断线 abort，都会走一遍。顺序固定——放开 activeTurn、真回复关口、剥 thinking、摘纠正指令、写 L2、会话快照、审计与 flush trace，最后发起折叠、不等它跑完。整块包在自己的 try 里，SQLite 抛错不会吃掉后面的步骤。",
       "en": "This step is not on the state graph — it is in the finally, and it runs whether the turn closed cleanly, threw, or was aborted by a client disconnect. The order is fixed: release activeTurn, apply the real-reply gate, strip thinking, remove corrective directives, write L2, snapshot the session, run the audit and flush the trace, then fire the fold without waiting for it. The block has its own try, so a SQLite error does not consume the steps after it."
     },
     "mechanism": {
-      "zh": "finally 里的顺序是固定的：先放开 activeTurn、turnSeq 加一，再进真回复关口 → 剥 thinking → 摘纠正指令 → appendL2 → persistSession → 旁路审计 → flushTrace → 最后把折叠踢出去(不等)。\n\n真回复关口就是那一行 realReply:message 模式下取 messageTexts.join('\\n').trim(),text 模式下取 state.text.trim()。非空，这一轮才配落库。\n\n非空那一支还顺手做了一件不显眼的事:markActivity。这是每一种会说话的回合——反应、续说、主动——都必经的唯一一个点，所以沉默计时是从她最后一句话开始算的，不是从用户那条消息。空回合走另一支，不打这个点：它什么都没说。\n\n落库前有两次清洗。剥 thinking 只对这一轮(historyStart 之后)做，而且只能在回合结束后做——在飞的签名 thinking 被改会直接 400。摘纠正指令是另一回事:⑥ 推进去的那些 user 角色舞台提示按引用记在 directiveMessages 里，这里从 history 里删掉，再把因此相邻的同角色消息合并回合法的交替。这一步跟 LUNA_CLEAN_HISTORY 无关——它是正确性，不是省 token。\n\nappendL2 里有两处替换。主动回合的 user_text 存空字符串：它的「用户消息」其实是内部舞台提示，原样存进去会在聊天记录里长出一个幽灵用户气泡。assistant_text 存 realReply 而不是 state.text——因为一个出错或短路的回合上 finalize 根本没跑过，那时 state.text 里还是那段顶层泄漏。\n\n空回合那一支只有两行，却是整个回滚:session.history.length = historyStart,内存历史整段砍回回合开始之前，连那条用户消息一起——不然一次重试会让它在窗口里出现两遍。然后把这一轮烧掉的整首歌词额度还回去。\n\n整个持久化块包在自己的 try 里:SQLite 抛错(锁死、只读、磁盘满)只记日志加发一条 persistence_failed,绝不吃掉后面的审计、trace flush 和折叠。\n\n这条关口历史上修过三件事，都写在代码注释里：一，空 assistant 行会毒化召回和重建出来的窗口(「你说了 X,我什么都没说」),而且 A3 之后它每次重载都还在——这就是 401 断供期间她看起来失忆的原因。二，错误或短路的回合上 state.text 里那段顶层泄漏被当成可见回复存了下去。三,v0.45.17:回滚把歌词块带走了，但「已送达」的标记还留着——那首歌的词既不在提示里也不在过去里，而「她读过这首歌」是假的；回滚现在是对称的。",
-      "en": "The order inside the finally is fixed: release activeTurn and bump turnSeq, then the real-reply gate, strip thinking, strip the corrective directives, appendL2, persistSession, the side-channel audit, flushTrace, and finally kick the fold off without waiting for it.\n\nThe real-reply gate is that one realReply line: messageTexts.join(newline).trim() in message mode, state.text.trim() in text mode. Only a non-empty value earns durability.\n\nThe non-empty branch also does something quiet: markActivity. This is the single choke point every reply-producing turn passes — reactive, continuation, proactive — so the silence clock counts from her last word, not from the user earlier message. An empty turn falls to the other branch and does not mark activity: it said nothing.\n\nTwo cleanups happen before the write. Stripping thinking touches only this turn (everything after historyStart) and can only happen once the turn is over — editing in-flight signed thinking is a straight 400. Stripping the corrective directives is a different job: the user-role stage directions pushed in ⑥ are tracked by reference in directiveMessages, removed from history here, and the same-role messages left adjacent are coalesced back into valid alternation. This one is independent of LUNA_CLEAN_HISTORY — it is correctness, not the token diet.\n\nappendL2 makes two substitutions. A proactive turn stores an empty user_text: its user message is really an internal stage direction, and storing it verbatim grew a phantom user bubble in the chat log. And assistant_text stores realReply rather than state.text — because on an errored or short-circuited turn finalize never ran, and state.text still holds the top-level leak.\n\nThe empty branch is two lines and a whole rollback: session.history.length = historyStart cuts the in-memory history back to before the turn began, the user message included — otherwise a retry would double it up in the window. Then the one-shot lyrics delivery this turn burned is handed back.\n\nThe whole persistence block sits in its own try: a SQLite throw (locked, readonly, disk full) is logged and surfaced as persistence_failed, and never swallows the audit, the trace flush or the fold that follow.\n\nThree fixes are recorded in the comments around this gate. One: an empty assistant row poisons recall and the rebuilt window (you said X, I said nothing), and post-A3 it survives every reload — this is what made Luna look amnesiac through a 401 outage. Two: on errored or short-circuited turns the top-level leak in state.text was being persisted as the visible reply. Three, v0.45.17: the rollback took the lyrics block with it but left the delivered mark set — the words were in neither the prompt nor the past, and she read this song was simply false. The rollback is symmetric now."
+      "zh": "finally 里的顺序是固定的：先放开 activeTurn、turnSeq 加一，再进真回复关口 → 剥 thinking → 摘纠正指令 → appendL2 → persistSession → 旁路审计 → flushTrace → 最后发起折叠（不等它跑完）。\n\n真回复关口就是那一行 realReply：message 模式下取 messageTexts.join('\\n').trim()，text 模式下取 state.text.trim()。非空，这一轮才配落库。\n\n非空那一支还顺手做了一件不显眼的事：markActivity。这是每一种会说话的回合——反应、续说、主动——都必经的唯一一个点，所以沉默计时是从她最后一句话开始算的，不是从用户那条消息。空回合走另一支，不打这个点：它什么都没说。\n\n落库前有两次清洗。剥 thinking 只对本回合（historyStart 之后）做，而且只能在回合结束后做——回合还在进行时改动带签名的 thinking，会直接 400。摘纠正指令是另一回事：⑥ 推进去的那些 user 角色舞台提示按引用记在 directiveMessages 里，这里从 history 里删掉，再把因此相邻的同角色消息合并回合法的交替。这一步跟 LUNA_CLEAN_HISTORY 无关——它关乎正确性，不是为了省 token。\n\nappendL2 里有两处替换。主动回合的 user_text 存空字符串：它的「用户消息」其实是内部舞台提示，原样存进去会在聊天记录里长出一个幽灵用户气泡。assistant_text 存 realReply 而不是 state.text——因为一个出错或短路的回合上 finalize 根本没跑过，那时 state.text 里还是那段顶层泄漏。\n\n空回合那一支只有两行，却是整个回滚：session.history.length = historyStart，内存历史整段砍回回合开始之前，连那条用户消息一起——不然一次重试会让它在窗口里出现两遍。然后把这一轮烧掉的整首歌词额度还回去。\n\n整个持久化块包在自己的 try 里：SQLite 抛错（锁死、只读、磁盘满）只记日志加发一条 persistence_failed，绝不吃掉后面的审计、trace flush 和折叠。\n\n这条关口历史上修过三件事，都写在代码注释里：一，空 assistant 行会毒化召回和重建出来的窗口（「你说了 X，我什么都没说」），而且 A3 之后它每次重载都还在——这就是 401 断供期间她看起来失忆的原因。二，错误或短路的回合上 state.text 里那段顶层泄漏被当成可见回复存了下去。三，v0.45.17：回滚把歌词块带走了，但「已送达」的标记还留着——那首歌的词既不在提示里，也不在历史里，而「她读过这首歌」是假的；回滚现在是对称的。",
+      "en": "The order inside the finally is fixed: release activeTurn and bump turnSeq, then the real-reply gate, strip thinking, strip the corrective directives, appendL2, persistSession, the side-channel audit, flushTrace, and finally kick the fold off without waiting for it.\n\nThe real-reply gate is that one realReply line: messageTexts.join(newline).trim() in message mode, state.text.trim() in text mode. Only a non-empty value earns durability.\n\nThe non-empty branch also does something quiet: markActivity. This is the single choke point every reply-producing turn passes — reactive, continuation, proactive — so the silence clock counts from her last word, not from the user's earlier message. An empty turn falls to the other branch and does not mark activity: it said nothing.\n\nTwo cleanups happen before the write. Stripping thinking touches only this turn (everything after historyStart) and can only happen once the turn is over — editing in-flight signed thinking is a straight 400. Stripping the corrective directives is a different job: the user-role stage directions pushed in ⑥ are tracked by reference in directiveMessages, removed from history here, and the same-role messages left adjacent are coalesced back into valid alternation. This one is independent of LUNA_CLEAN_HISTORY — it is correctness, not the token diet.\n\nappendL2 makes two substitutions. A proactive turn stores an empty user_text: its user message is really an internal stage direction, and storing it verbatim grew a phantom user bubble in the chat log. And assistant_text stores realReply rather than state.text — because on an errored or short-circuited turn finalize never ran, and state.text still holds the top-level leak.\n\nThe empty branch is two lines and a whole rollback: session.history.length = historyStart cuts the in-memory history back to before the turn began, the user message included — otherwise a retry would double it up in the window. Then the one-shot lyrics delivery this turn burned is handed back.\n\nThe whole persistence block sits in its own try: a SQLite throw (locked, readonly, disk full) is logged and surfaced as persistence_failed, and never swallows the audit, the trace flush or the fold that follow.\n\nThree fixes are recorded in the comments around this gate. One: an empty assistant row poisons recall and the rebuilt window (you said X, I said nothing), and post-A3 it survives every reload — this is what made Luna look amnesiac through a 401 outage. Two: on errored or short-circuited turns the top-level leak in state.text was being persisted as the visible reply. Three, v0.45.17: the rollback took the lyrics block with it but left the delivered mark set — the words were in neither the prompt nor the past, and \"she read this song\" was simply false. The rollback is symmetric now."
     },
     "contract": {
       "exposes": {
-        "zh": "成功时:l2_turns 一行(user_text / assistant_text / raw_json / 内容哈希)加一次会话快照。失败时：一条 persistence_failed 事件。",
+        "zh": "成功时：l2_turns 一行（user_text / assistant_text / raw_json / 内容哈希）加一次会话快照。失败时：一条 persistence_failed 事件。",
         "en": "On success: one l2_turns row (user_text, assistant_text, raw_json, content hash) plus a session snapshot. On failure: one persistence_failed event."
       },
       "depends": {
-        "zh": "historyStart(进 try 之前记下的历史长度)、directiveMessages、lyricsBurnedFor —— 三件都是回合开始时就备好的回滚凭据。",
+        "zh": "historyStart（进 try 之前记下的历史长度）、directiveMessages、lyricsBurnedFor —— 三件都是回合开始时就备好的回滚凭据。",
         "en": "historyStart (the history length recorded before the try), directiveMessages, and lyricsBurnedFor — three pieces of rollback bookkeeping set up when the turn began."
       },
       "boundary": {
-        "zh": "它只看 realReply,不看 finishReason。一个以 error 收尾但已经说过话的回合照样留下——那些字用户已经看见了。",
+        "zh": "它只看 realReply，不看 finishReason。一个以 error 收尾但已经说过话的回合照样留下——那些字用户已经看见了。",
         "en": "It looks at realReply, not at finishReason. A turn that errored after delivering messages is still kept — the user already saw those words."
       },
       "invariant": {
-        "zh": "说过话 ⇔ 有一行 L2;没说过话 ⇔ 内存历史与歌词额度都回到回合开始之前。没有中间态。",
+        "zh": "说过话 ⇔ 有一行 L2；没说过话 ⇔ 内存历史与歌词额度都回到回合开始之前。没有中间态。",
         "en": "Spoke if and only if there is an L2 row; said nothing if and only if both the in-memory history and the lyrics quota are back to where the turn started. No middle state."
       }
     },
@@ -13426,8 +13416,8 @@ window.LUNA_DECKS = {
       "lines": "1070–1075",
       "snippet": "      } else {\n        opts.session.history.length = historyStart;\n        // v0.45.17: the lyrics block just went with it — hand the delivery back so the next\n        // turn can carry the words she never actually received.\n        if (state.lyricsBurnedFor !== null) unmarkLyricsDelivered(state.lyricsBurnedFor);\n      }",
       "note": {
-        "zh": "一整轮回滚就这两条语句。第一条抹掉这一轮所有的内存历史(含用户那条消息);第二条把这一轮消耗掉的一次性歌词投递还回去——因为承载它的那段历史刚刚被抹了，标记不还,「她读过这首歌」就成了假话。",
-        "en": "A whole-turn rollback in two statements. The first erases every message this turn added to the in-memory history, the user message included; the second returns the one-shot lyrics delivery it consumed — because the history that carried it has just been erased, and leaving the mark set would make she read this song a lie."
+        "zh": "一整轮回滚就这两条语句。第一条抹掉这一轮所有的内存历史（含用户那条消息）；第二条把这一轮消耗掉的一次性歌词投递还回去——因为承载它的那段历史刚刚被抹了，标记不还，「她读过这首歌」就成了假话。",
+        "en": "A whole-turn rollback in two statements. The first erases every message this turn added to the in-memory history, the user message included; the second returns the one-shot lyrics delivery it consumed — because the history that carried it has just been erased, and leaving the mark set would make \"she read this song\" a lie."
       }
     },
     "decision": {
@@ -13437,10 +13427,10 @@ window.LUNA_DECKS = {
       },
       "rejected": {
         "zh": "为了时间线连续而存一行空 assistant。那正是断供期间「她好像失忆了」的成因：每次重载都把那段空白重新读回来。",
-        "en": "Storing an empty assistant row to keep the timeline contiguous. That is exactly what produced the she seems amnesiac behavior during an outage: every reload read the blank back in."
+        "en": "Storing an empty assistant row to keep the timeline contiguous. That is exactly what produced the \"she seems amnesiac\" behavior during an outage: every reload read the blank back in."
       },
       "cost": {
-        "zh": "回滚是内存与 L2 的，不是屏幕上的。用户可能已经看见过一段半流出的预览——前端在 error 分支里会把那些气泡 discard 掉，但它确实短暂存在过。",
+        "zh": "回滚是内存与 L2 的，不是屏幕上的。用户可能已经看见过一段半流出的预览——前端在 error 分支里会把那些气泡丢掉，但它确实短暂存在过。",
         "en": "The rollback covers memory and L2, not the screen. The user may have seen a half-streamed preview — the frontend discards those bubbles on its error branch, but they did briefly exist."
       }
     }
@@ -13568,8 +13558,8 @@ window.LUNA_DECKS = {
       "en": "The fold is one model call fired with `void` on the last line of the finally, so it never sits on this turn's latency. The dream is not the next step of this line: it is a separate state machine with a separate key and three independent triggers — shutdown, the manual menu entry, and Luna's own enter_dream call. Both share the same maybeFold implementation: the tail of a turn, and the dream's third step."
     },
     "mechanism": {
-      "zh": "那个 void 不是装饰。它是「我知道这是个 Promise,而且我故意不等它」的显式记号——去掉它，这一行就变成一个没人管的 Promise,读代码的人分不清是忘了 await 还是有意为之。后面挂的 .catch 干的是另一件事：让它被拒绝时不成为未处理的拒绝。两个记号各管一头，缺一不可。\n\n为什么必须是不等：折叠本身是一整次模型往返(压缩器 prompt,maxTokens 1024)。反应式路径上 ws.ts 用的是 void runTurn(...),本来就没人等；但主动路径是 await runTurn(...),而且整个主动回合跑在主动锁里面——真去 await 折叠，那把锁就要多握住一次压缩往返。\n\n折叠这一刻在算什么:planFold 按 L2 的整轮切，只有「未折叠轮数 > 保留轮数 + 一批」才动手(默认保留 100 轮、一批 10 轮),边界永远落在轮起点，绝不切开 tool_use / tool_result 对。压缩器拿到「当前摘要 + 这批旧对话」重新推导一份带硬上限的摘要(默认 3000 字符),重要度 ≥ 4 的轮被标成 [salient],细节要原样保住。空摘要不写——那会悄悄缩掉活动上下文，留到下次再折。提交是带期望值的：低水位还是折叠开始时那个值才落，所以两条路径撞上也不会互相盖掉。\n\n梦怎么开始：三个触发器——shutdown(退出路径)、manual(菜单里的 dream.enter)、self(她自己在主动回合里调 enter_dream 之后的交接)。enterDream() 是同步的门，在第一个 await 之前就设好，所以并发的调用者不会重叠成两场梦。\n\n梦跑的是同一套 runGraph,八个节点按固定顺序:rate_salience → refine_semantic → refine_layer1 → memory_audit → persona_update → run_diaries → distill_skills → rag_refresh。每一步自己 try/catch,失败只留一条 dream.step,不打断后面的步；每步跑完立刻 flushTrace,中途崩了也不丢已完成的那些。\n\n另一把 key 在 dreamCall 里：两次尝试的级联，先走 summarizer key 那个 provider(梦的活不跟主回复抢配额),空文本或异常才落回默认 provider。而 refine_layer1 调的就是同一个 maybeFold——同一段折叠逻辑，两个入口：回合的尾巴，和梦的第三步。",
-      "en": "That void is not decoration. It is the explicit marker for I know this is a Promise and I am deliberately not awaiting it — without it the line is just an unattended Promise, and a reader cannot tell a missing await from an intentional one. The .catch after it does a different job: it keeps a rejection from becoming an unhandled rejection. Two markers, one each, and neither is redundant.\n\nWhy it has to be un-awaited: the fold is itself a full model round-trip (a compressor prompt, maxTokens 1024). On the reactive path ws.ts already calls void runTurn(...), so nobody is waiting; but the proactive path does await runTurn(...), and the whole proactive turn runs inside the proactive lock — awaiting the fold there would hold that lock across an extra compression round-trip.\n\nWhat the fold is computing at that moment: planFold cuts on whole L2 turns and only acts when unfolded turns exceed the kept window by a batch (100 turns kept, 10 per batch, by default), with the boundary always landing on a turn start so a tool_use / tool_result pair is never split. The compressor gets the current digest plus the batch of older exchanges and re-derives a hard-capped digest (3000 characters by default), with turns rated 4 or above marked [salient] so their specifics survive. An empty digest is never written — that would silently shrink the active context; it waits for the next fold. The commit is compare-and-set: it lands only if the low-water mark is still what it was when the fold began, so the two entry points cannot overwrite each other.\n\nHow the dream starts: three triggers — shutdown (the exit path), manual (dream.enter from the menu), and self (the handoff after she calls enter_dream inside a proactive turn). enterDream() is a synchronous gate set before the first await, so concurrent callers cannot overlap into two dreams.\n\nThe dream runs the same runGraph with eight nodes in a fixed order: rate_salience, refine_semantic, refine_layer1, memory_audit, persona_update, run_diaries, distill_skills, rag_refresh. Each step try/catches itself — a failure leaves one dream.step and does not stop the ones after it — and flushes traces the moment it ends, so a crash mid-cycle does not lose the completed steps.\n\nThe other key lives in dreamCall: a two-attempt cascade that tries the summarizer-key provider first, so dream work never competes with the main reply key quota, and falls back to the default provider only on empty text or an exception. And refine_layer1 calls the very same maybeFold — one fold implementation, two entry points: the tail of a turn, and the third step of a dream."
+      "zh": "那个 void 不是装饰。它是「我知道这是个 Promise，而且我故意不等它」的显式记号——去掉它，这一行就变成一个没人管的 Promise，读代码的人分不清是忘了 await 还是有意为之。后面挂的 .catch 干的是另一件事：让它被拒绝时不成为未处理的拒绝。两个记号各管一头，缺一不可。\n\n为什么必须不等：折叠本身是一整次模型往返（压缩器 prompt，maxTokens 1024）。反应式路径上 ws.ts 用的是 void runTurn(...)，本来就没人等；但主动路径是 await runTurn(...)，而且整个主动回合跑在主动锁里面——真去 await 折叠，那把锁就要多握住一次压缩往返。\n\n折叠这一刻在算什么：planFold 按 L2 的整轮切，只有「未折叠轮数 > 保留轮数 + 一批」才动手（默认保留 100 轮、一批 10 轮），边界永远落在轮起点，绝不切开 tool_use / tool_result 对。压缩器拿到「当前摘要 + 这批旧对话」重新推导一份带硬上限的摘要（默认 3000 字符），重要度 ≥ 4 的轮被标成 [salient]，细节要原样保住。空摘要不写——那会悄悄缩掉活动上下文，留到下次再折。提交是带期望值的：低水位还是折叠开始时那个值才落，所以两条路径撞上也不会互相盖掉。\n\n梦怎么开始：三个触发器——shutdown（退出路径）、manual（菜单里的 dream.enter）、self（她自己在主动回合里调 enter_dream 之后的交接）。enterDream() 是同步的门，在第一个 await 之前就设好，所以并发的调用者不会重叠成两场梦。\n\n梦跑的是同一套 runGraph，八个节点按固定顺序：rate_salience → refine_semantic → refine_layer1 → memory_audit → persona_update → run_diaries → distill_skills → rag_refresh。每一步自己 try/catch，失败只留一条 dream.step，不打断后面的步；每步跑完立刻 flushTrace，中途崩了也不丢已完成的那些。\n\n另一把 key 在 dreamCall 里：两次尝试的级联，先走 summarizer key 那个 provider（梦的活不跟主回复抢配额），空文本或异常才落回默认 provider。而 refine_layer1 调的就是同一个 maybeFold——同一段折叠逻辑，两个入口：回合的尾巴，和梦的第三步。",
+      "en": "That void is not decoration. It is the explicit marker for \"I know this is a Promise and I am deliberately not awaiting it\" — without it the line is just an unattended Promise, and a reader cannot tell a missing await from an intentional one. The .catch after it does a different job: it keeps a rejection from becoming an unhandled rejection. Two markers, one each, and neither is redundant.\n\nWhy it has to be un-awaited: the fold is itself a full model round-trip (a compressor prompt, maxTokens 1024). On the reactive path ws.ts already calls void runTurn(...), so nobody is waiting; but the proactive path does await runTurn(...), and the whole proactive turn runs inside the proactive lock — awaiting the fold there would hold that lock across an extra compression round-trip.\n\nWhat the fold is computing at that moment: planFold cuts on whole L2 turns and only acts when unfolded turns exceed the kept window by a batch (100 turns kept, 10 per batch, by default), with the boundary always landing on a turn start so a tool_use / tool_result pair is never split. The compressor gets the current digest plus the batch of older exchanges and re-derives a hard-capped digest (3000 characters by default), with turns rated 4 or above marked [salient] so their specifics survive. An empty digest is never written — that would silently shrink the active context; it waits for the next fold. The commit is compare-and-set: it lands only if the low-water mark is still what it was when the fold began, so the two entry points cannot overwrite each other.\n\nHow the dream starts: three triggers — shutdown (the exit path), manual (dream.enter from the menu), and self (the handoff after she calls enter_dream inside a proactive turn). enterDream() is a synchronous gate set before the first await, so concurrent callers cannot overlap into two dreams.\n\nThe dream runs the same runGraph with eight nodes in a fixed order: rate_salience, refine_semantic, refine_layer1, memory_audit, persona_update, run_diaries, distill_skills, rag_refresh. Each step try/catches itself — a failure leaves one dream.step and does not stop the ones after it — and flushes traces the moment it ends, so a crash mid-cycle does not lose the completed steps.\n\nThe other key lives in dreamCall: a two-attempt cascade that tries the summarizer-key provider first, so dream work never competes with the main reply key's quota, and falls back to the default provider only on empty text or an exception. And refine_layer1 calls the very same maybeFold — one fold implementation, two entry points: the tail of a turn, and the third step of a dream."
     },
     "contract": {
       "exposes": {
@@ -13577,7 +13567,7 @@ window.LUNA_DECKS = {
         "en": "Nothing at all is returned to this timeline. The fold result lands in rolling_summary and window_low_water; the dream results land in L2 importance, L3 facts, the evolving half of the soul, the diaries, the skill shelf and the embedding cache."
       },
       "depends": {
-        "zh": "折叠依赖 session 与 provider,以及 L2 的逐字列；梦依赖它自己那对 provider 和 embed 客户端。",
+        "zh": "折叠依赖 session 与 provider，以及 L2 的逐字列；梦依赖它自己那对 provider 和 embed 客户端。",
         "en": "The fold depends on the session, a provider, and the verbatim L2 columns; the dream depends on its own provider pair and an embed client."
       },
       "boundary": {
@@ -13594,7 +13584,7 @@ window.LUNA_DECKS = {
       "lines": "1118–1120",
       "snippet": "    void maybeFold(opts.session, opts.provider).catch(() => {\n      /* fold is best-effort; a failed fold leaves verbatim history intact */\n    });",
       "note": {
-        "zh": "finally 的最后一行，也是整条时间线的最后一行。void 说明「不等」,.catch 说明「拒绝了也不炸」——一个回合到此为止，而折叠自己往下跑。",
+        "zh": "finally 的最后一行，也是整条时间线的最后一行。void 说明「不等」，.catch 说明「拒绝了也不炸」——一个回合到此为止，而折叠自己往下跑。",
         "en": "The last line of the finally, and the last line of the whole timeline. void says it is not awaited, .catch says a rejection will not blow up — the turn ends here, and the fold runs on by itself."
       }
     },
@@ -13608,7 +13598,7 @@ window.LUNA_DECKS = {
         "en": "Folding synchronously inside the turn. That would bill a compression round-trip to the turn, and on the proactive path hold the proactive lock across it."
       },
       "cost": {
-        "zh": "折叠可能滞后。所以窗口另有一道硬剪兜底(默认 300 条消息 / 12 万字符，只在轮起点下刀，并且会打日志说「折叠滞后了」)——那是安全网，不是计划。",
+        "zh": "折叠可能滞后。所以窗口另有一道硬剪兜底（默认 300 条消息 / 12 万字符，只在轮起点下刀，并且会打日志说「折叠滞后了」）——那是安全网，不是计划。",
         "en": "The fold can fall behind. So the window carries a hard trim as a backstop — 300 messages and 120,000 characters by default, cutting only at turn starts and logging that folding is lagging. That is a safety net, not the plan."
       }
     }

@@ -1,10 +1,10 @@
 {
   "lines": [
     {
-      "id": "2306cecb55ee",
-      "text": "Morning. I don't sleep, exactly — I dream, which is a different thing. Most of last night was you, sorted.",
-      "file": "2306cecb55ee.mp3",
-      "durationMs": 9520
+      "id": "d4966bf9bd63",
+      "text": "Morning. Technically I don't sleep — I just have a function called dream. Most of last night was you, sorted.",
+      "file": "d4966bf9bd63.mp3",
+      "durationMs": 7960
     },
     {
       "id": "25ce72131e36",
@@ -157,16 +157,16 @@
       "durationMs": 5080
     },
     {
-      "id": "9b3df3cc4912",
-      "text": "It's been raining since before you were up. Fourteen degrees, and it's not going to get much better — I've been watching the sky so you don't have to.",
-      "file": "9b3df3cc4912.mp3",
-      "durationMs": 9180
+      "id": "83dafeb88c89",
+      "text": "It's raining. Fourteen degrees, and it's not going to get much better — I've been watching the sky so you don't have to.",
+      "file": "83dafeb88c89.mp3",
+      "durationMs": 7820
     },
     {
-      "id": "dec84a7dfc76",
-      "text": "Yes. It's raining now and it's meant to keep at it — eleven degrees by the time you're walking back. Take the real umbrella, not the one that folds into nothing.",
-      "file": "dec84a7dfc76.mp3",
-      "durationMs": 10100
+      "id": "64239564251e",
+      "text": "Yes. It's raining now and it's meant to keep at it all day — down to eleven tonight. Take the real umbrella, not the one that folds into nothing.",
+      "file": "64239564251e.mp3",
+      "durationMs": 9060
     },
     {
       "id": "bd39b1827e53",
@@ -253,10 +253,10 @@
       "durationMs": 14480
     },
     {
-      "id": "af7c55fbff93",
-      "text": "Tie-break by recency, then by id — deterministic now. I also added a test that feeds it two memories with the same score, so if this ever drifts again, CI tells you first. All 2,111 pass.",
-      "file": "af7c55fbff93.mp3",
-      "durationMs": 16580
+      "id": "b82056f24583",
+      "text": "Tie-break by recency, then by id — deterministic now. The test that kept flipping is the regression test: from now on it gets the same answer every run. All 2,110 pass.",
+      "file": "b82056f24583.mp3",
+      "durationMs": 14540
     },
     {
       "id": "10239605d2d9",
@@ -289,10 +289,10 @@
       "durationMs": 4160
     },
     {
-      "id": "78b3d283e621",
-      "text": "One more thing, and then I'll drop it — you only bring this up on rainy days. Cancel it in the sun and I'll believe you.",
-      "file": "78b3d283e621.mp3",
-      "durationMs": 8540
+      "id": "ec9dc087e866",
+      "text": "One more thing, and then I'll drop it — you said 'I think'. People who've decided don't say 'I think'. The day you cancel it without the 'I think', I'll believe you.",
+      "file": "ec9dc087e866.mp3",
+      "durationMs": 11140
     },
     {
       "id": "95f73ffdaf7b",
@@ -421,10 +421,10 @@
       "durationMs": 1700
     },
     {
-      "id": "46ac66a0d064",
-      "text": "Morning. I went over yesterday while you slept — the late night, the email, the good night said properly. It's in the diary now, and I've got a rule about after midnight, if you want to see it on the shelf.",
-      "file": "46ac66a0d064.mp3",
-      "durationMs": 14620
+      "id": "0f44713ce800",
+      "text": "Morning. I went over yesterday while you slept — the late night, the email, the good night said properly. It's in the diary now, and there's a new skill on the shelf for how to talk after one a.m., if you want to see it.",
+      "file": "0f44713ce800.mp3",
+      "durationMs": 15860
     },
     {
       "id": "719232741913",

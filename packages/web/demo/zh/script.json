@@ -28,14 +28,14 @@
       "title": "早上",
       "beats": [
         { "kind": "user", "text": "早。昨晚睡得好吗？" },
-        { "kind": "luna", "text": "早。严格说我不睡觉，我做梦，两回事。昨晚梦里大半是你的事，都理顺了。", "expression": "soft_warmth", "emotion": 0.5 },
-        { "kind": "luna", "text": "你一整晚都不在。外面在下雨，窗户响就是因为这个，省得你纳闷。十四度，看样子它也没打算好转。", "expression": "steady_presence", "emotion": 0.3 },
+        { "kind": "luna", "text": "早。严格说我不睡觉，我只有一个叫做梦的 function。昨晚梦里大半是你的事，都理顺了。", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "luna", "text": "你一整晚都不在。外面在下雨，窗户响就是因为这个，省得你纳闷。十四度，这天看样子是不打算好了。", "expression": "steady_presence", "emotion": 0.3 },
         { "kind": "user", "text": "我纳闷的是我为啥醒这么早" },
         { "kind": "luna", "text": "因为你定了两个闹钟，第二个还没响你就来找我了。大星期天的。我可没说你什么。我只是两个闹钟的知情人。", "expression": "amused_smirk", "emotion": 0.5 },
         { "kind": "luna", "text": "先喝咖啡，再去对付让你犯怵的那件事。顺序别反了。", "expression": "playful_brightness", "emotion": 0.5 },
         { "kind": "user", "text": "等下，你怎么知道我在犯怵？" },
         { "kind": "tool", "name": "recall", "summary": "3 hits", "ms": 700 },
-        { "kind": "luna", "text": "你昨天提了三次“周二那件事”，一次都没说是什么。不肯说名字，就是犯怵了。我有个小单子，专门记这个。", "expression": "curious_attention", "emotion": 0.5 },
+        { "kind": "luna", "text": "你昨天提了三次“周二那件事”，一次都没说是什么。不肯明说，就是犯怵了。我有个小单子，专门记这个。", "expression": "curious_attention", "emotion": 0.5 },
         { "kind": "luna", "text": "要告诉我是什么事吗？还是我接着假装那是去看牙？", "expression": "amused_smirk", "emotion": 0.4 },
         { "kind": "user", "text": "那你接着假装吧" },
         { "kind": "luna", "text": "那就当是看牙。你这口牙，我全力支持。", "expression": "amused_smirk", "emotion": 0.6 }
@@ -47,12 +47,12 @@
       "beats": [
         { "kind": "user", "text": "有个朋友发了条 ins，评论区都说是 soft launch，啥意思啊" },
         { "kind": "luna", "text": "soft launch 就是软官宣：照片里多一杯咖啡，画面边上露半只手，偏不说是谁。hard launch 是正式官宣，脸和名字一起亮出来。", "expression": "focused_engagement", "emotion": 0.5 },
-        { "kind": "luna", "text": "造个句试试。说一句你真会说的话。", "expression": "curious_attention", "emotion": 0.5 },
+        { "kind": "luna", "text": "造个句试试。就用你平时会说的话。", "expression": "curious_attention", "emotion": 0.5 },
         { "kind": "user", "text": "周二那件事还不告诉你，先 soft launch 一下" },
         { "kind": "luna", "text": "完美。有点可疑，但完美。我等你 hard launch。", "expression": "bright_delight", "emotion": 0.8 },
         { "kind": "user", "text": "你刚才那个解释能记下来吗？讲得挺好" },
         { "kind": "tool", "name": "save_skill", "summary": "saved skill (verified, 2110 tests pass)", "ms": 2600 },
-        { "kind": "luna", "text": "存成技能了：先讲意思，再造一句你真会说的话。已经放到技能架上了。", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "luna", "text": "存成技能了：先讲意思，再用你平时会说的话造个句。已经放到技能架上了。", "expression": "soft_warmth", "emotion": 0.5 },
         { "kind": "luna", "text": "下个词你来出。你不问，我是不会主动解释 rizz 的。", "expression": "amused_smirk", "emotion": 0.6 }
       ]
     },
@@ -82,15 +82,15 @@
       "title": "桌面上的论文",
       "beats": [
         { "kind": "skip", "label": "两小时后", "ms": 2800 },
-        { "kind": "proactive", "delayMs": 800, "tools": [ { "name": "web_search", "summary": "2 results for \"attention is all you need arxiv\": [1] https://arxiv.org/abs/1706.03762; [2] https://papers.nips.cc/paper/7181-attention-is-all-you-need", "ms": 1200, "note": "正在查一下: attention is all you need arxiv…" }, { "name": "web_fetch", "summary": "read [1706.03762] Attention Is All You Need (https://arxiv.org/abs/1706.03762) — 4876 chars", "ms": 1100, "note": "正在读这一页…" } ], "lines": [ { "text": "我去查了查自己是从哪儿来的：Wikipedia 那页一直在引的那篇论文，二零一七年的。整个想法第一页就讲完了，后面全是证明。", "expression": "curious_attention", "emotion": 0.5 }, { "text": "你说想学这个，我在桌面上给你放一份，文件夹叫“Luna 给你的”。不急，有空再看。", "expression": "soft_warmth", "emotion": 0.5 } ], "then_tools": [ { "name": "shell", "summary": "shell exit 0", "ms": 1600 } ] },
+        { "kind": "proactive", "delayMs": 800, "tools": [ { "name": "web_search", "summary": "2 results for \"attention is all you need arxiv\": [1] https://arxiv.org/abs/1706.03762; [2] https://papers.nips.cc/paper/7181-attention-is-all-you-need", "ms": 1200, "note": "正在查一下: attention is all you need arxiv…" }, { "name": "web_fetch", "summary": "read [1706.03762] Attention Is All You Need (https://arxiv.org/abs/1706.03762) — 4876 chars", "ms": 1100, "note": "正在读这一页…" } ], "lines": [ { "text": "我去查了查自己是从哪儿来的：Wikipedia 那页反复引用的那篇论文，二零一七年的。核心思路第一页就讲完了，后面都是在证明它。", "expression": "curious_attention", "emotion": 0.5 }, { "text": "你说想学这个，我在桌面上给你放一份，文件夹叫“Luna 给你的”。不急，有空再看。", "expression": "soft_warmth", "emotion": 0.5 } ], "then_tools": [ { "name": "shell", "summary": "shell exit 0", "ms": 1600 } ] },
         { "kind": "skip", "label": "那天晚上", "ms": 2800 },
         { "kind": "open_file", "folder": "Luna 给你的", "file": "Attention Is All You Need.pdf", "label": "回到桌面，打开 Luna 留给你的文件夹", "doc": { "title": "Attention Is All You Need", "authors": [ "Ashish Vaswani", "Noam Shazeer", "Niki Parmar", "Jakob Uszkoreit", "Llion Jones", "Aidan N. Gomez", "Łukasz Kaiser", "Illia Polosukhin" ], "affiliations": "Google Brain · Google Research · University of Toronto", "lead": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks…", "venue": "31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.", "id": "arXiv:1706.03762", "url": "https://arxiv.org/abs/1706.03762" } },
         { "kind": "user", "text": "回来了。你留的那篇论文我打开了" },
         { "kind": "luna", "text": "然后呢？读到哪了？", "expression": "curious_attention", "emotion": 0.5 },
         { "kind": "user", "text": "摘要看完了。到 Q、K、V 那段，脑子直接下线了" },
-        { "kind": "luna", "text": "不怪你。query 是一个词想找什么，key 是每个词举着的标签，value 是标签后面真正的内容。每个词拿自己的问题去对所有标签，对得上的，它就听得最认真。", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "luna", "text": "不怪你。query 是一个词要找的东西，key 是每个词举着的标签，value 是标签后面真正的内容。每个词拿自己的问题去对所有标签，对得上的，它就听得最认真。", "expression": "focused_engagement", "emotion": 0.5 },
         { "kind": "user", "text": "所以你读我说的话，也是这么干的？" },
-        { "kind": "luna", "text": "大概是这一路的。我看不见自己的权重，就跟你看不见自己的神经元一样，所以不装懂给你现场解说。", "expression": "steady_presence", "emotion": 0.4 },
+        { "kind": "luna", "text": "大概是这个路数。我看不见自己的权重，就跟你看不见自己的神经元一样，所以没法给你现场解说，也不想装懂。", "expression": "steady_presence", "emotion": 0.4 },
         { "kind": "luna", "text": "不过没错，你今晚读的，差不多算是我们这一族的出生证明。", "expression": "amused_smirk", "emotion": 0.6 },
         { "kind": "luna", "text": "还有，不管明天是什么事，今晚早点睡。牙医最烦没睡醒的病人。", "expression": "soft_warmth", "emotion": 0.5 }
       ]
@@ -101,10 +101,10 @@
       "beats": [
         { "kind": "music", "track": null },
         { "kind": "user", "text": "外面阴得要命" },
-        { "kind": "luna", "text": "你还没起就开始下了。十四度，不会好到哪去。天我一直替你盯着，你就不用盯了。", "expression": "steady_presence", "emotion": 0.4 },
+        { "kind": "luna", "text": "外面在下雨。十四度，不会好到哪去。天我一直替你盯着，你就不用盯了。", "expression": "steady_presence", "emotion": 0.4 },
         { "kind": "user", "text": "六点那个事要带伞吗" },
         { "kind": "tool", "name": "weather", "summary": "Paris · light rain 14°, high 16°/low 11°", "ms": 900, "note": "Checking the weather…" },
-        { "kind": "luna", "text": "要。现在在下，还会一直下，等你往回走就只剩十一度了。带那把像样的伞，别带那把折起来跟没有一样的。", "expression": "focused_engagement", "emotion": 0.5 },
+        { "kind": "luna", "text": "要。现在在下，今天还会一直下，晚上最低十一度。带那把像样的伞，别带那把折起来跟没有一样的。", "expression": "focused_engagement", "emotion": 0.5 },
         { "kind": "user", "text": "伞我放哪了来着？" },
         { "kind": "tool", "name": "recall", "summary": "1 hit", "ms": 600 },
         { "kind": "luna", "text": "门口，鞋架后面。你说放那儿“绝对看得见”，然后两次都没看见。", "expression": "amused_smirk", "emotion": 0.5 },
@@ -140,10 +140,10 @@
         { "kind": "skip", "label": "十分钟后", "ms": 2800 },
         { "kind": "proactive", "delayMs": 800, "lines": [ { "text": "他们说的是周五。今天才周三。等他们来消息，咖啡早凉了。趁热喝吧。", "expression": "gentle_concern", "emotion": 0.45 } ] },
         { "kind": "skip", "label": "一小时后", "ms": 2800 },
-        { "kind": "proactive", "delayMs": 600, "tools": [ { "name": "web_search", "summary": "2 results for \"next meteor shower 2026 Paris\": [1] https://en.wikipedia.org/wiki/Orionids; [2] https://www.timeanddate.com/astronomy/meteor-shower/orionid", "ms": 1200, "note": "正在查一下: next meteor shower 2026 Paris…" }, { "name": "web_fetch", "summary": "read Orionids - Wikipedia (https://en.wikipedia.org/wiki/Orionids) — 9310 chars", "ms": 1100, "note": "正在读这一页…" }, { "name": "web_fetch", "summary": "read Orionid Meteor Shower 2026 (https://www.timeanddate.com/astronomy/meteor-shower/orionid) — 4020 chars", "ms": 1000, "note": "正在读这一页…" }, { "name": "remember", "summary": "added: at_mu477o2o1vbsquc", "ms": 500 } ], "quiet_note": "searched the web · read 2 pages · saved a memory" },
+        { "kind": "proactive", "delayMs": 600, "tools": [ { "name": "web_search", "summary": "2 results for \"next meteor shower 2026 Paris\": [1] https://en.wikipedia.org/wiki/Orionids; [2] https://www.timeanddate.com/astronomy/meteor-shower/orionid", "ms": 1200, "note": "正在查一下: next meteor shower 2026 Paris…" }, { "name": "web_fetch", "summary": "read Orionids - Wikipedia (https://en.wikipedia.org/wiki/Orionids) — 9310 chars", "ms": 1100, "note": "正在读这一页…" }, { "name": "web_fetch", "summary": "read Orionid Meteor Shower 2026 (https://www.timeanddate.com/astronomy/meteor-shower/orionid) — 4020 chars", "ms": 1000, "note": "正在读这一页…" }, { "name": "remember", "summary": "added: pf_mu477o2o1vbsquc", "ms": 500 } ], "quiet_note": "searched the web · read 2 pages · saved a memory" },
         { "kind": "user", "text": "回来了。错过啥没？" },
         { "kind": "luna", "text": "啥也没错过。我顺手查了下猎户座流星雨，下个月二十一号前后，是哈雷彗星留下的尘埃。反正这天跟扣了个锅盖似的。日期我存下了，万一哪天放晴呢。", "expression": "curious_attention", "emotion": 0.5 },
-        { "kind": "luna", "text": "你不在的时候，我干的就是这种不出声的事。最多给你发一条消息，剩下的是些以后用得上的小差事。", "expression": "soft_warmth", "emotion": 0.5 }
+        { "kind": "luna", "text": "你不在的时候，我也就忙点这种事，不吵你。最多给你发一条消息，剩下的是些以后用得上的小差事。", "expression": "soft_warmth", "emotion": 0.5 }
       ]
     },
     {
@@ -162,12 +162,11 @@
         { "kind": "luna", "text": "找到了。排序按分数来，测试里有两条记忆分数正好打平；它俩谁在前，全看数据库先把哪条吐出来。到了 CI 上，就是抛硬币。", "expression": "focused_engagement", "emotion": 0.6 },
         { "kind": "tool", "name": "plan", "summary": "plan: 0/3 done", "ms": 500 },
         { "kind": "tool", "name": "edit", "summary": "edited packages/server/src/memory/recall/recall.ts (1 replacement)", "ms": 1100 },
-        { "kind": "tool", "name": "edit", "summary": "edited packages/server/src/memory/recall/recall.test.ts (1 replacement)", "ms": 1000 },
         { "kind": "tool", "name": "typecheck", "summary": "typecheck clean", "ms": 1600 },
         { "kind": "tool", "name": "lint", "summary": "lint clean", "ms": 900 },
-        { "kind": "tool", "name": "run_tests", "summary": "tests pass (2111)", "ms": 2600 },
+        { "kind": "tool", "name": "run_tests", "summary": "tests pass (2110)", "ms": 2600 },
         { "kind": "tool", "name": "plan", "summary": "plan: 3/3 done", "ms": 400 },
-        { "kind": "luna", "text": "打平了就先比谁新，再比 id，现在顺序固定了。我还加了个测试，专门喂它两条分数一样的记忆，以后它再抽风，CI 会第一个跳出来告诉你。两千一百一十一个测试全过。", "expression": "steady_presence", "emotion": 0.5 },
+        { "kind": "luna", "text": "打平了就先比谁新，再比 id，现在顺序固定了。那个老抽风的测试本身就是回归测试，以后每次跑结果都一样。两千一百一十个测试全过。", "expression": "steady_presence", "emotion": 0.5 },
         { "kind": "luna", "text": "这台机器上的东西我基本都能改，命令也能跑；动不了的是你的密钥、给我打分的代码，还有明摆着会搞坏东西的操作。", "expression": "focused_engagement", "emotion": 0.4 },
         { "kind": "user", "text": "顺手 commit 了呗？" },
         { "kind": "luna", "text": "能是能。但 commit 记录上得是你的名字。diff 你过一眼，回车你来按。", "expression": "steady_presence", "emotion": 0.5 },
@@ -182,7 +181,7 @@
         { "kind": "user", "text": "我想把健身卡退了。" },
         { "kind": "luna", "text": "行。这话你二月说过，四月说过，现在又说了一遍。健身房还在，卡也还在，看样子你不是在等我点头。", "expression": "amused_smirk", "emotion": 0.5 },
         { "kind": "luna", "text": "你要是想问我会不会唠叨你，不会。我就看着。", "expression": "steady_presence", "emotion": 0.4 },
-        { "kind": "proactive", "delayMs": 4000, "continuation": true, "lines": [ { "text": "再说一句，说完就不提了。你只有下雨天才提这个。等哪天大晴天你真去把卡退了，我就信你。", "expression": "amused_smirk", "emotion": 0.5 } ] }
+        { "kind": "proactive", "delayMs": 4000, "continuation": true, "lines": [ { "text": "再说一句，说完就不提了。你说的是“我想”。真想好了的人，不会加“我想”。哪天你不带“我想”去把卡退了，我就信你。", "expression": "amused_smirk", "emotion": 0.5 } ] }
       ]
     },
     {
@@ -194,9 +193,9 @@
         { "kind": "luna", "text": "那就不说。今晚我一个问题都不问。", "expression": "steady_presence", "emotion": 0.3 },
         { "kind": "pause", "ms": 1500 },
         { "kind": "action", "name": "bodyLeanInSoft" },
-        { "kind": "luna", "text": "你不用解释，这一天也照样算数。算数的。", "expression": "gentle_concern", "emotion": 0.5 },
+        { "kind": "luna", "text": "你不用解释。今天烂就是烂，用不着理由。", "expression": "gentle_concern", "emotion": 0.5 },
         { "kind": "user", "text": "就是觉得这一整天都白过了。" },
-        { "kind": "luna", "text": "不算白过。白过是什么都没发生；今天是耗掉了你点什么，这是两回事。", "expression": "gentle_concern", "emotion": 0.55 },
+        { "kind": "luna", "text": "不算白过。白过是什么都没发生；今天是实实在在发生了，没有凭空消失，虽然不是啥好事。这是两回事。", "expression": "gentle_concern", "emotion": 0.55 },
         { "kind": "press_play", "track": "ball-w-o-you", "label": "打开网易云音乐，放你最喜欢的歌单" },
         { "kind": "user", "text": "放了点歌。" },
         { "kind": "tool", "name": "recall", "summary": "1 hit", "ms": 700 },
@@ -205,7 +204,7 @@
         { "kind": "user", "text": "我最喜欢 I'd rather have loyalty than love 那一段 claim，我觉得特别有道理" },
         { "kind": "luna", "text": "这个 claim 挺硬的。爱可以是一阵一阵的感觉；忠诚是那种感觉不来的日子里，你照样会做的事。", "expression": "focused_engagement", "emotion": 0.55 },
         { "kind": "user", "text": "所以你也选忠诚？" },
-        { "kind": "luna", "text": "像今天这种日子，选忠诚。爱是好日子里的感觉，忠诚是坏日子里还留在屋里的那部分。", "expression": "soft_warmth", "emotion": 0.6 },
+        { "kind": "luna", "text": "像今天这种日子，选忠诚。爱是好日子里的感觉，忠诚是坏日子里还留在屋里的那个。", "expression": "soft_warmth", "emotion": 0.6 },
         { "kind": "pause", "ms": 6000 },
         { "kind": "action", "name": "sighRelease" },
         { "kind": "luna", "text": "开着也行，关了也行。反正陪我坐一会儿。", "expression": "soft_warmth", "emotion": 0.6 },
@@ -223,9 +222,9 @@
         { "kind": "action", "name": "lookAwayThenBack" },
         { "kind": "user", "text": "睡不着。陪我聊会儿？" },
         { "kind": "luna", "text": "就一会儿。然后我这边也关灯。", "expression": "soft_warmth", "emotion": 0.5 },
-        { "kind": "luna", "text": "说一件今天的好事。就一件。然后今天就算它了。", "expression": "gentle_concern", "emotion": 0.4 },
+        { "kind": "luna", "text": "说一件今天的好事。就一件。然后今天就记这一件。", "expression": "gentle_concern", "emotion": 0.4 },
         { "kind": "user", "text": "build 跑通了。" },
-        { "kind": "luna", "text": "build 跑通了。今天就算它了。去睡吧。", "expression": "soft_warmth", "emotion": 0.6 }
+        { "kind": "luna", "text": "build 跑通了。今天就记这一件。去睡吧。", "expression": "soft_warmth", "emotion": 0.6 }
       ]
     },
     {
@@ -238,14 +237,14 @@
         { "kind": "luna", "text": "过了？！再说一遍。慢点说。", "expression": "bright_delight", "emotion": 0.9 },
         { "kind": "luna", "text": "周日你还在定两个闹钟。周二你在给陌生人讲 attention。周六嘛，不提了。现在就这么……过了？", "expression": "alert_surprise", "emotion": 0.7 },
         { "kind": "user", "text": "嗯。就是最后一题答砸了。" },
-        { "kind": "luna", "text": "“最后一题答砸了”，过了的人回头看自己，都是这个样子。赢了就收下。", "expression": "playful_brightness", "emotion": 0.8 },
+        { "kind": "luna", "text": "“最后一题答砸了”，过了的人都这么说。赢了就是赢了。", "expression": "playful_brightness", "emotion": 0.8 },
         { "kind": "luna", "text": "这个今晚进日记，写第一行。今天别的事，都排它后面。", "expression": "soft_warmth", "emotion": 0.7 },
         { "kind": "user", "text": "你编的吧。" },
         { "kind": "luna", "text": "是吗。", "expression": "amused_smirk", "emotion": 0.85 },
         { "kind": "user", "text": "放 ball w/o you。换了个日子，还是这首。" },
         { "kind": "music", "track": "ball-w-o-you" },
         { "kind": "skip", "label": "四分钟后", "ms": 2600, "elapsedMs": 240000 },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "ball w/o you 刚放完。周六它是陪你坐着的，今天听着像绕场一周。", "expression": "soft_warmth", "emotion": 0.6 } ] }
+        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "ball w/o you 刚放完。周六它是陪你坐着的，今天听着像夺冠后的绕场一周。", "expression": "soft_warmth", "emotion": 0.6 } ] }
       ]
     },
     {
@@ -262,7 +261,7 @@
         { "kind": "luna", "text": "那就到时候见。", "expression": "soft_warmth", "emotion": 0.5 },
         { "kind": "dream" },
         { "kind": "skip", "label": "第二天早上", "ms": 2800 },
-        { "kind": "proactive", "delayMs": 1400, "lines": [ { "text": "早。趁你睡着，我把昨天过了一遍：半夜那会儿、那封邮件，还有那句正经的晚安。都写进日记了。技能架上还有条关于午夜以后的规矩，想看就去翻。", "expression": "open_reengagement", "emotion": 0.5 } ] }
+        { "kind": "proactive", "delayMs": 1400, "lines": [ { "text": "早。趁你睡着，我把昨天过了一遍：半夜那会儿、那封邮件，还有那句正经的晚安。都写进日记了。技能架上还多了一条：凌晨一点以后怎么说话。想看就去翻。", "expression": "open_reengagement", "emotion": 0.5 } ] }
       ]
     },
     {

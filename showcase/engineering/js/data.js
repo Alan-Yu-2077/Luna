@@ -61,7 +61,7 @@ window.LUNA_MAP = (function () {
         {
           title: { zh: '六支怎么分的', en: 'How the six are divided' },
           body: {
-            zh: '前五支（上下文 · 循环 · 工具 · 控制 · 状态）沿用 agent harness 的通行分解。第六支「时钟」是本项目特有的：除了请求驱动，还有一个 60 秒的服务端定时器可以发起回合。',
+            zh: '前五支（上下文 · 循环 · 工具 · 控制 · 状态）沿用 agent harness 的通行分解。第六支「时钟」是本项目特有的：除了请求，服务端还有一个每 60 秒跳一次的定时器，也能发起回合。',
             en: 'Five (context · loop · tools · control · state) follow the common harness decomposition. The sixth — the clock — is specific to this project: besides request-driven turns, a 60-second server-side timer can start one.',
           },
         },
@@ -74,7 +74,7 @@ window.LUNA_MAP = (function () {
 
     /* 数字口径写在明面上。改图或改代码之后，这一段要跟着核。 */
     footnote: {
-      zh: '计数口径：工具数 28 = packages/protocol/src/tools.ts 中 ToolName 枚举的成员数。构件详页 47 个 = 31 个结构构件 + 5 条泳道 + 11 个时序步骤（「推理」那一步没有详页，它不是本仓库的代码）。每页附一段逐字代码片段并配一张机制图，代码片段已与当前提交逐行比对。仓库：v0.45.18，5 个包。',
+      zh: '计数口径：工具数 28 = packages/protocol/src/tools.ts 中 ToolName 枚举的成员数。构件详页 47 个 = 31 个结构构件 + 5 条泳道 + 11 个时序步骤（「推理」那一步没有详页，它不是本仓库的代码）。每页附一段原样摘录的代码和一张机制图，代码已与当前提交逐行比对。仓库：v0.45.18，5 个包。',
       en: 'How things are counted: 28 tools = members of the ToolName enum in packages/protocol/src/tools.ts. 47 component pages = 31 structural components + 5 lanes + 11 sequence steps (the inference step has no page — it is not this repository\'s code). Each page carries a verbatim code excerpt and a mechanism figure, checked line by line against the current commit. Repository: v0.45.18, 5 packages.',
     },
 
@@ -122,7 +122,7 @@ window.LUNA_MAP = (function () {
         ] },
       { id: 'guard', name: { zh: '控制', en: 'Control' }, en: 'control mechanisms',
         dim: 'GUARDRAILS · OBSERVABILITY',
-        gist: { zh: '能力门、安全闸、护栏与审计轨', en: 'capability gates, safety gates, guardrails, audit trail' },
+        gist: { zh: '能力门、安全闸、护栏与审计轨迹', en: 'capability gates, safety gates, guardrails, audit trail' },
         leaves: [
           { id: 'capgate', label: { zh: '能力门', en: 'capability gates' } },
           { id: 'proactgate', label: { zh: '主动安全门', en: 'proactive safety gate' } },

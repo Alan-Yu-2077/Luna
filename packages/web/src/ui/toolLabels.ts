@@ -21,7 +21,7 @@ const CUTE: Record<ToolName, Bilingual> = {
   multi_edit: { en: 'edited a file ✏️', zh: '改了个文件 ✏️' },
   write_file: { en: 'wrote a file 📝', zh: '写了个文件 📝' },
   shell: { en: 'ran a command 💻', zh: '跑了条命令 💻' },
-  typecheck: { en: 'type-checked ✅', zh: '查了类型 ✅' },
+  typecheck: { en: 'type-checked ✅', zh: '跑了类型检查 ✅' },
   run_tests: { en: 'ran the tests 🧪', zh: '跑了测试 🧪' },
   lint: { en: 'checked formatting 🎨', zh: '查了格式 🎨' },
   repo_map: { en: 'mapped the codebase 🗺️', zh: '摸了遍代码结构 🗺️' },

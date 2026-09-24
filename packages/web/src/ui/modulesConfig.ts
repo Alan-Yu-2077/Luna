@@ -42,7 +42,7 @@ export const MODULE_CARDS: readonly ModuleCard[] = [
   {
     id: 'embedding',
     title: { en: 'Embedding', zh: 'Embedding' },
-    blurb: { en: 'The vectors her recall searches', zh: '她回忆的检索向量' },
+    blurb: { en: 'The vectors her recall searches', zh: '她回忆时检索的向量' },
     probe: 'embedding',
     fields: [
       { key: 'LUNA_EMBEDDING_BASE_URL', label: 'Base URL', placeholder: 'https://…' },
@@ -53,7 +53,7 @@ export const MODULE_CARDS: readonly ModuleCard[] = [
   {
     id: 'search',
     title: { en: 'Web search', zh: '联网搜索' },
-    blurb: { en: 'Her hand for looking things up out there', zh: '她查外面世界的手' },
+    blurb: { en: 'Her hand for looking things up out there', zh: '她上网查东西的手' },
     probe: 'search',
     fields: [
       { key: 'LUNA_WEB_SEARCH_PROVIDER', label: { en: 'Provider', zh: '服务商' }, placeholder: 'tavily' },

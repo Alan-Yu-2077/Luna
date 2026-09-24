@@ -25,15 +25,15 @@
 
 ## ▶ 现场回放
 
-十四幕，取自她和我相处的一周，中文、英文两个版本。用的是她**真实的前端和渲染引擎**，声音是她自己的音色，
+十四幕，取自她和我相处的一周，有中文、英文两个版本。用的是她**真实的前端和渲染引擎**，声音是她自己的音色，
 提前渲染好。台词会替你打好，你只管按 ➤。
 
 每一幕演完，点「看看代码里发生了什么」，页面会冻结，右边浮出一摞工程笔记：从访客最想问的那个问题
 （“她怎么知道外面在下雨？”）一路讲到 prompt 里的哪一块、哪个工具、哪道安全闸、哪个源文件。每段代码都钉在
-一个提交上，测试会逐字核对它和仓库一致。请用电脑打开。
+一个提交上，测试会逐字核对它和仓库是否一致。请用电脑打开。
 
-之所以用回放来展示，是因为 Luna 不是分发给大家用的产品：她围绕一台机器上的一个实例开发，要给每位访客
-都跑一个真模型，花的钱远比能展示的多。
+之所以用回放来展示，是因为 Luna 不是分发给大家用的产品：她是围绕一台机器上的单个实例开发的，要给每位访客
+都跑一个真模型，花的钱远远超过展示本身的价值。
 
 ## 🧩 里面有什么
 
@@ -42,7 +42,7 @@
 | 🧠 **睡一觉会整理的记忆** | 原话工作窗口、按显著性沉淀的对话、结构化长期事实，全在一个 SQLite 文件里。离线的**梦境循环**给一天打分、改写事实、写日记、提炼可复用的技能。召回同时看语义、关键词和新近度，并设了相关性下限，要紧的旧记忆不会被新消息埋掉。 |
 | 🌱 **带刹车的主动性** | 她能主动开口：沉默阶梯、换歌时刻、转念一想。背后是确定性的护栏：在她主动醒来的回合里，会动到外界的工具（跑命令、改代码）必须等她先把要做什么说出口才放行。 |
 | 🛠 **关在闸门里的工具** | 联网搜索和防 SSRF 的网页读取、天气、时间、音乐（正在放什么、他的曲库、歌词），还有一个代码 agent（grep、查符号、改代码、跑测试、类型检查），碰不到密钥，也改不了给她打分的代码。 |
-| 🗣 **身体和声音** | 说话本身是一次 tool call：每个气泡带一个表情，驱动 Live2D 的脸，由 GPT-SoVITS 念出来；表情跟着每一句开口时切换。 |
+| 🗣 **身体和声音** | 说话本身是一次 tool call：每个气泡带一个表情，驱动 Live2D 的脸，由 GPT-SoVITS 念出来；每句话一开口，表情就跟着切换。 |
 | 🔌 **一份契约** | server 和 web 共用一份 Zod 类型的 WebSocket 协议，tool call 和消息边发生边流出来；哪一边漏改了协议，编译就过不去。 |
 
 ## 🏗 它是怎么拼起来的
@@ -55,10 +55,10 @@
 
 </div>
 
-五个 Bun workspace 包，依赖单向：[`protocol`](packages/protocol)（线上协议）、[`server`](packages/server)
+五个 Bun workspace 包，依赖单向：[`protocol`](packages/protocol)（通信协议）、[`server`](packages/server)
 （大脑，所有状态和每一次模型调用都在这里）、[`web`](packages/web)（一层薄薄的视图，回放也在这里）、
-[`music-cli`](packages/music-cli)（macOS 正在播放的观察器）、[`desktop`](packages/desktop)（Electron 外壳）。
-细节见 [`ARCHITECTURE.md`](ARCHITECTURE.md)；可交互的图谱就是上面那颗按钮。
+[`music-cli`](packages/music-cli)（读取 macOS「正在播放」的观察器）、[`desktop`](packages/desktop)（Electron 外壳）。
+细节见 [`ARCHITECTURE.md`](ARCHITECTURE.md)；可交互的图谱就是上面那个按钮。
 
 ## 🎬 真实 app 里的片段
 
@@ -68,7 +68,7 @@
     <td width="50%"><img src="docs/assets/moment-empathy.png" alt="一起算考试分数线" /></td>
   </tr>
   <tr>
-    <td align="center"><sub><b>她有幽默感。</b>一本正经地接梗，心情标签切到「俏皮」。</sub></td>
+    <td align="center"><sub><b>她有幽默感。</b>一本正经地接梗，心情标签切到「调皮」。</sub></td>
     <td align="center"><sub><b>她真能帮上忙。</b>把分数算清楚，情绪的分寸也拿捏对了。</sub></td>
   </tr>
   <tr>
@@ -76,20 +76,20 @@
     <td><img src="docs/assets/moment-code.png" alt="读自己的代码，确认技能系统怎么工作" /></td>
   </tr>
   <tr>
-    <td align="center"><sub><b>她会在自己身上长东西。</b>给“还没见过的那个我”存了一个技能，几分钟后就用上了。</sub></td>
+    <td align="center"><sub><b>她会给自己攒本事。</b>给“还没见过的那个我”存了一个技能，几分钟后就用上了。</sub></td>
     <td align="center"><sub><b>她读得懂自己的代码</b>，用它来回答自己的技能系统是怎么工作的。</sub></td>
   </tr>
 </table>
 
 ## 📚 怎么读这份代码
 
-先看 [`ARCHITECTURE.md`](ARCHITECTURE.md) 了解整体形状，再看
+先看 [`ARCHITECTURE.md`](ARCHITECTURE.md) 了解整体结构，再看
 [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md)：250 多条按版本记录的开发日志，每条分成
-*Fact*（改了什么）和 *Inference*（为什么要紧），做错了的版本也都留着。真正诚实地讲清她是怎么搭起来的，是那份日志，不是这一页。
+*Fact*（改了什么）和 *Inference*（为什么要紧），做错了的版本也都留着。她到底是怎么搭起来的，如实的记录在那份日志里，不在这一页。
 
 | | |
 | --- | --- |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | 各个包、线上协议、记忆、工具、主动性护栏、回放 |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | 各个包、通信协议、记忆、工具、主动性护栏、回放 |
 | [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) | 逐版本的工程日志 |
 | [`ROADMAP.md`](ROADMAP.md) | 按主题回看她走过的路 |
 | [`.env.example`](.env.example) | 每一个配置项，都有说明 |
@@ -97,7 +97,7 @@
 
 ## 🧪 自己跑起来
 
-这个仓库是**公开出来给人读的工程本身**，不是产品。它围绕一台机器上的一个实例开发，不保证能在你的电脑上跑起来；
+这个仓库是**公开出来给人读的工程本身**，不是产品。它是围绕一台机器上的单个实例开发的，所以不保证能在你的电脑上跑起来；
 音色和立绘也不在可复用的范围内。如果你还是想试试：
 
 <details>

@@ -46,8 +46,8 @@ const num = (detail: string, pattern: RegExp): string | null => pattern.exec(det
 function personaLine(detail: string, lang: UiLang): string {
   const self = detail.includes('self');
   const bond = detail.includes('bond');
-  if (self && bond) return lang === 'zh' ? '对自己、对两个人之间，认识都动了动。' : 'Both shifted a little — herself, and the two of them.';
-  if (bond) return lang === 'zh' ? '对两个人之间的认识动了动。' : 'Her sense of the two of them shifted a little.';
+  if (self && bond) return lang === 'zh' ? '对自己、对两人的关系，认识都动了动。' : 'Both shifted a little — herself, and the two of them.';
+  if (bond) return lang === 'zh' ? '对两人关系的认识动了动。' : 'Her sense of the two of them shifted a little.';
   return lang === 'zh' ? '对自己的认识动了动。' : 'Her sense of herself shifted a little.';
 }
 
@@ -84,7 +84,7 @@ export function translateStep(s: StepLike, lang: UiLang = uiLang()): string {
       if (removed !== null && added !== null) {
         return zh ? `放下了 ${removed} 件事，记住了 ${added} 件。` : `Let go of ${removed}, kept ${added}.`;
       }
-      return zh ? '整理了心里的事。' : 'Sorted what she knows.';
+      return zh ? '整理了记住的事。' : 'Sorted what she knows.';
     }
     case 'memory_audit': {
       const removed = num(s.detail, /removed (\d+)/);
@@ -107,7 +107,7 @@ export function translateStep(s: StepLike, lang: UiLang = uiLang()): string {
     case 'distill_skills':
       return skillLine(s.detail, lang);
     case 'rag_refresh':
-      return zh ? '翻新了回忆的书签。' : 'Refreshed the bookmarks on her memories.';
+      return zh ? '更新了回忆的书签。' : 'Refreshed the bookmarks on her memories.';
     default:
       return `${s.step}: ${s.detail || s.status}`;
   }

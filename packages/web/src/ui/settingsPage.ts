@@ -29,7 +29,7 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
   { id: 'voice', label: { en: 'Voice', zh: '声音' }, blurb: { en: 'Her voice', zh: '她的声音' } },
   { id: 'expression', label: { en: 'Expression & Motion', zh: '表情与动作' }, blurb: { en: 'How her face and body move', zh: '她的表情与动作' } },
   { id: 'appearance', label: { en: 'Appearance', zh: '外观' }, blurb: { en: 'How she looks, and the room she is in', zh: '她的样子与这间屋子' } },
-  { id: 'behaviour', label: { en: 'Behaviour', zh: '行为' }, blurb: { en: 'What she does on her own', zh: '她自己的行为' } },
+  { id: 'behaviour', label: { en: 'Behaviour', zh: '行为' }, blurb: { en: 'What she does on her own', zh: '她主动做的事' } },
   // v0.44.6: persona is its own category (it is ABOUT her, not about widgets), and the four module
   // cards get their own too — four cards under System would have buried both.
   { id: 'persona', label: { en: 'Persona', zh: '人格' }, blurb: { en: 'Who she is', zh: '她是谁' } },

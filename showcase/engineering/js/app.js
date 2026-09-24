@@ -292,7 +292,7 @@
   };
   const DKV = {
     why: { zh: '为什么', en: 'Why' },
-    rejected: { zh: '被拒绝的方案', en: 'Rejected' },
+    rejected: { zh: '否决的方案', en: 'Rejected' },
     cost: { zh: '代价', en: 'Cost' },
   };
 

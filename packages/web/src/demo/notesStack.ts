@@ -114,20 +114,32 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
 .demo-sheet .code-note { margin: 0 0 12px; font-size: 13px; line-height: 1.55; color: var(--n-pencil); }
 
 .demo-code-btn {
-  position: absolute; left: 50%; bottom: 34px; z-index: 6; transform: translateX(-50%);
-  display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
-  padding: 11px 22px; border: 2px solid #fff; border-radius: 999px; cursor: pointer;
-  font-family: var(--font); font-size: 15px; font-weight: 600; color: var(--sky-text); background: var(--sky);
-  box-shadow: 0 4px 0 var(--sky-deep), 0 10px 24px rgba(90, 120, 160, 0.28);
-  animation: demo-code-bob 2.6s ease-in-out infinite;
+  position: relative; pointer-events: auto;
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 7px 15px; border: 2px solid #fff; border-radius: 999px; cursor: pointer;
+  font-family: var(--font); font-size: 12.5px; font-weight: 600; color: var(--sky-text); background: var(--sky);
+  box-shadow: 0 3px 0 var(--sky-deep), 0 6px 16px rgba(90, 120, 160, 0.26);
+  animation: demo-code-in 0.6s var(--ease-pop) backwards;
+}
+/* A soft ring every few seconds once it has landed, so it is noticed without jumping about. */
+.demo-code-btn::after {
+  content: ''; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none;
+  animation: demo-code-ping 2.8s ease-out 1.2s infinite;
 }
 .demo-code-btn[hidden] { display: none; }
-.demo-code-btn .glyph { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; font-weight: 700; opacity: 0.85; }
+.demo-code-btn .glyph { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; font-weight: 700; opacity: 0.85; }
 .demo-code-btn:hover { background: var(--sky-deep); }
-.demo-code-btn:active { transform: translateX(-50%) translateY(2px); box-shadow: 0 2px 0 var(--sky-deep); }
+.demo-code-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--sky-deep); }
 .menu-mode .demo-code-btn { display: none; }
-@keyframes demo-code-bob { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-4px); } }
-@media (prefers-reduced-motion: reduce) { .demo-code-btn { animation: none; } .demo-sheet, .demo-sheet.lift, .demo-notes { transition-duration: 0.01s; } }
+@keyframes demo-code-in {
+  0% { opacity: 0; transform: translateX(-14px) scale(0.55); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes demo-code-ping {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--sky-deep) 70%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 11px color-mix(in srgb, var(--sky-deep) 0%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .demo-code-btn, .demo-code-btn::after { animation: none; } .demo-sheet, .demo-sheet.lift, .demo-notes { transition-duration: 0.01s; } }
 `;
 
 export const CLIP_SVG =

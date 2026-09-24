@@ -13,7 +13,7 @@
     {
       "name": "flaky-test-triage",
       "description": "When a test is 'flaky', find the non-determinism before touching the assertion.",
-      "body": "1. Run it twice before touching anything. Same code, two answers: that's non-determinism, not a logic bug.\n2. grep + find_symbol to locate what the test exercises, not the test.\n3. read_file the ranking/ordering/timing code it depends on.\n4. Look for ties, clocks, and unordered reads — the usual three.\n5. plan, then the smallest deterministic fix (a tie-break, an injected clock), plus a test that pins the case that flaked.\n6. typecheck, lint and the full run_tests before saying it's fixed. Report the count.\n7. Never widen the assertion to make it pass. The commit is his.",
+      "body": "1. Run it twice before touching anything. Same code, two answers: that's non-determinism, not a logic bug.\n2. grep + find_symbol to locate what the test exercises, not the test.\n3. read_file the ranking/ordering/timing code it depends on.\n4. Look for ties, clocks, and unordered reads — the usual three.\n5. plan, then the smallest deterministic fix (a tie-break, an injected clock). The test that flaked is the regression test; if a new one is needed, write it out for him — test files are his.\n6. typecheck, lint and the full run_tests before saying it's fixed. Report the count.\n7. Never widen the assertion to make it pass. The commit is his.",
       "used_count": 1,
       "last_used_ms": 1789977720000,
       "verified_ms": 1789680130000,

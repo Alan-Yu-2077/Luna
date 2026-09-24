@@ -280,7 +280,7 @@ scene pill with its picker, and his hand when the story needs it — a play prom
 drawn desk with the folder she left and the first page of the paper in it (a real link out, no copied
 body text); the next scripted line waits behind either; on a phone, one card asking to open the replay on a
 computer (nothing else loads behind it — the show is not adapted to phones); a door that counts her ~10 MB in
-(`demo/preload.ts`) before Enter opens; the curtain call's inner-voice card; and after each scene, the engineering notes — a note clipped to the stage opens a pile of
+(`demo/preload.ts`) before Enter opens; the curtain call's inner-voice card; and after each scene, the engineering notes — a button that pops in beside the scene pill opens a pile of
 notebook sheets over the frozen page, one bilingual `demo/notes.json` whose every code block a test holds
 to its file and line. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
 framing); `bun run build:demo` emits a separate `dist-demo/` that the packaged app never carries,

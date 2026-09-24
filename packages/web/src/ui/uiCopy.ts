@@ -93,14 +93,14 @@ const UI_COPY = {
   'menu.dream': { en: 'Dream', zh: '做梦' },
   'menu.settings': { en: 'Settings', zh: '设置' },
   'menu.quit': { en: 'Quit', zh: '退出' },
-  'menu.soon.diary': { en: 'Her diary opens here soon.', zh: '她的日记很快会在这里。' },
-  'menu.soon.skills': { en: 'Her skills gather here soon.', zh: '她的技能很快会在这里。' },
-  'menu.soon.settings': { en: 'Settings assemble here soon.', zh: '设置很快会在这里。' },
+  'menu.soon.diary': { en: 'Her diary opens here soon.', zh: '她的日记很快就会出现在这里。' },
+  'menu.soon.skills': { en: 'Her skills gather here soon.', zh: '她的技能很快就会出现在这里。' },
+  'menu.soon.settings': { en: 'Settings assemble here soon.', zh: '设置很快就会出现在这里。' },
 
   // ── the model stage ──
   'stage.loading': { en: 'Loading her…', zh: '正在加载她…' },
   'stage.loadingSub': { en: 'The model is on its way', zh: '模型在路上' },
-  'stage.none': { en: 'No avatar installed', zh: '还没有装形象' },
+  'stage.none': { en: 'No avatar installed', zh: '还没有安装形象' },
   'stage.noneSub': { en: 'Drop a Live2D model in public/models/ — see docs/SETUP.md', zh: '把 Live2D 模型放进 public/models/ ——见 docs/SETUP.md' },
   'stage.webglOff': { en: 'WebGL unavailable', zh: 'WebGL 不可用' },
   'stage.webglOffSub': { en: "This browser can't render the avatar", zh: '这个浏览器画不出她' },
@@ -123,7 +123,7 @@ const UI_COPY = {
   'settings.gaze': { en: 'Gaze follow', zh: '视线跟随' },
   'settings.affect': { en: 'Mood memory', zh: '情绪记忆' },
   'settings.livePeak': { en: 'Living expressions', zh: '鲜活表情' },
-  'settings.shortClips': { en: 'Brief performances', zh: '短小表演' },
+  'settings.shortClips': { en: 'Brief performances', zh: '小段表演' },
   'settings.idleActions': { en: 'Idle gestures', zh: '闲时小动作' },
   'settings.listening': { en: 'Attentive listening', zh: '专注倾听' },
   'settings.speechPerf': { en: 'Speaking performance', zh: '说话时的表演' },
@@ -131,7 +131,7 @@ const UI_COPY = {
   'settings.costume': { en: 'Costume', zh: '装扮' },
   'settings.costumeHint': {
     en: 'Yours to set — her expressions never put these on or take them off',
-    zh: '由你来定——她的表情不会自己穿上或摘下这些',
+    zh: '由你来定——她换表情时不会自己加上或去掉这些',
   },
   'settings.workbench': { en: '🎛 Live2D workbench', zh: '🎛 Live2D 工作台' },
   'settings.serverEmpty': { en: 'No server settings yet — Luna is still connecting.', zh: '还没有服务器设置——Luna 还在连接。' },
@@ -144,19 +144,19 @@ const UI_COPY = {
   'settings.reset': { en: 'Reset to default', zh: '恢复默认' },
 
   // ── the settings page ──
-  'settings.health.checking': { en: 'Voice service: checking…', zh: '声音服务：查看中…' },
+  'settings.health.checking': { en: 'Voice service: checking…', zh: '声音服务：检查中…' },
   'settings.health.ready': { en: 'Voice service: running ✓', zh: '声音服务：在跑 ✓' },
   'settings.health.starting': { en: 'Voice service: starting…', zh: '声音服务：正在启动…' },
   'settings.health.down': { en: 'Voice service: not running', zh: '声音服务：没有在跑' },
   'settings.behaviourNote': {
     en: 'Her proactive behaviour (when she reaches out, how often) still lives in the config file — moving it here is a later version.',
-    zh: '她的主动行为（什么时候来找你、多久说一次）暂时还住在配置文件里——搬进这里是之后的一版。',
+    zh: '她的主动行为（什么时候来找你、多久说一次）暂时还住在配置文件里——之后的版本会把它搬到这里。',
   },
 
   // ── persona ──
   'persona.intro': {
     en: 'Fixed is the ground you set — she cannot change it. Evolving is what she grew herself — yours to read, not to edit here.',
-    zh: 'Fixed 是你定的底色，她改不了；Evolving 是她自己长出来的，你看，但在这里不改。',
+    zh: 'Fixed 是你定的底色，她改不了；Evolving 是她自己长出来的，你能看，但不能在这里改。',
   },
   'persona.preview': { en: 'Preview diff', zh: '预览改动' },
   'persona.save': { en: 'Save fixed core', zh: '保存 Fixed 部分' },
@@ -164,18 +164,18 @@ const UI_COPY = {
   'persona.noChange': { en: 'Nothing changed.', zh: '没有改动。' },
   'persona.empty': { en: "Can't save it empty.", zh: '不能存成空的。' },
   'persona.saving': { en: 'Saving…', zh: '保存中…' },
-  'persona.saved': { en: 'Saved. She carries it the next time she speaks.', zh: '已保存。她下次开口就带着它。' },
+  'persona.saved': { en: 'Saved. She carries it the next time she speaks.', zh: '已保存。她下次开口就会用上。' },
   'persona.saveFailed': { en: 'Save failed — is her backend running?', zh: '保存失败——她的后端没有在跑？' },
   'persona.nothingYet': { en: '(Nothing written yet.)', zh: '（她还没写下什么。）' },
   'persona.unreachable': { en: "Can't reach it right now — her backend isn't running.", zh: '现在取不到——她的后端没有在跑。' },
 
   // ── modules ──
-  'modules.browserOnly': { en: 'Modules are edited in the desktop app — in a browser this is read-only.', zh: '模块配置在桌面端编辑——浏览器里只是看看。' },
+  'modules.browserOnly': { en: 'Modules are edited in the desktop app — in a browser this is read-only.', zh: '模块配置在桌面端编辑——浏览器里只能看。' },
   'modules.probe': { en: 'Probe', zh: '探测' },
   'modules.save': { en: 'Save', zh: '保存' },
   'modules.restartLuna': { en: 'Restart Luna', zh: '重启 Luna' },
   'modules.probing': { en: 'Probing…', zh: '探测中…' },
-  'modules.ok': { en: 'Works ✓', zh: '通 ✓' },
+  'modules.ok': { en: 'Works ✓', zh: '可用 ✓' },
   'modules.failed': { en: 'Failed', zh: '失败' },
   'modules.noChange': { en: 'Nothing changed.', zh: '没有改动。' },
   'modules.saveFailed': { en: 'Save failed', zh: '保存失败' },
@@ -217,7 +217,7 @@ const UI_COPY = {
   'chip.dreamingAt': { en: '🌙 dreaming · {step}', zh: '🌙 在做梦 · {step}' },
   'chip.dreamIdle': { en: '🌙 done dreaming — still asleep', zh: '🌙 梦做完了，还睡着' },
   'chip.awake': { en: '☀️ awake', zh: '☀️ 醒了' },
-  'chip.quietMoment': { en: '(a quiet moment)', zh: '（安静的一会儿）' },
+  'chip.quietMoment': { en: '(a quiet moment)', zh: '（安静了一会儿）' },
 
   // ── the boot gate (non-lobby boots only) ──
   'boot.title': { en: 'Luna is waking up…', zh: 'Luna 正在醒来…' },
@@ -250,7 +250,7 @@ const UI_COPY = {
   'demo.backToLuna': { en: 'Back to Luna →', zh: '回到 Luna →' },
   // v0.50.0: the engineering notes after each scene.
   'demo.codeNotes': { en: "Click this to view what's going on in code", zh: '点这里，看看代码里发生了什么' },
-  'demo.notesEyebrow': { en: 'Scene {n} · {title} · in the code', zh: '第 {n} 幕 · {title} · 代码里' },
+  'demo.notesEyebrow': { en: 'Scene {n} · {title} · in the code', zh: '第 {n} 幕 · {title} · 幕后代码' },
   'demo.notesHint': { en: 'click the sheet to turn it', zh: '点一下纸，翻到下一张' },
   'demo.notesNext': { en: 'Next sheet', zh: '下一张' },
   'demo.notesPrev': { en: 'Previous sheet', zh: '上一张' },
@@ -259,7 +259,7 @@ const UI_COPY = {
   'demo.innerVoice': { en: '💭 inner voice', zh: '💭 内心 OS' },
   'demo.personaNote': {
     en: "Her persona file lives on the owner's machine — the replay doesn't carry it. In the app, this is where he edits the fixed core and reads what she has grown.",
-    zh: '她的人格文件在主人的机器上，回放里不带。在 app 里，这一栏是主人改 Fixed 底色、看她自己长出来的 Evolving 的地方。',
+    zh: '她的人格文件在主人的机器上，回放里不带。在 app 里，主人就在这一栏改 Fixed 底色、看她自己长出来的 Evolving。',
   },
 
   // ── desktop-only chrome ──
@@ -271,7 +271,7 @@ const UI_COPY = {
   'pack.manual': { en: 'Installed — restart your voice server', zh: '已安装——请手动重启你的语音服务' },
   'pack.notPack': { en: 'Not a voice pack', zh: '不是音色包' },
   'pack.ambiguous': { en: 'Ambiguous pack — install it from the setup wizard', zh: '候选不止一个——请到配置向导里安装' },
-  'pack.confirm': { en: 'Swap voice to “{name}”?', zh: '换成这个音色包？「{name}」' },
+  'pack.confirm': { en: 'Swap voice to “{name}”?', zh: '换成音色包「{name}」？' },
   'pack.apply': { en: 'Apply', zh: '应用' },
   'pack.installing': { en: 'Installing…', zh: '安装中…' },
   'pack.cancel': { en: 'Cancel', zh: '取消' },
