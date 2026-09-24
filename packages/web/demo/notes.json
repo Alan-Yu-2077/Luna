@@ -1,7 +1,7 @@
 {
  "_note": "Engineering notes for the replay (v0.50.x): one stack of sheets per scene, both languages. Every code block is the named file verbatim at `from` in commit `ref` (notes.test.ts checks it against the working tree); every quote is a line the scene really says.",
  "repo": "https://github.com/Alan-Yu-2077/Luna",
- "ref": "0ed05e5fff6808c8e9625c05621fc24c2cab7455",
+ "ref": "71dd6a86c3d1d2e55170045a6cfd1d6270a09c63",
  "scenes": {
   "morning": {
    "hook": {
@@ -3219,7 +3219,7 @@
       {
        "type": "code",
        "file": "packages/web/src/demo/director.ts",
-       "from": 616,
+       "from": 640,
        "snippet": "    inner(text) {\n      const card = doc.createElement('div');\n      card.className = 'demo-inner';\n      const tag = doc.createElement('span');\n      tag.className = 'demo-inner-tag';\n      tag.textContent = t('demo.innerVoice');\n      const body = doc.createElement('p');\n      body.textContent = text;\n      card.append(tag, body);\n      refs.chatLog.appendChild(card);\n      refs.chatLog.scrollTop = refs.chatLog.scrollHeight;\n    },",
        "note": {
         "en": "Plain DOM in the chat log: no frame, no voice, no history entry.",

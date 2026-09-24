@@ -789,8 +789,8 @@ Fact:
   both READMEs lose the map button and the sentence pointing at it. The showcase build still places the map
   under `/engineering/`, and the `demo.map` copy stays for when it returns.
 - **README**: the "Luna" heading under the icon is gone — the icon already says it (shipped as `25b2ac3`).
-- `bun test` 2177 pass once the notes are re-pinned to this commit (a follow-up commit; `director.ts` and
-  `app.ts` lines moved).
+- `bun test` 2177 pass once the notes are re-pinned to this commit (a follow-up commit pins them to `71dd6a8`;
+  `director.ts` and `app.ts` lines moved).
 
 Inference:
 
