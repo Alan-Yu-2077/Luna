@@ -10,8 +10,6 @@ quiet, tools behind safety rails, and a body and a voice to say it with.
 
 <a href="https://alan-yu-2077.github.io/Luna/"><img src="docs/assets/replay-cta.svg" width="720" alt="Watch Luna, live — the replay: real front end, her own voice, engineering notes" /></a>
 
-<a href="https://alan-yu-2077.github.io/Luna/engineering/"><img src="docs/assets/map-cta.svg" width="420" alt="Engineering map — the agent harness, mapped" /></a>
-
 **English** · [简体中文](README.zh-CN.md)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -60,7 +58,7 @@ Five Bun workspace packages with a one-way dependency arrow: [`protocol`](packag
 contract), [`server`](packages/server) (the brain — all state and every model call),
 [`web`](packages/web) (a thin reactive view, and the replay), [`music-cli`](packages/music-cli) (a
 macOS Now-Playing observer) and [`desktop`](packages/desktop) (an Electron shell). The deep dive is
-[`ARCHITECTURE.md`](ARCHITECTURE.md); the interactive map is the button above.
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## 🎬 Moments from the real app
 

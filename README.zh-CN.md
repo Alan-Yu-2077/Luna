@@ -9,8 +9,6 @@
 
 <a href="https://alan-yu-2077.github.io/Luna/"><img src="docs/assets/replay-cta.zh.svg" width="720" alt="进入 Luna 的现场回放：真实前端 · 她自己的声音 · 每一幕后面都有工程笔记" /></a>
 
-<a href="https://alan-yu-2077.github.io/Luna/engineering/"><img src="docs/assets/map-cta.zh.svg" width="420" alt="工程图谱：把 agent 的骨架摊开给你看" /></a>
-
 [English](README.md) · **简体中文**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -56,7 +54,7 @@
 五个 Bun workspace 包，依赖单向：[`protocol`](packages/protocol)（通信协议）、[`server`](packages/server)
 （大脑，所有状态和每一次模型调用都在这里）、[`web`](packages/web)（一层薄薄的视图，回放也在这里）、
 [`music-cli`](packages/music-cli)（读取 macOS「正在播放」的观察器）、[`desktop`](packages/desktop)（Electron 外壳）。
-细节见 [`ARCHITECTURE.md`](ARCHITECTURE.md)；可交互的图谱就是上面那个按钮。
+细节见 [`ARCHITECTURE.md`](ARCHITECTURE.md)。
 
 ## 🎬 真实 app 里的片段
 

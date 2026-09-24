@@ -969,16 +969,13 @@ async function boot(): Promise<void> {
       });
     };
     mountMenu();
-    // v0.46.2: the replay's front door carries the one link out — to the engineering map, which the
-    // showcase build places beside it. Lobby only; it disappears the moment she wakes.
+    // v0.46.2: the replay's front door carries its links out. Lobby only; they disappear the moment
+    // she wakes. v0.48.1: the same replay in the other language. v0.51.5 (owner): the engineering map
+    // is unlinked while it is reworked — the showcase build still places it under /engineering/.
     if (demo) {
-      // v0.48.1: the map, and the same replay in the other language.
       const other = new URLSearchParams(location.search);
       other.set('lang', uiLang() === 'zh' ? 'en' : 'zh');
-      mountLobbyLinks(document, root, [
-        { href: './engineering/', label: t('demo.map') },
-        { href: `?${other.toString()}`, label: t('demo.switchLang') },
-      ]);
+      mountLobbyLinks(document, root, [{ href: `?${other.toString()}`, label: t('demo.switchLang') }]);
     }
 
     // ← Menu lives in the chat header, and the disconnect is POLITE: mid-turn it waits for the

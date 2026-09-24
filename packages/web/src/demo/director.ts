@@ -220,22 +220,46 @@ body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none
   letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--sky-text); color: #fff;
 }
 .demo-desktop-only {
-  position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center;
-  justify-content: flex-start; gap: 12px; padding: 32px 24px; overflow-y: auto; text-align: center; color: #e8edf5;
-  background: radial-gradient(120% 90% at 50% 18%, #33445e 0%, #1a2230 72%);
+  position: fixed; inset: 0; z-index: 1000; display: flex; padding: 32px 24px; overflow-y: auto;
+  text-align: center; color: #e8edf5; background: radial-gradient(120% 90% at 50% 18%, #33445e 0%, #1a2230 72%);
 }
 /* Centred while it fits; taller than the screen (a phone on its side), it scrolls from the top. */
-.demo-desktop-only > :first-child { margin-top: auto; }
-.demo-desktop-only > :last-child { margin-bottom: auto; }
-.demo-desktop-only svg { width: 96px; height: 72px; color: #fff; }
-.demo-desktop-only h2 { margin: 6px 0 0; font-size: 21px; line-height: 1.35; }
-.demo-desktop-only p { margin: 0; max-width: 340px; font-size: 13.5px; line-height: 1.65; color: #c5d0de; }
-.demo-desktop-only .en { display: block; font-size: 0.86em; color: #8fa6bf; }
+.demo-desktop-only .inner { margin: auto; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.demo-desktop-only h2 { margin: 4px 0 0; font-size: 20px; line-height: 1.45; }
+.demo-desktop-only .en { display: block; margin-top: 2px; font-size: 0.72em; font-weight: 500; color: #8fa6bf; }
 .demo-desktop-only button {
-  margin-top: 8px; border: none; cursor: pointer; background: var(--sky); color: var(--sky-text); font: inherit;
-  font-size: 15px; font-weight: 600; padding: 10px 24px; border-radius: 999px; box-shadow: 0 3px 0 var(--sky-deep);
+  margin-top: 6px; border: none; cursor: pointer; background: var(--sky); color: var(--sky-text); font: inherit;
+  font-size: 14px; font-weight: 600; padding: 8px 20px; border-radius: 999px; box-shadow: 0 3px 0 var(--sky-deep);
 }
-.demo-desktop-only .url { font-size: 12px; color: #8fa6bf; word-break: break-all; }
+.demo-desktop-only .url { margin: 0; max-width: 320px; font-size: 12px; color: #8fa6bf; word-break: break-all; }
+/* v0.51.5: phone ✗, PC ✓ — drawn, then looped. */
+.demo-devices { width: min(300px, 80vw); height: auto; overflow: visible; }
+.demo-devices .dev { fill: none; stroke: #e8edf5; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.demo-devices .screen { fill: rgba(232, 237, 245, 0.07); }
+.demo-devices .no { fill: none; stroke: #ff6b7a; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 34 40; }
+.demo-devices .yes { fill: none; stroke: #5fd39a; stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 60 70; }
+.demo-devices .flow { fill: none; stroke: #8fa6bf; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 4 7; }
+.demo-devices .head { fill: none; stroke: #8fa6bf; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.demo-devices .glow { fill: #5fd39a; opacity: 0; }
+.demo-devices .phone, .demo-devices .pc { transform-box: fill-box; transform-origin: center; }
+.demo-devices .phone { animation: demo-dev-shake 4.8s ease-in-out infinite; }
+.demo-devices .pc { animation: demo-dev-pop 4.8s ease-in-out infinite; }
+.demo-devices .no { animation: demo-dev-no 4.8s ease-in-out infinite; }
+.demo-devices .no.b { animation-delay: 0.12s; }
+.demo-devices .yes { animation: demo-dev-yes 4.8s ease-in-out infinite; }
+.demo-devices .flow { animation: demo-dev-flow 0.9s linear infinite; }
+.demo-devices .glow { animation: demo-dev-glow 4.8s ease-in-out infinite; }
+@keyframes demo-dev-no { 0%, 6% { stroke-dashoffset: 38; opacity: 1; } 18%, 86% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes demo-dev-shake { 0%, 20%, 34%, 100% { transform: translateX(0); } 23% { transform: translateX(-4px) rotate(-3deg); } 27% { transform: translateX(4px) rotate(3deg); } 31% { transform: translateX(-2px); } }
+@keyframes demo-dev-yes { 0%, 42% { stroke-dashoffset: 64; opacity: 1; } 58%, 86% { stroke-dashoffset: 0; opacity: 1; } 96%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes demo-dev-pop { 0%, 40%, 56%, 100% { transform: scale(1); } 47% { transform: scale(1.07); } }
+@keyframes demo-dev-glow { 0%, 50% { opacity: 0; } 62%, 84% { opacity: 0.16; } 96%, 100% { opacity: 0; } }
+@keyframes demo-dev-flow { to { stroke-dashoffset: -11; } }
+@media (prefers-reduced-motion: reduce) {
+  .demo-devices .phone, .demo-devices .pc, .demo-devices .no, .demo-devices .yes, .demo-devices .flow, .demo-devices .glow { animation: none; }
+  .demo-devices .no, .demo-devices .yes { stroke-dashoffset: 0; }
+  .demo-devices .glow { opacity: 0.16; }
+}
 `;
 
 let styleMounted = false;
@@ -832,22 +856,24 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
 
 // v0.50.1 (owner) — phones are not adapted: the replay is a desk-sized show (the chat beside her, the
 // notes after each scene), so a phone gets one card asking to open it on a computer — both languages,
-// since it comes before the language question — and a button that copies the link to send over. Nothing
-// else loads behind it. (v0.49.2's rotate-and-scale route is retired.)
+// since it comes before the language question — and nothing else loads behind it. v0.51.5 (owner): one
+// line of copy and a drawn phone ✗ / PC ✓; the link is printed only if copying it fails (in-app browsers).
 export const DESKTOP_ONLY_COPY = {
-  title: { zh: '请在电脑上打开', en: 'Please open this on a computer' },
-  body: {
-    zh: '这段回放是照电脑屏幕做的：左边是聊天，右边是她，每一幕后面还有工程笔记。手机上放不下，也没有做适配。',
-    en: 'This replay is built for a computer screen — the chat beside her, and engineering notes after every scene. It does not fit a phone, and is not adapted for one.',
-  },
+  title: { zh: '这是一个 PC 端项目，请在电脑上打开', en: 'A desktop project — please open it on a computer' },
   copy: { zh: '复制链接', en: 'Copy the link' },
   copied: { zh: '已复制 ✓', en: 'Copied ✓' },
 } as const;
 
-const SCREEN_SVG =
-  '<svg viewBox="0 0 96 72" aria-hidden="true"><rect x="6" y="4" width="84" height="52" rx="5" fill="none" ' +
-  'stroke="currentColor" stroke-width="3.2"/><path d="M34 68 H62 M48 56 V68" stroke="currentColor" stroke-width="3.2" ' +
-  'stroke-linecap="round"/></svg>';
+const DEVICES_SVG =
+  '<svg class="demo-devices" viewBox="0 0 260 120" aria-hidden="true">' +
+  '<g class="phone"><rect class="dev screen" x="18" y="16" width="52" height="90" rx="9"/>' +
+  '<path class="dev" d="M38 26 H50"/><circle cx="44" cy="96" r="3" fill="#e8edf5"/>' +
+  '<path class="no" d="M32 49 L56 73"/><path class="no b" d="M56 49 L32 73"/></g>' +
+  '<path class="flow" d="M88 61 H138"/><path class="head" d="M132 54 L140 61 L132 68"/>' +
+  '<circle class="glow" cx="199" cy="50" r="46"/>' +
+  '<g class="pc"><rect class="dev screen" x="156" y="18" width="86" height="60" rx="6"/>' +
+  '<path class="dev" d="M199 78 V94 M182 96 H216"/>' +
+  '<path class="yes" d="M181 48 L194 61 L218 35"/></g></svg>';
 
 export function mountDesktopOnly(doc: Document, win: Window): void {
   ensureStyle(doc);
@@ -855,7 +881,7 @@ export function mountDesktopOnly(doc: Document, win: Window): void {
   card.className = 'demo-desktop-only';
   card.setAttribute('role', 'dialog');
   card.setAttribute('aria-label', `${DESKTOP_ONLY_COPY.title.zh} · ${DESKTOP_ONLY_COPY.title.en}`);
-  const both = (key: 'title' | 'body' | 'copy' | 'copied', tag: 'h2' | 'p' | 'button'): HTMLElement => {
+  const both = (key: 'title' | 'copy' | 'copied', tag: 'h2' | 'p' | 'button'): HTMLElement => {
     const el = doc.createElement(tag);
     const en = doc.createElement('span');
     en.className = 'en';
@@ -863,22 +889,29 @@ export function mountDesktopOnly(doc: Document, win: Window): void {
     el.append(DESKTOP_ONLY_COPY[key].zh, en);
     return el;
   };
-  const icon = doc.createElement('div');
-  icon.innerHTML = SCREEN_SVG;
+  const art = doc.createElement('div');
+  art.innerHTML = DEVICES_SVG;
   const link = `${win.location.origin}${win.location.pathname}`;
   const url = doc.createElement('p');
   url.className = 'url';
   url.textContent = link;
+  url.hidden = true;
   const copy = both('copy', 'button');
   if (copy instanceof HTMLButtonElement) copy.type = 'button';
+  const showLink = (): void => {
+    url.hidden = false;
+  };
   copy.addEventListener('click', () => {
-    void win.navigator.clipboard
-      ?.writeText(link)
+    const clip = win.navigator.clipboard;
+    if (!clip) return showLink();
+    void clip
+      .writeText(link)
       .then(() => copy.replaceChildren(...both('copied', 'p').childNodes))
-      .catch(() => {
-        /* no clipboard (an in-app browser) — the address is printed above to copy by hand */
-      });
+      .catch(showLink); // no clipboard here (an in-app browser): print the address to copy by hand
   });
-  card.append(icon, both('title', 'h2'), both('body', 'p'), url, copy);
+  const inner = doc.createElement('div');
+  inner.className = 'inner';
+  inner.append(art, both('title', 'h2'), copy, url);
+  card.append(inner);
   doc.body.appendChild(card);
 }
