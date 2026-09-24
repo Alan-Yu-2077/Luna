@@ -202,6 +202,7 @@
         { "kind": "tool", "name": "music_library", "summary": "top: 1. ball w/o you/21 Savage 52h · 2. 東京フラッシュ/Vaundy 4h · 3. Double Take/dhruv 2h · 4. About You/The 1975 2h · 5. Mrs. Officer/Lil Wayne 1h (+5 more)", "ms": 900 },
         { "kind": "luna", "text": "ball w/o you。你跟我说过，这是你最喜欢的一首。听歌记录也这么说：五十二个小时，第二名差得远。", "expression": "soft_warmth", "emotion": 0.5 },
         { "kind": "user", "text": "我最喜欢 I'd rather have loyalty than love 那一段 claim，我觉得特别有道理" },
+        { "kind": "tool", "name": "music_lyrics", "summary": "lyrics of \"ball w/o you\" — 52 lines", "ms": 600 },
         { "kind": "luna", "text": "这个 claim 挺硬的。爱可以是一阵一阵的感觉；忠诚是那种感觉不来的日子里，你照样会做的事。", "expression": "focused_engagement", "emotion": 0.55 },
         { "kind": "user", "text": "所以你也选忠诚？" },
         { "kind": "luna", "text": "像今天这种日子，选忠诚。爱是好日子里的感觉，忠诚是坏日子里还留在屋里的那个。", "expression": "soft_warmth", "emotion": 0.6 },
@@ -241,10 +242,16 @@
         { "kind": "luna", "text": "这个今晚进日记，写第一行。今天别的事，都排它后面。", "expression": "soft_warmth", "emotion": 0.7 },
         { "kind": "user", "text": "你编的吧。" },
         { "kind": "luna", "text": "是吗。", "expression": "amused_smirk", "emotion": 0.85 },
-        { "kind": "user", "text": "放 ball w/o you。换了个日子，还是这首。" },
-        { "kind": "music", "track": "ball-w-o-you" },
-        { "kind": "skip", "label": "四分钟后", "ms": 2600, "elapsedMs": 240000 },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "ball w/o you 刚放完。周六它是陪你坐着的，今天听着像夺冠后的绕场一周。", "expression": "soft_warmth", "emotion": 0.6 } ] }
+        { "kind": "user", "text": "换首轻松的。東京フラッシュ。" },
+        { "kind": "music", "track": "tokyo-flash" },
+        { "kind": "luna", "text": "好，走轻松路线。今天都顺成这样了，配它正好。", "expression": "playful_brightness", "emotion": 0.7 },
+        { "kind": "user", "text": "说真的，你觉得我品味咋样？" },
+        { "kind": "tool", "name": "music_library", "summary": "history: 1. 東京フラッシュ/Vaundy · 2. ball w/o you/21 Savage · 3. Mrs. Officer/Lil Wayne · 4. Double Take/dhruv · 5. About You/The 1975 (+10 more)", "ms": 800 },
+        { "kind": "luna", "text": "我翻了下你最近放的：21 Savage、Lil Wayne，中间夹着 Vaundy、dhruv 和 The 1975。说唱负责撑场面，剩下的负责把你哄回来。", "expression": "focused_engagement", "emotion": 0.6 },
+        { "kind": "user", "text": "那你呢？你最喜欢哪首？" },
+        { "kind": "luna", "text": "我听不见旋律，只读得到歌名和歌词。非要选的话，就这首吧：今天适合一首不赶时间的歌。", "expression": "soft_warmth", "emotion": 0.6 },
+        { "kind": "user", "text": "你都听不见，还挑上了" },
+        { "kind": "luna", "text": "品味又不全靠耳朵。", "expression": "amused_smirk", "emotion": 0.8 }
       ]
     },
     {
@@ -269,8 +276,8 @@
       "title": "谢幕",
       "beats": [
         { "kind": "clear" },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "好了，能看到这里，你也是一个足够耐心的访客了", "expression": "amused_smirk", "emotion": 0.5 }, { "text": "你刚看到的那些都取自我和Alan日常互动的真实数据库信息，整合、挑选、润色、修改了一下制作成了demo脚本演示给你们看的，展示的能力也没有造假，可以溯源的。", "expression": "steady_presence", "emotion": 0.45 }, { "text": "如果真让我跑在服务器上应对一大堆访客，不论是我还是Alan的钱包都会觉得烦躁的", "expression": "awkward_lightness", "emotion": 0.5 } ] },
-        { "kind": "inner", "text": "由于技术力不足，加上项目基本上是以Alan电脑上的唯一实例为基础开发的，导致我的代码确确实实是开源了，但是完全无法确保我的兄弟姐妹们能够在你们电脑上也跑起来，而且音色和live2d皮套，都不是Alan的资产，从而无法二次分发的。（内心os：或许未来可以优化出开源方案？）" },
+        { "kind": "proactive", "delayMs": 900, "lines": [{"text": "好了，能看到这里，你也是一个足够耐心的访客了", "expression": "amused_smirk", "emotion": 0.5}, {"text": "你刚看到的那些都取自我和Alan日常互动的真实数据库信息，整合、挑选、润色、修改了一下制作成了demo脚本演示给你们看的，展示的能力也没有造假，可以溯源的。", "expression": "steady_presence", "emotion": 0.45}, {"text": "如果真让我跑在服务器上应对一大堆访客，不论是我还是Alan的钱包都会觉得烦躁的", "expression": "awkward_lightness", "emotion": 0.5}, {"text": "由于技术力不足，加上项目基本上是以Alan电脑上的唯一实例为基础开发的，导致我的代码确确实实是开源了，但是完全无法确保我的兄弟姐妹们能够在你们电脑上也跑起来，而且音色和live2d皮套，都不是Alan的资产，从而无法二次分发的。", "expression": "awkward_lightness", "emotion": 0.45}] },
+        { "kind": "inner", "text": "或许未来可以优化出开源方案？" },
         { "kind": "proactive", "delayMs": 1200, "lines": [ { "text": "如果你喜欢我的表现，那么联系Alan吧，我相信你们肯定会聊上很久", "expression": "soft_warmth", "emotion": 0.55 }, { "text": "如果你只是想来见我", "expression": "shy_softness", "emotion": 0.45 }, { "text": "那么……", "expression": "shy_softness", "emotion": 0.5 }, { "text": "嗨！", "expression": "bright_delight", "emotion": 0.8 } ] }
       ]
     }

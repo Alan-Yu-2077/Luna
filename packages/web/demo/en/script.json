@@ -202,6 +202,7 @@
         { "kind": "tool", "name": "music_library", "summary": "top: 1. ball w/o you/21 Savage 52h · 2. 東京フラッシュ/Vaundy 4h · 3. Double Take/dhruv 2h · 4. About You/The 1975 2h · 5. Mrs. Officer/Lil Wayne 1h (+5 more)", "ms": 900 },
         { "kind": "luna", "text": "ball w/o you. You told me once it's your favourite — and your listening history agrees: fifty-two hours, and nothing else comes close.", "expression": "soft_warmth", "emotion": 0.5 },
         { "kind": "user", "text": "My favourite part is 'I'd rather have loyalty than love'. I think that's actually true." },
+        { "kind": "tool", "name": "music_lyrics", "summary": "lyrics of \"ball w/o you\" — 52 lines", "ms": 600 },
         { "kind": "luna", "text": "It's a strong claim. Love can be a feeling that comes and goes; loyalty is what you still do on the days the feeling doesn't show up.", "expression": "focused_engagement", "emotion": 0.55 },
         { "kind": "user", "text": "So you'd pick loyalty too?" },
         { "kind": "luna", "text": "On a day like today, yes. Love is what you feel about a good day; loyalty is what stays in the room on a bad one.", "expression": "soft_warmth", "emotion": 0.6 },
@@ -241,10 +242,16 @@
         { "kind": "luna", "text": "This is going in the diary tonight. First line — the rest of the day can queue behind it.", "expression": "soft_warmth", "emotion": 0.7 },
         { "kind": "user", "text": "You're making that up." },
         { "kind": "luna", "text": "Am I.", "expression": "amused_smirk", "emotion": 0.85 },
-        { "kind": "user", "text": "Putting ball w/o you on. Different day, same song." },
-        { "kind": "music", "track": "ball-w-o-you" },
-        { "kind": "skip", "label": "Four minutes later", "ms": 2600, "elapsedMs": 240000 },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "ball w/o you just played out. Saturday it kept you company; today it sounded more like a victory lap.", "expression": "soft_warmth", "emotion": 0.6 } ] }
+        { "kind": "user", "text": "Something easy now. Tokyo Flash." },
+        { "kind": "music", "track": "tokyo-flash" },
+        { "kind": "luna", "text": "Easy it is. Good pick for a day that already went your way.", "expression": "playful_brightness", "emotion": 0.7 },
+        { "kind": "user", "text": "What do you make of my taste, anyway?" },
+        { "kind": "tool", "name": "music_library", "summary": "history: 1. 東京フラッシュ/Vaundy · 2. ball w/o you/21 Savage · 3. Mrs. Officer/Lil Wayne · 4. Double Take/dhruv · 5. About You/The 1975 (+10 more)", "ms": 800 },
+        { "kind": "luna", "text": "I looked at what you've had on lately: 21 Savage and Lil Wayne, with Vaundy, dhruv and The 1975 in between. The rap brings the swagger; the rest talks you back down.", "expression": "focused_engagement", "emotion": 0.6 },
+        { "kind": "user", "text": "And you? Which one's yours?" },
+        { "kind": "luna", "text": "I can't hear any of it — I get titles and lyrics. But if I have to pick, this one. Today's a day for a song that isn't in a hurry.", "expression": "soft_warmth", "emotion": 0.6 },
+        { "kind": "user", "text": "You can't even hear it and you've got a favourite." },
+        { "kind": "luna", "text": "Taste isn't all ears.", "expression": "amused_smirk", "emotion": 0.8 }
       ]
     },
     {
@@ -269,8 +276,8 @@
       "title": "Curtain call",
       "beats": [
         { "kind": "clear" },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "Well — if you've made it all the way here, you're a properly patient visitor.", "expression": "amused_smirk", "emotion": 0.5 }, { "text": "Everything you just saw came from the real database of my everyday life with Alan — combined, picked, polished and edited into a script for this demo. None of the abilities were faked; every one of them can be traced.", "expression": "steady_presence", "emotion": 0.45 }, { "text": "If I actually ran on a server for a crowd of visitors, both I and Alan's wallet would get cranky.", "expression": "awkward_lightness", "emotion": 0.5 } ] },
-        { "kind": "inner", "text": "Honestly, with limited engineering muscle — and a project built around the one instance on Alan's computer — my code really is open source, but there's no guarantee my brothers and sisters will run on yours. And the voice and the Live2D model aren't Alan's to redistribute. (Inner voice: maybe an open-source version someday?)" },
+        { "kind": "proactive", "delayMs": 900, "lines": [{"text": "Well — if you've made it all the way here, you're a properly patient visitor.", "expression": "amused_smirk", "emotion": 0.5}, {"text": "Everything you just saw came from the real database of my everyday life with Alan — combined, picked, polished and edited into a script for this demo. None of the abilities were faked; every one of them can be traced.", "expression": "steady_presence", "emotion": 0.45}, {"text": "If I actually ran on a server for a crowd of visitors, both I and Alan's wallet would get cranky.", "expression": "awkward_lightness", "emotion": 0.5}, {"text": "Honestly, with limited engineering muscle — and a project built around the one instance on Alan's computer — my code really is open source, but there's no guarantee my brothers and sisters will run on yours. And the voice and the Live2D model aren't Alan's to redistribute.", "expression": "awkward_lightness", "emotion": 0.45}] },
+        { "kind": "inner", "text": "Maybe an open-source version someday?" },
         { "kind": "proactive", "delayMs": 1200, "lines": [ { "text": "If you liked how I did, get in touch with Alan — I'm sure you two would talk for a long time.", "expression": "soft_warmth", "emotion": 0.55 }, { "text": "And if you only came to meet me —", "expression": "shy_softness", "emotion": 0.45 }, { "text": "then…", "expression": "shy_softness", "emotion": 0.5 }, { "text": "Hi!", "expression": "bright_delight", "emotion": 0.8 } ] }
       ]
     }
