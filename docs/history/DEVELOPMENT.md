@@ -785,6 +785,8 @@ Fact:
   sizes are `clamp`ed to the window width, so the full size arrives around 1,300px wide and a 1,024px window
   gets 45px, clear of her. One stylesheet, so the desktop app's menu grows too.
 - `bun test` 2177 pass. Browser: 1440×900 (zh) and 1024×700 (en).
+- CI: the Windows runner once took 6.2s to create `music-cli`'s SQLite fixture (bun's hook default is 5s), so
+  that `beforeAll` now allows 30s — a test-only change; the file itself was unchanged since v0.45.15.
 
 Inference:
 

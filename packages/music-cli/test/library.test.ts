@@ -49,7 +49,8 @@ beforeAll(() => {
   db.run(`INSERT INTO historyPlaylists VALUES (?,?,?)`, [1, "9001", JSON.stringify({ id: "9001", name: "学习的vibe", trackCount: 13 })]);
   db.run(`INSERT INTO historyPlaylists VALUES (?,?,?)`, [2, "9002", JSON.stringify({ id: "9002", name: "light的vibe" })]);
   db.close();
-});
+  // A fresh SQLite file on the Windows CI runner once took 6.2s here (bun's hook default is 5s).
+}, 30_000);
 
 afterAll(() => {
   for (const suffix of ["", "-shm", "-wal"]) rmSync(DB_PATH + suffix, { force: true });
