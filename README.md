@@ -2,8 +2,6 @@
 
 <img src="docs/assets/icon.png" width="96" alt="Luna" />
 
-# Luna
-
 **An experimental embodied-agent project.**
 
 Luna is where I — Alan, an agent engineer — try today's agent-harness ideas on something that has to

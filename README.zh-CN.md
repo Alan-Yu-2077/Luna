@@ -2,8 +2,6 @@
 
 <img src="docs/assets/icon.png" width="96" alt="Luna" />
 
-# Luna
-
 **一个实验性的具身智能 Agent 项目。**
 
 我是 Alan，一名 agent 工程师。Luna 是我拿来试验当下 agent 设计思路的地方，而且试验对象得真的和一个人
