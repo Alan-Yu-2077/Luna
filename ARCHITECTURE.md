@@ -252,6 +252,8 @@ two seams that already existed:
 - **The voice seam.** `WebAudioSink`'s injectable `fetchSpeechFn` resolves a line to a pre-rendered
   mp3 (`scripts/renderVoice.ts` synthesizes every script line through api_v2 with the request the
   live forward builds, so it is her voice). A line without a file takes the sink's real failure path.
+  In the app and the replay alike, a line's expression is set when its utterance starts (voice is serial),
+  so a message delivered while an earlier line is still being spoken cannot put its face on that line.
 
 The script (`web/demo/script.json`) is authored as beats — `user` / `luna` / `tool` (with the real
 `summarize()` line and an optional progress note) / `proactive` (lines, or tools + a quiet note; a
@@ -261,7 +263,8 @@ on the turntable) / `press_play` and `open_file` (his hand: the player, the desk
 cycle, in-chat) — and compiled (`demo/compile.ts`) into
 `ServerEvent` frames timed like a real turn plus **stage cues** the app never sees; every frame is
 parsed against the protocol at compile time, and a test loads the shipped script and its data files.
-The tape's rules are the server's: the dream block emits what ws.ts + `cycle.ts` emit and **holds** at
+The tape keeps a real turn's time (v0.51.0): the model's latency before it answers and before each tool
+call, a readable stream, and each message held until her current line is nearly spoken. The tape's rules are the server's: the dream block emits what ws.ts + `cycle.ts` emit and **holds** at
 `finished_idle` until the visitor's ☀️ Wake; the door (`dream.enter`) refuses only an open turn, so a
 run's tail between turns pauses under a dream and resumes after it; turns join history as their
 closing frame fires. Two more injected faces carry the rest: `demo/demoMusic.ts` answers the player
@@ -276,7 +279,8 @@ invented*), the curtain with a sweeping clock under which the compiler advances 
 scene pill with its picker, and his hand when the story needs it — a play prompt over the player, a
 drawn desk with the folder she left and the first page of the paper in it (a real link out, no copied
 body text); the next scripted line waits behind either; on a phone, one card asking to open the replay on a
-computer (nothing else loads behind it — the show is not adapted to phones); and after each scene, the engineering notes — a note clipped to the stage opens a pile of
+computer (nothing else loads behind it — the show is not adapted to phones); a door that counts her ~10 MB in
+(`demo/preload.ts`) before Enter opens; the curtain call's inner-voice card; and after each scene, the engineering notes — a note clipped to the stage opens a pile of
 notebook sheets over the frozen page, one bilingual `demo/notes.json` whose every code block a test holds
 to its file and line. `demo.html` sets the `window.lunaDemo` bridge (including her portrait
 framing); `bun run build:demo` emits a separate `dist-demo/` that the packaged app never carries,

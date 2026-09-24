@@ -2,6 +2,8 @@ import { describe, expect, test } from 'bun:test';
 import type { ServerEvent, Setting } from '@luna/protocol';
 import { compileScript, PACING, type Compiled, type SinkCall, type StageCue } from './compile';
 const PACING_GAP = PACING.gapMs;
+const THINK = PACING.thinkMs;
+const CHUNK = PACING.chunkMs;
 import { DemoScript } from './script';
 import { createTapeClient, type Scheduler, type TapeClient } from './tapeClient';
 
@@ -151,9 +153,9 @@ describe('send', () => {
     expect(tape.phase()).toBe('running');
     clock.advance(0);
     expect(types(log).slice(1)).toEqual(['turn.started']);
-    clock.advance(700);
+    clock.advance(THINK);
     expect(types(log)).toContain('tool.started');
-    clock.advance(25); // "yo" is one chunk
+    clock.advance(CHUNK); // "yo" is one chunk
     expect(types(log).slice(-2)).toEqual(['tool.progress', 'tool.finished']);
     clock.advance(300); // the gap, then the turn closes and the action cue lands on the same tick
     expect(types(log).slice(-1)).toEqual(['turn.result']);
@@ -168,7 +170,7 @@ describe('send', () => {
     tape.connect();
     clock.advance(0);
     tape.send({ type: 'chat.send', text: 'hi' });
-    clock.advance(700 + 25 + 1000 - 1); // one chunk of "yo" + a 1000ms voice
+    clock.advance(THINK + CHUNK + 1000 - 1); // one chunk of "yo" + a 1000ms voice
     expect(log.arms).toEqual(['hi']);
     clock.advance(1);
     expect(log.arms).toEqual(['hi', 'again']);
@@ -203,7 +205,7 @@ describe('scenes', () => {
     clock.advance(10_000);
     tape.nextScene();
     expect(log.starts).toEqual([0, 1]);
-    clock.advance(100 + 700 + 25 * 2 + 1000);
+    clock.advance(100 + THINK + CHUNK * 2 + 1000);
     expect(types(log).slice(-2)).toEqual(['tool.finished', 'proactive.finished']);
     expect(log.arms).toEqual(['hi', 'again']);
     expect(log.ends).toEqual([
@@ -219,7 +221,7 @@ describe('scenes', () => {
     tape.connect();
     clock.advance(0);
     tape.send({ type: 'chat.send', text: 'hi' });
-    clock.advance(700); // turn.started fired, the message frames are pending
+    clock.advance(THINK); // turn.started fired, the message frames are pending
     const before = types(log).length;
     tape.jumpTo(1);
     expect(log.starts).toEqual([0, 1]);
@@ -242,8 +244,8 @@ describe('stage cues (v0.47.0)', () => {
     clock.advance(0);
     expect(log.stages).toEqual([{ kind: 'music', track: 'hw' }]);
     expect(types(log).filter((t) => t.startsWith('stage'))).toEqual([]);
-    // "on" streams (700 + 25), its voice runs 500 → the curtain falls at 1225 and lasts 1000.
-    clock.advance(700 + 25 + 500);
+    // "on" streams (think + one chunk), its voice runs 500 → then the curtain falls and lasts 1000.
+    clock.advance(THINK + CHUNK + 500);
     expect(log.stages[1]).toEqual({ kind: 'skip', label: 'later', ms: 1000 });
     const atCurtain = types(log).length;
     clock.advance(999);
@@ -371,7 +373,7 @@ describe('pause and resume (← Menu, then Talk)', () => {
     tape.connect();
     clock.advance(0);
     tape.send({ type: 'chat.send', text: 'hi' });
-    clock.advance(700); // turn.started fired; message frames not yet
+    clock.advance(THINK); // turn.started fired; message frames not yet
     tape.close();
     expect(log.status).toEqual(['open', 'closed']);
     const before = log.events.length;
@@ -382,7 +384,7 @@ describe('pause and resume (← Menu, then Talk)', () => {
     expect(types(log).slice(before)).toEqual(['settings.state']);
     clock.advance(0);
     expect(types(log).slice(before + 1)).toEqual(['tool.started']);
-    clock.advance(25 + 1000);
+    clock.advance(CHUNK + 1000);
     expect(types(log).filter((t) => t === 'turn.started')).toHaveLength(1);
     expect(types(log).filter((t) => t === 'turn.result')).toHaveLength(1);
     expect(log.arms).toEqual(['hi', 'again']);

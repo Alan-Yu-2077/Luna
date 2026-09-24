@@ -37,7 +37,8 @@ beforeEach(() => {
   Bun.env['LUNA_PROACTIVE'] = '1';
   // Disable quiet-hours so the tick is clock-independent (the default 0–5 would
   // short-circuit on a UTC CI runner landing at 00:00–05:59).
-  Bun.env['LUNA_PROACTIVE_QUIET_HOURS'] = '';
+  // v0.51.0: not '' — Number('') is 0, so '' made midnight quiet and these failed 00:00–00:59 UTC.
+  Bun.env['LUNA_PROACTIVE_QUIET_HOURS'] = 'none';
   resetSessions();
   resetDreamStateForTests(); // clear any fire-and-forget dream leaked from a prior test
   resetProactiveFireStateForTests(); // clear the in-flight lock + per-key debounce between tests

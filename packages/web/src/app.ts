@@ -5,6 +5,8 @@ import { createTapeClient } from './demo/tapeClient';
 import { mountDesktopOnly, mountDirector, mountGuide, mountLobbyLinks, type Director } from './demo/director';
 import { looksLikePhone, probeDevice } from './demo/phone';
 import { mountNotesStack } from './demo/notesStack';
+import { modelFiles, preload } from './demo/preload';
+import { speakerIn } from './demo/compile';
 import { LunaWsClient, type WsStatus } from './wsClient';
 import { resolveWsUrl } from './wsUrl';
 import { isInteractivePoint, modelRectFromVars } from './ui/petHitTest';
@@ -139,10 +141,28 @@ async function boot(): Promise<void> {
     // v0.50.1 (owner): no phone version — a phone is asked to open the replay on a computer, and nothing
     // behind the card loads (no tape, no model, no voice).
     if (looksLikePhone(probeDevice(window))) {
+      document.getElementById('demo-splash')?.remove();
       mountDesktopOnly(document, window);
       return;
     }
     const guide = mountGuide(document, { lang: known });
+    document.getElementById('demo-splash')?.remove();
+    // v0.51.0: her model's files download while the visitor reads the card; Enter shows the progress.
+    const modelUrl = resolveModelUrl() ?? './models/yumi/yumi.model3.json';
+    const fetchAsset = (u: string): Promise<Response> => fetch(u);
+    const ready = (): void => guide.progress(null);
+    const fallback = setTimeout(ready, 30_000); // a stalled file must not lock the door
+    void modelFiles(modelUrl, fetchAsset)
+      .then((files) =>
+        preload(['./live2dcubismcore.min.js', ...files], fetchAsset, ({ loaded, total }) => {
+          if (total > 0) guide.progress((loaded / total) * 100);
+        }),
+      )
+      .catch(() => undefined)
+      .finally(() => {
+        clearTimeout(fallback);
+        ready();
+      });
     const lang = await guide.language;
     storeDemoChoice();
     if (lang !== urlLang) {
@@ -445,7 +465,12 @@ async function boot(): Promise<void> {
       // v0.50.0: the engineering notes, one stack for the whole show; a scene without notes gets no button.
       // Frozen means silent too: a last line still playing stops with her face.
       const notesStack = bundle.notes
-        ? mountNotesStack(document, { notes: bundle.notes, lang: uiLang(), onFreeze: (on) => on && audio.stop() })
+        ? mountNotesStack(document, {
+            notes: bundle.notes,
+            lang: uiLang(),
+            onFreeze: (on) => on && audio.stop(),
+            speaker: (id, text) => speakerIn(bundle.compiled.scenes.find((sc) => sc.id === id), text),
+          })
         : null;
       director ??= mountDirector(document, refs, {
         sceneTitles: bundle.titles,
@@ -472,17 +497,26 @@ async function boot(): Promise<void> {
           if (call.kind === 'action') live2d.playAction?.(call.name, call.intensity);
           else live2d.pulse?.(call.pose, call.ms);
         },
-        onSceneStart: (i, scene) => director?.sceneStart(i, scene.title),
+        onSceneStart: (i, scene) => {
+          // v0.51.0 (owner): a new scene is another day — whatever was on the turntable is off.
+          bundle.music?.set(null);
+          director?.sceneStart(i, scene.title);
+        },
         onSceneEnd: (i, hasNext) => director?.sceneEnd(i, hasNext),
         // v0.47.0: the director's devices — the curtain is DOM, the turntable is the music store
         // the card polls through the demo fetch.
         onStage: (cue) => {
-          if (cue.kind === 'skip') director?.skip(cue.label, cue.ms);
+          if (cue.kind === 'skip') {
+            director?.skip(cue.label, cue.ms);
+            if (cue.elapsedMs !== undefined) bundle.music?.advance(cue.elapsedMs);
+          }
           else if (cue.kind === 'music') bundle.music?.set(cue.track);
           else if (cue.kind === 'press_play') {
             const track = cue.track;
             director?.pressPlay(cue.label, () => bundle.music?.set(track));
           } else if (cue.kind === 'open_file') director?.openFile(cue);
+          else if (cue.kind === 'clear') windowView.renderHistory([]); // the real clear-and-redraw, with nothing to redraw
+          else if (cue.kind === 'inner') director?.inner(cue.text);
           // 'await' never reaches here — the tape holds on it itself (a finished dream waits for Wake).
         },
       });

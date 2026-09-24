@@ -7,7 +7,7 @@ import type { AudioSink, Live2DSink } from './sinks';
 
 type Call = [string, ...unknown[]];
 
-function harness() {
+function harness(speakOverride?: AudioSink['speak']) {
   const calls: Call[] = [];
   // typing-indicator states kept OUT of `calls` (like audioStops) so the exact-
   // equality `calls` assertions stay stable while we assert the dots separately.
@@ -31,9 +31,12 @@ function harness() {
   const spoken: string[] = [];
   const audioStops: number[] = []; // kept OUT of `calls` so exact-equality tests stay stable
   const audio: AudioSink = {
-    speak: async (t) => {
-      spoken.push(t);
-    },
+    speak:
+      speakOverride ??
+      (async (t, _voice, onStart) => {
+        spoken.push(t);
+        onStart?.(); // a real sink calls this when the audio begins
+      }),
     stop: () => {
       audioStops.push(1);
     },
@@ -70,6 +73,28 @@ describe('frontend controller — message-tool consumption', () => {
       ['expr', 'soft_warmth', 0.6],
     ]);
     expect(h.spoken).toEqual(['想你了']);
+  });
+
+  // v0.51.0: voice is serial, so the second of two quick messages must not put its face on the first
+  // line — each expression waits for its own utterance to start.
+  test('an expression lands when its line starts speaking, not when the message arrives', () => {
+    const starts: Array<() => void> = [];
+    const h = harness(
+      (_t, _voice, onStart) =>
+        new Promise<boolean>(() => {
+          starts.push(() => onStart?.()); // queued: this utterance starts only when we say so
+        }),
+    );
+    const faces = () => h.calls.filter((c) => c[0] === 'expr').map((c) => c[1]);
+    h.handle({ type: 'tool.started', call_id: 'a', tool_name: 'message', input: {} });
+    h.handle(okMessage('a', delivery({ text: 'one', expression: 'soft_warmth' })));
+    h.handle({ type: 'tool.started', call_id: 'b', tool_name: 'message', input: {} });
+    h.handle(okMessage('b', delivery({ text: 'two', expression: 'annoyed_resistance' })));
+    expect(faces()).toEqual([]); // both delivered, neither spoken yet
+    starts[0]?.();
+    expect(faces()).toEqual(['soft_warmth']);
+    starts[1]?.();
+    expect(faces()).toEqual(['soft_warmth', 'annoyed_resistance']);
   });
 
   test('history event replays prior turns through renderHistory (mapped shape)', () => {

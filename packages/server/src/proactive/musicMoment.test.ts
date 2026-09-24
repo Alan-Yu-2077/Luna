@@ -58,7 +58,8 @@ beforeEach(() => {
   migrate(db, join(import.meta.dir, '..', 'migrations'));
   setMemoryDb(db);
   Bun.env['LUNA_PROACTIVE'] = '1';
-  Bun.env['LUNA_PROACTIVE_QUIET_HOURS'] = ''; // clock-independent by default
+  // clock-independent by default. v0.51.0: not '' — Number('') is 0, so '' made midnight quiet.
+  Bun.env['LUNA_PROACTIVE_QUIET_HOURS'] = 'none';
   resetSessions();
   resetDreamStateForTests();
   resetProactiveFireStateForTests();

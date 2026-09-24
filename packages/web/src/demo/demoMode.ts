@@ -62,6 +62,11 @@ export type DemoBundle = {
 // snapshot degrades (silent lines / an empty server-settings panel) rather than blocking the boot.
 // v0.48.1: the tape is per language — `demo/<lang>/` holds the script, her voice and what she wrote;
 // `demo/` itself holds what both languages share (the server's English, the covers).
+// v0.51.0: the tape, her voice manifest, the notes and the data are plain files with unhashed names,
+// and Pages lets a browser keep them for ten minutes — right after a deploy that pairs the new code
+// with the old tape. `no-cache` still uses the copy, but only after the server confirms it is current.
+export const FRESH: RequestInit = { cache: 'no-cache' };
+
 export async function loadDemo(
   bridge: DemoBridge,
   lang: UiLang = 'en',
@@ -70,10 +75,10 @@ export async function loadDemo(
   const { base } = bridge;
   const langBase = `${base}${lang}/`;
   const [scriptRes, voiceRes, settingsRes, notesRes] = await Promise.all([
-    fetchFn(`${langBase}script.json`),
-    fetchFn(`${langBase}voice/manifest.json`),
-    fetchFn(`${base}data/settings.json`),
-    fetchFn(`${base}notes.json`),
+    fetchFn(`${langBase}script.json`, FRESH),
+    fetchFn(`${langBase}voice/manifest.json`, FRESH),
+    fetchFn(`${base}data/settings.json`, FRESH),
+    fetchFn(`${base}notes.json`, FRESH),
   ]);
   if (!scriptRes.ok) throw new Error(`demo script unreachable: ${scriptRes.status}`);
   const script = DemoScript.parse(await scriptRes.json());

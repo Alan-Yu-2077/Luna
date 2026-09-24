@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 250" width="900" height="250" role="img" aria-label="进入 Luna 的现场回放">
+  <style>
+    .arrow { fill: none; stroke: #e0453a; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    .hand { font-family: "Chalkboard SE", "Comic Sans MS", "Segoe Print", "Bradley Hand", cursive; font-size: 22px; font-weight: 700; fill: #e0453a; }
+    .t { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Arial, sans-serif; }
+    .l { animation: nudge-l 1.6s ease-in-out infinite; }
+    .r { animation: nudge-r 1.6s ease-in-out infinite; }
+    .u { animation: nudge-u 1.6s ease-in-out infinite; }
+    @keyframes nudge-l { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(7px, 3px); } }
+    @keyframes nudge-r { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-7px, -3px); } }
+    @keyframes nudge-u { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(0, 6px); } }
+  </style>
+  <defs>
+    <filter id="s" x="-10%" y="-20%" width="120%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#27496b" flood-opacity="0.22"/></filter>
+  </defs>
+  <!-- the button -->
+  <g filter="url(#s)">
+    <rect x="186" y="72" width="528" height="112" rx="56" fill="#a9d3f5"/>
+    <rect x="186" y="64" width="528" height="112" rx="56" fill="#bfe0fb" stroke="#ffffff" stroke-width="4"/>
+  </g>
+  <circle cx="250" cy="120" r="32" fill="#27496b"/>
+  <path d="M241 104 L266 120 L241 136 Z" fill="#ffffff" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+  <text class="t" x="302" y="116" font-size="33" font-weight="800" fill="#27496b">进入 Luna 的现场回放</text>
+  <text class="t" x="303" y="148" font-size="15" font-weight="500" fill="#3d5f86">真实前端 · 她自己的声音 · 每一幕后面都有工程笔记</text>
+  <!-- red arrows -->
+  <g class="l">
+    <path class="arrow" d="M34 58 C 70 40, 128 52, 160 98"/>
+    <path class="arrow" d="M143 92 L 162 102 L 165 80"/>
+    <text class="hand" x="22" y="40" transform="rotate(-6 22 40)">从这里开始</text>
+  </g>
+  <g class="r">
+    <path class="arrow" d="M866 208 C 830 222, 772 210, 742 160"/>
+    <path class="arrow" d="M760 166 L 740 157 L 737 179"/>
+    <text class="hand" x="744" y="236" transform="rotate(4 744 236)">点我！</text>
+  </g>
+  <g class="u">
+    <path class="arrow" d="M612 8 C 606 26, 600 36, 592 50"/>
+    <path class="arrow" d="M584 38 L 591 52 L 604 44"/>
+  </g>
+</svg>

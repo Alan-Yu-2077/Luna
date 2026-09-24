@@ -23,7 +23,7 @@ Bun.env['LUNA_PROACTIVE'] = '1';
 // short idle threshold + no cooldown so the soak actually exercises the loop
 Bun.env['LUNA_PROACTIVE_IDLE_THRESHOLD_MS'] = '1';
 Bun.env['LUNA_PROACTIVE_MIN_INTERVAL_MS'] = '1';
-Bun.env['LUNA_PROACTIVE_QUIET_HOURS'] = '';
+Bun.env['LUNA_PROACTIVE_QUIET_HOURS'] = 'none'; // not '': Number('') is 0, which would quiet midnight
 
 const db = new Database(':memory:', { strict: true });
 migrate(db, join(import.meta.dir, '..', 'src', 'migrations'));

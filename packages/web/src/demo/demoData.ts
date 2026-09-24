@@ -69,6 +69,7 @@ export function createDemoFetch(
     }
     const target = demoRoute(bases, url);
     if (target === null) return new Response('not found', { status: 404 });
-    return fetchFn(target, init);
+    // Revalidated like the tape (demoMode's FRESH): these files change with every deploy of the show.
+    return fetchFn(target, { ...init, cache: 'no-cache' });
   };
 }

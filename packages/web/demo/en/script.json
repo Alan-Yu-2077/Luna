@@ -3,7 +3,7 @@
   "version": 1,
   "music": {
     "tracks": [
-      { "id": "heat-waves", "title": "Heat Waves", "artist": "Glass Animals", "album": "Dreamland", "duration": 238, "cover": "heat-waves", "affinity": { "sessions": 138, "listenedSeconds": 25200, "rank": 1 } },
+      { "id": "ball-w-o-you", "title": "ball w/o you", "artist": "21 Savage", "album": "i am > i was", "duration": 195, "cover": "ball-w-o-you", "affinity": { "sessions": 212, "listenedSeconds": 187200, "rank": 1 } },
       { "id": "tokyo-flash", "title": "東京フラッシュ", "artist": "Vaundy", "album": "strobo", "duration": 225, "cover": "tokyo-flash", "affinity": { "sessions": 84, "listenedSeconds": 14400, "rank": 2 } },
       { "id": "double-take", "title": "Double Take", "artist": "dhruv", "album": "rapunzel", "duration": 187, "cover": "double-take", "affinity": { "sessions": 51, "listenedSeconds": 7200, "rank": 3 } },
       { "id": "about-you", "title": "About You", "artist": "The 1975", "album": "Being Funny in a Foreign Language", "duration": 326, "cover": "about-you", "affinity": { "sessions": 30, "listenedSeconds": 6000, "rank": 4 } },
@@ -197,13 +197,15 @@
         { "kind": "luna", "text": "You don't have to explain it for it to count. It counted.", "expression": "gentle_concern", "emotion": 0.5 },
         { "kind": "user", "text": "I just feel like I wasted the whole day." },
         { "kind": "luna", "text": "Not wasted. Wasted is when nothing happens; today cost you something, which is a different thing.", "expression": "gentle_concern", "emotion": 0.55 },
-        { "kind": "press_play", "track": "heat-waves", "label": "Open NetEase Cloud Music and put on your favourite playlist" },
-        { "kind": "user", "text": "Put some music on." },
-        { "kind": "pause", "ms": 900 },
-        { "kind": "luna", "text": "Heat Waves. You always pause it just before the end.", "expression": "soft_warmth", "emotion": 0.5 },
-        { "kind": "user", "text": "What's it even about?" },
-        { "kind": "tool", "name": "music_lyrics", "summary": "lyrics of \"Heat Waves\" — 34 lines", "ms": 800 },
-        { "kind": "luna", "text": "Missing someone in the middle of a good time. The bit you stop before is where it admits it can't fix anything — which is probably why you stop.", "expression": "gentle_concern", "emotion": 0.5 },
+        { "kind": "press_play", "track": "ball-w-o-you", "label": "Open NetEase Cloud Music and put on your favourite playlist" },
+        { "kind": "user", "text": "Music's on." },
+        { "kind": "tool", "name": "recall", "summary": "1 hit", "ms": 700 },
+        { "kind": "tool", "name": "music_library", "summary": "top: 1. ball w/o you/21 Savage 52h · 2. 東京フラッシュ/Vaundy 4h · 3. Double Take/dhruv 2h · 4. About You/The 1975 2h · 5. Mrs. Officer/Lil Wayne 1h (+5 more)", "ms": 900 },
+        { "kind": "luna", "text": "ball w/o you. You told me once it's your favourite — and your listening history agrees: fifty-two hours, and nothing else comes close.", "expression": "soft_warmth", "emotion": 0.5 },
+        { "kind": "user", "text": "My favourite part is 'I'd rather have loyalty than love'. I think that's actually true." },
+        { "kind": "luna", "text": "It's a strong claim. Love can be a feeling that comes and goes; loyalty is what you still do on the days the feeling doesn't show up.", "expression": "focused_engagement", "emotion": 0.55 },
+        { "kind": "user", "text": "So you'd pick loyalty too?" },
+        { "kind": "luna", "text": "On a day like today, yes. Love is what you feel about a good day; loyalty is what stays in the room on a bad one.", "expression": "soft_warmth", "emotion": 0.6 },
         { "kind": "pause", "ms": 6000 },
         { "kind": "action", "name": "sighRelease" },
         { "kind": "luna", "text": "Leave it on, or don't. Sit with me a while either way.", "expression": "soft_warmth", "emotion": 0.6 },
@@ -240,11 +242,10 @@
         { "kind": "luna", "text": "This is going in the diary tonight. First line — the rest of the day can queue behind it.", "expression": "soft_warmth", "emotion": 0.7 },
         { "kind": "user", "text": "You're making that up." },
         { "kind": "luna", "text": "Am I.", "expression": "amused_smirk", "emotion": 0.85 },
-        { "kind": "user", "text": "Putting it on. This time I'm letting it finish." },
-        { "kind": "music", "track": "heat-waves" },
-        { "kind": "skip", "label": "Four minutes later", "ms": 2600 },
-        { "kind": "music", "track": "tokyo-flash" },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "Heat Waves just finished. All the way to the end — first time I've heard you let it.", "expression": "soft_warmth", "emotion": 0.6 } ] }
+        { "kind": "user", "text": "Putting ball w/o you on. Different day, same song." },
+        { "kind": "music", "track": "ball-w-o-you" },
+        { "kind": "skip", "label": "Four minutes later", "ms": 2600, "elapsedMs": 240000 },
+        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "ball w/o you just played out. Saturday it kept you company; today it sounded more like a victory lap.", "expression": "soft_warmth", "emotion": 0.6 } ] }
       ]
     },
     {
@@ -268,8 +269,10 @@
       "id": "curtain-call",
       "title": "Curtain call",
       "beats": [
-        { "kind": "skip", "label": "Later", "ms": 2400 },
-        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "That's the replay. Everything you just watched, I can actually do — the memory, the music, the weather, the web, the code, the paper on your desk, the dream. Same code, same voice.", "expression": "steady_presence", "emotion": 0.45 }, { "text": "What you didn't see is the part that takes a person: deciding whether I should have said any of it. That's still his job — the one I was talking to.", "expression": "soft_warmth", "emotion": 0.5 }, { "text": "If you want to see how I'm built, the engineering map is one link away, back at the front door. If you just wanted to meet me — hi.", "expression": "shy_softness", "emotion": 0.6 } ] }
+        { "kind": "clear" },
+        { "kind": "proactive", "delayMs": 900, "lines": [ { "text": "Well — if you've made it all the way here, you're a properly patient visitor.", "expression": "amused_smirk", "emotion": 0.5 }, { "text": "Everything you just saw came from the real database of my everyday life with Alan — combined, picked, polished and edited into a script for this demo. None of the abilities were faked; every one of them can be traced.", "expression": "steady_presence", "emotion": 0.45 }, { "text": "If I actually ran on a server for a crowd of visitors, both I and Alan's wallet would get cranky.", "expression": "awkward_lightness", "emotion": 0.5 } ] },
+        { "kind": "inner", "text": "Honestly, with limited engineering muscle — and a project built around the one instance on Alan's computer — my code really is open source, but there's no guarantee my brothers and sisters will run on yours. And the voice and the Live2D model aren't Alan's to redistribute. (Inner voice: maybe an open-source version someday?)" },
+        { "kind": "proactive", "delayMs": 1200, "lines": [ { "text": "If you liked how I did, get in touch with Alan — I'm sure you two would talk for a long time.", "expression": "soft_warmth", "emotion": 0.55 }, { "text": "And if you only came to meet me —", "expression": "shy_softness", "emotion": 0.45 }, { "text": "then…", "expression": "shy_softness", "emotion": 0.5 }, { "text": "Hi!", "expression": "bright_delight", "emotion": 0.8 } ] }
       ]
     }
   ]

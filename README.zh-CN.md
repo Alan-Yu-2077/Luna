@@ -1,184 +1,126 @@
 <div align="center">
 
-<img src="docs/assets/icon.png" width="108" alt="Luna" />
+<img src="docs/assets/icon.png" width="96" alt="Luna" />
 
 # Luna
 
-**住在你桌面上的 AI 伙伴——她有记忆、有感知、能做事、会说话。**
+**一个实验性的具身智能 Agent 项目。**
 
-一颗 LLM 大脑:分层记忆与梦境沉淀、主动性、行动完整性护栏、代码能力——
-以 Live2D 立绘为身体,配上口型同步的自定义语音。
+我是 Alan，一名 agent 工程师。Luna 是我拿来试验当下 agent 设计思路的地方，而且试验对象得真的和一个人
+一起过日子：睡一觉会整理记忆，知道什么时候该主动、什么时候该闭嘴，工具都关在安全护栏里，还有身体和声音。
+
+<a href="https://alan-yu-2077.github.io/Luna/"><img src="docs/assets/replay-cta.zh.svg" width="720" alt="进入 Luna 的现场回放：真实前端 · 她自己的声音 · 每一幕后面都有工程笔记" /></a>
+
+<a href="https://alan-yu-2077.github.io/Luna/engineering/"><img src="docs/assets/map-cta.zh.svg" width="420" alt="工程图谱：把 agent 的骨架摊开给你看" /></a>
+
+[English](README.md) · **简体中文**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Runtime: Bun](https://img.shields.io/badge/Bun-%E2%89%A5%201.2-black?logo=bun&logoColor=white)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](tsconfig.json)
-[![Desktop: Electron](https://img.shields.io/badge/Electron-%E6%A1%8C%E9%9D%A2%E5%AE%A0%E7%89%A9-47848F?logo=electron&logoColor=white)](packages/desktop)
-
-[English](README.md) · **简体中文**
-
-<img src="docs/assets/moment-fries.png" width="820" alt="Luna,一个 Live2D 桌面伙伴,在玩梗" />
-
-[![在线演示 · 在浏览器里见她](https://img.shields.io/badge/%E2%96%B6_%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%A7%81%E5%A5%B9-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
-[![工程图谱 · 看她怎么搭的](https://img.shields.io/badge/%E2%9A%99_%E5%B7%A5%E7%A8%8B%E5%9B%BE%E8%B0%B1-%E7%9C%8B%E5%A5%B9%E6%80%8E%E4%B9%88%E6%90%AD%E7%9A%84-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
-
-<sub>演示用的是真实的前端和渲染引擎,跑在一盘预录的脚本磁带上——声音是她自己的音色,预先渲染好;
-中文、英文两个版本,场景相同,进门时选。
-和 app 的区别都在她之外:台词替你打好(你只按 ➤)、顶部的场景药丸带着「下一幕」、每次时间跳跃拉一道幕。
-每一幕演完,舞台上别着的便签会打开<b>工程笔记</b>:她为什么这么说,背后是什么机制、哪段源码,每段代码都钉在一个提交上。请用电脑打开,没有做手机版。</sub>
-
-<sub>这个仓库是<b>作为参考公开的工程本身</b>,不是一个用来分发的产品。<br/>
-没有安装包:Luna 是一个人的伙伴,真正要紧的那个实例只活在一台机器上。代码你可以读、可以 clone、可以拿走任何你想要的部分。</sub>
 
 </div>
 
 ---
 
-## ✨ 特性
+## ▶ 现场回放
 
-- 🧠 **三层记忆 + 梦境** —— 滚动工作记忆、按显著性沉淀的耐久对话层、结构化长期事实,全部落在
-  一个本地 SQLite 文件;离线**梦境循环**把一天消化成事实、日记和提炼出的技能。混合召回融合
-  embedding 语义、关键词、新近度,并带"相关性楼层"——真正相关的老记忆不会被新消息埋掉。
-- 🌱 **主动性** —— 她会主动开口:静默感知的时间阶梯、天气突变与重连钩子、追想式跟进,全部跑在
-  确定性的、可调的护栏上(免打扰时段、主动强度),而不是"每 N 分钟骚扰一次"的定时器。
-- ⚡ **全链路流式** —— 一条 WebSocket、一份服务端与前端共享的 Zod 强类型事件契约。回复逐 token、
-  工具启动/进度、记忆更新实时推送;工具回合永不阻塞。
-- 🛠 **真实能力** —— 联网搜索 + SSRF 防护的网页阅读、天气(和风 / Open-Meteo)、时间感知、
-  带能力闸门的代码代理(仓库地图、符号检索、编辑),以及她自己蒸馏的技能架。
-- 🎭 **有身体** —— Live2D 立绘:情绪驱动表情、视线跟随、待机动画方案、音素级口型同步,以及
-  透明置顶的**桌宠模式**。
-- 🗣 **她的声音** —— GPT-SoVITS 克隆音色,全程不用开终端:向导一键下载并部署
-  GPT-SoVITS,拖入音色权重包,语音服务由 Luna 自己启动并看护;运行中把新音色包拖到界面上即可换声。
-- 🧙 **引导式上手** —— 中英双语向导,第一步先问你要哪个 Luna:**完整版**(Live2D + 语音,七步)
-  还是**只要 agent 内核**(只有对话框,五步,什么都不用下载)。两条路都一样:每把 key 都对真实
-  服务商**在线验证**、立绘与音色包拖入即装,并且处处有退路(状态栏按钮、原生 `⌘,` 菜单、失败
-  弹窗)——配坏了永远一键回到向导。
-- 🔒 **本地优先** —— 记忆是本地 SQLite,密钥只存本机配置文件,服务默认只绑回环地址。
-  属于*她*的一切都不出你的电脑。
+十四幕，取自她和我相处的一周，中文、英文两个版本。用的是她**真实的前端和渲染引擎**，声音是她自己的音色，
+提前渲染好。台词会替你打好，你只管按 ➤。
 
-## 🚀 自己跑一个
+每一幕演完，点「看看代码里发生了什么」，页面会冻结，右边浮出一摞工程笔记：从访客最想问的那个问题
+（“她怎么知道外面在下雨？”）一路讲到 prompt 里的哪一块、哪个工具、哪道安全闸、哪个源文件。每段代码都钉在
+一个提交上，测试会逐字核对它和仓库一致。请用电脑打开。
 
-没有安装包可下——你从源码把她构建出来,而这恰好也是理解她是什么的老实办法。
+之所以用回放来展示，是因为 Luna 不是分发给大家用的产品：她围绕一台机器上的一个实例开发，要给每位访客
+都跑一个真模型，花的钱远比能展示的多。
+
+## 🧩 里面有什么
+
+| | |
+| --- | --- |
+| 🧠 **睡一觉会整理的记忆** | 原话工作窗口、按显著性沉淀的对话、结构化长期事实，全在一个 SQLite 文件里。离线的**梦境循环**给一天打分、改写事实、写日记、提炼可复用的技能。召回同时看语义、关键词和新近度，并设了相关性下限，要紧的旧记忆不会被新消息埋掉。 |
+| 🌱 **带刹车的主动性** | 她能主动开口：沉默阶梯、换歌时刻、转念一想。背后是确定性的护栏：在她主动醒来的回合里，会动到外界的工具（跑命令、改代码）必须等她先把要做什么说出口才放行。 |
+| 🛠 **关在闸门里的工具** | 联网搜索和防 SSRF 的网页读取、天气、时间、音乐（正在放什么、他的曲库、歌词），还有一个代码 agent（grep、查符号、改代码、跑测试、类型检查），碰不到密钥，也改不了给她打分的代码。 |
+| 🗣 **身体和声音** | 说话本身是一次 tool call：每个气泡带一个表情，驱动 Live2D 的脸，由 GPT-SoVITS 念出来；表情跟着每一句开口时切换。 |
+| 🔌 **一份契约** | server 和 web 共用一份 Zod 类型的 WebSocket 协议，tool call 和消息边发生边流出来；哪一边漏改了协议，编译就过不去。 |
+
+## 🏗 它是怎么拼起来的
+
+<div align="center">
+
+<img src="docs/assets/architecture-overview.svg" width="880" alt="Luna 作为 agent harness 的概念图。中间是 LLM，一个无状态的黑盒：输入一组消息，输出 token 流和 tool call 意图。左边是每次调用前临时拼好的上下文：缓存的身份、召回的记忆、易变的感知、最近的对话窗口。右边是输出和对输出的处理：话语、工具调用、沉默，以及一道完整性闸门。下方三条回路把状态带到下一次调用：工具结果回到同一次请求，对话写入 luna.sqlite 供之后召回，以及离线的梦境里同一个黑盒重读并改写这份存储。" />
+
+<sub>模型是这里唯一一块不是我写的部分。其余的每一样，都是在决定它能看见什么、能做什么、什么能留到下一次调用。</sub>
+
+</div>
+
+五个 Bun workspace 包，依赖单向：[`protocol`](packages/protocol)（线上协议）、[`server`](packages/server)
+（大脑，所有状态和每一次模型调用都在这里）、[`web`](packages/web)（一层薄薄的视图，回放也在这里）、
+[`music-cli`](packages/music-cli)（macOS 正在播放的观察器）、[`desktop`](packages/desktop)（Electron 外壳）。
+细节见 [`ARCHITECTURE.md`](ARCHITECTURE.md)；可交互的图谱就是上面那颗按钮。
+
+## 🎬 真实 app 里的片段
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/moment-fries.png" alt="一个接着玩的薯条梗" /></td>
+    <td width="50%"><img src="docs/assets/moment-empathy.png" alt="一起算考试分数线" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>她有幽默感。</b>一本正经地接梗，心情标签切到「俏皮」。</sub></td>
+    <td align="center"><sub><b>她真能帮上忙。</b>把分数算清楚，情绪的分寸也拿捏对了。</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/assets/moment-skill.png" alt="给未来的自己存一个技能，然后用上" /></td>
+    <td><img src="docs/assets/moment-code.png" alt="读自己的代码，确认技能系统怎么工作" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>她会在自己身上长东西。</b>给“还没见过的那个我”存了一个技能，几分钟后就用上了。</sub></td>
+    <td align="center"><sub><b>她读得懂自己的代码</b>，用它来回答自己的技能系统是怎么工作的。</sub></td>
+  </tr>
+</table>
+
+## 📚 怎么读这份代码
+
+先看 [`ARCHITECTURE.md`](ARCHITECTURE.md) 了解整体形状，再看
+[`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md)：250 多条按版本记录的开发日志，每条分成
+*Fact*（改了什么）和 *Inference*（为什么要紧），做错了的版本也都留着。真正诚实地讲清她是怎么搭起来的，是那份日志，不是这一页。
+
+| | |
+| --- | --- |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | 各个包、线上协议、记忆、工具、主动性护栏、回放 |
+| [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) | 逐版本的工程日志 |
+| [`ROADMAP.md`](ROADMAP.md) | 按主题回看她走过的路 |
+| [`.env.example`](.env.example) | 每一个配置项，都有说明 |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | 约定、测试、工作流 |
+
+## 🧪 自己跑起来
+
+这个仓库是**公开出来给人读的工程本身**，不是产品。它围绕一台机器上的一个实例开发，不保证能在你的电脑上跑起来；
+音色和立绘也不在可复用的范围内。如果你还是想试试：
+
+<details>
+<summary>从源码构建（不提供支持）</summary>
 
 ```sh
 git clone https://github.com/Alan-Yu-2077/Luna.git
 cd Luna
-bun run app        # 装依赖 → 构建 → 打包 → Luna.app 出现在桌面 → 自动启动
-```
-
-<div align="center">
-<img src="docs/assets/wizard-chat.png" width="640" alt="中英双语引导向导" /><br/>
-<sub>首次启动即进入中英双语引导向导——不用碰配置文件,不用翻文档。</sub>
-</div>
-
-唯一*必填*的是聊天 API key(Anthropic 或任意兼容网关)——其余每一步都可跳过,以后在设置里随时重开。
-
-想在浏览器里跑,或者不在 macOS:
-
-```sh
 bun install
-cp .env.example .env   # 填 ANTHROPIC_API_KEY
-bun run dev            # server + web,http://localhost:5173
+cp .env.example .env   # 填 ANTHROPIC_API_KEY（或兼容的网关）
+bun run dev            # server + web，在 http://localhost:5173
+bun test               # 全部测试
 ```
 
-<div align="center">
-<table>
-  <tr>
-    <td align="center"><img src="docs/assets/wizard-voice.png" width="420" alt="语音步骤:拖入 GPT-SoVITS 音色包" /><br/><sub>语音步骤——一键部署 GPT-SoVITS,拖入音色包,徽章实时报告语音服务状态</sub></td>
-    <td align="center"><img src="docs/assets/app-first-run.png" width="420" alt="首次运行:设置面板与自带立绘空状态" /><br/><sub>首启界面——她不自带身体;立绘和声音由你来定</sub></td>
-  </tr>
-</table>
-</div>
+server 默认只监听 **本机回环（`127.0.0.1`）**；记忆是本地的 SQLite 文件，密钥只留在你本地的配置里。
 
-## 🏗 架构一图流
+</details>
 
-<div align="center">
+## 📄 许可证
 
-<img src="docs/assets/architecture-overview.svg" width="900" alt="Luna 作为 agent harness 的概念图。中心是 LLM,画成一个无状态黑盒:输入一个 messages 数组,输出 token 流与工具调用意图。左边是每次调用都重新拼装的上下文:可缓存的身份、按查询检索的回忆、易变的感知、最近的对话窗口。右边是输出以及对输出的处置:说话、工具调用、沉默,以及一道诚信闸门。下方三条回路把状态带过每一次调用——工具结果回到同一次请求、这轮对话被写进 luna.sqlite 并在日后被召回、以及离线的梦境里同一个盒子重读并改写这个存储。" />
-
-<sub>模型是这里唯一不是我写的部分。剩下的全部工程,都是在决定它能看见什么、能做什么,
-以及什么东西能活到下一次调用。</sub>
-
-</div>
-
-五个 Bun workspace 包,依赖箭头单向:[`protocol`](packages/protocol)(共享线上契约——两端不同步
-的改动是*编译错误*而不是运行时漂移)、[`server`](packages/server)(大脑,持有全部状态与模型调用)、
-[`web`](packages/web)(轻薄响应式视图)、[`music-cli`](packages/music-cli)(内置的 macOS
-Now-Playing 观测器)、[`desktop`](packages/desktop)(可选 Electron 外壳)。
-深入细节见 [`ARCHITECTURE.md`](ARCHITECTURE.md)。
-
-<div align="center">
-
-<img src="docs/assets/architecture.svg" width="820" alt="Luna 运行时拓扑:desktop 外壳拉起并守护 web、server 与 GPT-SoVITS 语音边车;web 与 server 共处一份 Zod 契约;server 在回环边界内独占 luna.sqlite,并通过接缝连到模型 provider" />
-
-[![打开可交互版本](https://img.shields.io/badge/%E2%86%97%20%E6%89%93%E5%BC%80%E5%8F%AF%E4%BA%A4%E4%BA%92%E7%89%88%E6%9C%AC-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/diagrams/architecture.html)
-
-<sub>可交互版本支持平移、缩放、单独追一条关系、导出——每个框还标了它是从哪个源文件画出来的,
-并锚定到某个 commit。</sub>
-
-</div>
-
-## 🎬 一些瞬间
-
-真实对话——她会玩梗、会联网查、会翻自己的代码、会记住。
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/assets/moment-fries.png" alt="持续的薯条梗" /></td>
-    <td width="50%"><img src="docs/assets/moment-empathy.png" alt="一起算考试分数" /></td>
-  </tr>
-  <tr>
-    <td align="center"><sub><b>她有幽默感。</b>一个薯条梗一本正经地接住了——情绪泡翻成 <i>Playful</i>。</sub></td>
-    <td align="center"><sub><b>她是真的在帮忙。</b>算清了分数,还把情绪落点接对了("是那条分数线本身,不是你的紧张")。</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/assets/moment-skill.png" alt="给未来的自己存一条技能,随后就用上了" /></td>
-    <td><img src="docs/assets/moment-code.png" alt="翻自己的代码库确认技能系统" /></td>
-  </tr>
-  <tr>
-    <td align="center"><sub><b>她在自我叠加。</b>存下一条技能"留给一个我还没遇见的自己",几分钟后就用上了(<code>ran a command → shell exit 0</code>)。</sub></td>
-    <td align="center"><sub><b>她能读自己的代码。</b>搜遍仓库(<code>103 of 103 matches</code>)来回答自己的技能系统是怎么运作的。</sub></td>
-  </tr>
-</table>
-
-## 📚 文档
-
-**当参考来读的话**:先看 [`ARCHITECTURE.md`](ARCHITECTURE.md) 摸清骨架,然后是
-[`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md)——140+ 条按版本的记录,每条都分成
-*Fact*(改了什么)和 *Inference*(为什么重要),**包括做错的那些版本、以及始终没补上的窟窿**。
-真正如实交代她是怎么长出来的,是那份日志,不是这个 README。
-
-| 文档 | 内容 |
-| --- | --- |
-| [`docs/SETUP.md`](docs/SETUP.md) | 自带模型与语音的手动步骤(向导会替你做这些) |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | 结构地图:包、线上契约、记忆、工具、主动性护栏 |
-| [`ROADMAP.md`](ROADMAP.md) | 按主题的方向图 |
-| [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) | 完整逐版本工程日志(130+ 条) |
-| [`.env.example`](.env.example) | 每一个配置项,带注释 |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | 开发流程、测试、约定 |
-
-## 🧪 开发
-
-```sh
-bun test                                    # 全包测试套件
-bun run --cwd packages/server tsc --noEmit  # 按包类型检查(server/web/desktop/protocol)
-```
-
-测试与代码同目录(`*.test.ts`),线上契约零 `as` 断言,每个高风险特性都先躲在默认关闭的
-env 开关后面、验证充分才翻默认。服务默认绑定**回环地址(`127.0.0.1`)**;只在可信网络上
-设置 `LUNA_BIND_HOST=0.0.0.0`。
-
-## 🤝 关于使用这些代码
-
-这是一个作为参考公开的个人项目,不是一个有人维护的产品——**Issue、PR、平台支持一律不作承诺。**
-这话说得直白,但意思是大方的:代码是 MIT,每个版本背后的推理都摊在
-[`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) 里,想 fork 或细读的话
-[`CONTRIBUTING.md`](CONTRIBUTING.md) 记着全部约定。拿走有用的部分,不用回报什么。
-
-## 📄 许可
-
-[MIT](LICENSE),唯一例外:随包分发的 **Live2D Cubism Core** 运行时
-(`packages/web/public/live2dcubismcore.min.js`)为 Live2D Inc. 专有,受其自身许可约束。
-详见 [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES)。
+[MIT](LICENSE)，有一个例外：内置的 **Live2D Cubism Core** 运行时
+（`packages/web/public/live2dcubismcore.min.js`）归 Live2D Inc. 所有，受其自有许可证约束。见
+[`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES)。
 
 ## ❤️ 致谢
 
@@ -186,5 +128,5 @@ env 开关后面、验证充分才翻默认。服务默认绑定**回环地址(`
 [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display) ·
 [Live2D Cubism](https://www.live2d.com/) ·
 [Bun](https://bun.sh) · [Electron](https://electronjs.org) ·
-天气数据 [和风天气](https://dev.qweather.com/) & [Open-Meteo](https://open-meteo.com/) ·
-搜索 [Tavily](https://tavily.com/)
+天气来自 [QWeather](https://dev.qweather.com/) 与 [Open-Meteo](https://open-meteo.com/) ·
+搜索来自 [Tavily](https://tavily.com/)

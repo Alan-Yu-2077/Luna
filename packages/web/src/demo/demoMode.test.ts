@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { PACING } from './compile';
 import { loadDemo, readDemoBridge, readPortrait } from './demoMode';
 
 // v0.46.0 — the bridge that decides whether this boot is the replay, and the bundle it loads.
@@ -39,8 +40,19 @@ describe('loadDemo', () => {
       './demo/zh/script.json',
       './demo/zh/voice/manifest.json',
     ]);
-    expect(bundle.compiled.scenes[0]?.turns[0]?.run.endMs).toBe(700 + 25 + 900);
+    expect(bundle.compiled.scenes[0]?.turns[0]?.run.endMs).toBe(PACING.thinkMs + PACING.chunkMs + 900);
     expect(bundle.settings).toEqual([]);
+  });
+
+  // v0.51.0: unhashed files revalidate, so a deploy never plays the new code over yesterday's tape.
+  test('the tape, the manifest, the settings and the notes are always revalidated', async () => {
+    const caches: Array<RequestCache | undefined> = [];
+    await loadDemo({ base: '/d/' }, 'en', async (u, init) => {
+      caches.push(init?.cache);
+      if (u.endsWith('script.json')) return Response.json(script);
+      return u.endsWith('manifest.json') ? Response.json({ lines: [] }) : Response.json([]);
+    });
+    expect(caches).toEqual(['no-cache', 'no-cache', 'no-cache', 'no-cache']);
   });
 
   test('a broken notes file never blocks the boot — the replay just has no notes', async () => {

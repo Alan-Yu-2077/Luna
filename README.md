@@ -1,137 +1,70 @@
 <div align="center">
 
-<img src="docs/assets/icon.png" width="108" alt="Luna" />
+<img src="docs/assets/icon.png" width="96" alt="Luna" />
 
 # Luna
 
-**A desktop AI companion that lives with you — she remembers, perceives, acts, and speaks.**
+**An experimental embodied-agent project.**
 
-An LLM brain with layered memory and dreams, proactive agency, action-integrity rails, and a
-code-agent capability — embodied as a Live2D avatar with lip-synced custom voice.
+Luna is where I — Alan, an agent engineer — try today's agent-harness ideas on something that has to
+live with a person: memory that consolidates while she "sleeps", initiative that knows when to stay
+quiet, tools behind safety rails, and a body and a voice to say it with.
+
+<a href="https://alan-yu-2077.github.io/Luna/"><img src="docs/assets/replay-cta.svg" width="720" alt="Watch Luna, live — the replay: real front end, her own voice, engineering notes" /></a>
+
+<a href="https://alan-yu-2077.github.io/Luna/engineering/"><img src="docs/assets/map-cta.svg" width="420" alt="Engineering map — the agent harness, mapped" /></a>
+
+**English** · [简体中文](README.zh-CN.md)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Runtime: Bun](https://img.shields.io/badge/Bun-%E2%89%A5%201.2-black?logo=bun&logoColor=white)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](tsconfig.json)
-[![Desktop: Electron](https://img.shields.io/badge/Electron-desktop%20pet-47848F?logo=electron&logoColor=white)](packages/desktop)
-
-**English** · [简体中文](README.zh-CN.md)
-
-<img src="docs/assets/moment-fries.png" width="820" alt="Luna, a Live2D companion, sharing a joke" />
-
-[![Live demo — meet her in the browser](https://img.shields.io/badge/%E2%96%B6_Live_demo-meet_her_in_the_browser-27496b?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/)
-[![Engineering Map — the agent harness, mapped](https://img.shields.io/badge/%E2%9A%99_Engineering_Map-the_agent_harness%2C_mapped-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/)
-
-<sub>The demo is the real front end and rendering engine on a scripted tape — her actual voice, pre-rendered,
-in English or in Chinese (the same scenes; pick at the door).
-What differs from the app sits around her, not in her: the lines are typed for you (you only press ➤),
-a scene pill carries Next, and a curtain marks each skip in time.
-After each scene, a note clipped to the stage opens the <b>engineering notes</b> — why she said that, and the
-mechanism and source behind it, every snippet pinned to a commit. Open it on a computer; it is not built for phones.</sub>
-
-<sub>This repository is the <b>engineering, published as a reference</b> — not a distributed product.<br/>
-There are no installers: Luna is one person's companion, and the instance that matters lives on one
-machine. Read the code, clone it, take the parts you want.</sub>
 
 </div>
 
 ---
 
-## ✨ Features
+## ▶ The replay
 
-- 🧠 **Three-layer memory + dreams** — a rolling working window, salience-scored durable turns, and
-  structured long-lived facts over one SQLite file; an offline **dream cycle** consolidates the day
-  into facts, diary, and distilled skills. Hybrid recall blends embeddings, keywords, recency, and a
-  relevance floor so a decisively relevant old memory is never buried.
-- 🌱 **Proactive agency** — she can open a conversation herself: silence-aware timing ladders,
-  weather-shift and reconnect hooks, follow-up thoughts — all behind deterministic, tunable rails
-  (quiet hours, outreach intensity) instead of a "message me every N minutes" loop.
-- ⚡ **Streaming everything** — one WebSocket, one Zod-typed event contract shared by server and web.
-  Reply tokens, tool starts/progress, memory updates all stream live; tool turns never block.
-- 🛠 **Real capabilities** — web search + SSRF-guarded page reading, weather (QWeather / Open-Meteo),
-  time perception, a gated code-agent (repo map, symbol search, edits), and a skills shelf she
-  distills herself.
-- 🎭 **Embodied** — a Live2D avatar with emotion-driven expressions, gaze follow, idle animation
-  profiles, phoneme lip-sync, and a transparent always-on-top **desktop pet mode**.
-- 🗣 **Her voice** — a GPT-SoVITS cloned voice, set up with no
-  terminal anywhere: the wizard downloads & deploys the runtime in one click, you drag a voice pack
-  in, and Luna starts + supervises the voice server herself. Drop a new pack onto the running app
-  to swap voices.
-- 🧙 **Guided onboarding** — a bilingual (中文/English) wizard that opens by asking which Luna you
-  want: **the complete companion** (Live2D + voice, seven steps) or **just the agent core** (chat box
-  only, five steps, nothing to download). Either way you get *live* key validation against the real
-  vendors, drag-and-drop avatar/voice installs, and escape hatches everywhere (status-bar button,
-  native `⌘,` menu, failure dialogs) so a bad config can never strand you.
-- 🔒 **Local-first** — memory is a local SQLite file, keys live in a local config only, the server
-  binds loopback by default. Nothing about *her* leaves your machine.
+Fourteen scenes from a week with her, in English or in Chinese, played through her **real front end and
+rendering engine** with her own pre-rendered voice — the lines are typed for you; you press ➤.
 
-## 🚀 Run your own
+After every scene, **"view what's going on in code"** freezes the page and opens a stack of engineering
+notes: the question a visitor would ask ("how does she know it's raining?") answered down to the prompt
+block, the tool, the safety gate and the source file — every snippet pinned to a commit and checked
+against the repository by a test. Best on a computer.
 
-There is no installer to download — you build her from source, which is also the honest way to read
-what she is.
+The replay is the showcase because Luna is not a distributed product: she was built around one instance
+on one machine, and a live model for every visitor would cost more than it shows.
 
-```sh
-git clone https://github.com/Alan-Yu-2077/Luna.git
-cd Luna
-bun run app        # installs deps → builds → packages → puts Luna.app on your Desktop → launches
-```
+## 🧩 What's inside
 
-<div align="center">
-<img src="docs/assets/wizard-chat.png" width="640" alt="The bilingual guided setup wizard" /><br/>
-<sub>First launch opens a bilingual guided setup — no env files, no docs required.</sub>
-</div>
-
-The only *required* thing is a chat API key (Anthropic, or any compatible gateway) — every other
-step is optional and re-runnable from Settings.
-
-Prefer the browser, or not on macOS?
-
-```sh
-bun install
-cp .env.example .env   # set ANTHROPIC_API_KEY
-bun run dev            # server + web at http://localhost:5173
-```
-
-<div align="center">
-<table>
-  <tr>
-    <td align="center"><img src="docs/assets/wizard-voice.png" width="420" alt="Voice step: drag a GPT-SoVITS pack in" /><br/><sub>Voice step — one-click GPT-SoVITS deploy, drag a voice pack in, live health badge</sub></td>
-    <td align="center"><img src="docs/assets/app-first-run.png" width="420" alt="First run: settings panel over the bring-your-own-avatar empty state" /><br/><sub>First run — she ships with no body; you bring the avatar and the voice</sub></td>
-  </tr>
-</table>
-</div>
+| | |
+| --- | --- |
+| 🧠 **Memory that sleeps on it** | A verbatim working window, salience-scored turns and structured long-lived facts in one SQLite file. An offline **dream cycle** rates the day, rewrites the facts, writes her diary and distills reusable skills. Recall blends meaning, keywords and recency, with a relevance floor so an old memory that matters is never buried. |
+| 🌱 **Initiative with brakes** | She can start a conversation — a silence ladder, a music-moment wake, a second thought — behind deterministic rails: a surface tool (a shell command, an edit) is refused in a waking until she has said what she is about to do. |
+| 🛠 **Tools, gated** | Web search and SSRF-guarded page reading, weather, time, music (what's playing, his library, lyrics), and a code agent (grep, symbols, edits, tests, typecheck) that cannot touch secrets or the code that grades it. |
+| 🗣 **A body and a voice** | Speech is a tool call: each bubble carries an expression that drives a Live2D face, voiced by a GPT-SoVITS model, the face changing as each line begins. |
+| 🔌 **One contract** | A single Zod-typed WebSocket protocol shared by server and web — tool calls and messages stream as they happen; a wire change missing on either side is a compile error. |
 
 ## 🏗 How it fits together
 
 <div align="center">
 
-<img src="docs/assets/architecture-overview.svg" width="900" alt="A conceptual diagram of Luna as an agent harness. At the centre is the LLM, drawn as a stateless black box that takes one array of messages in and emits a token stream plus tool-call intents out. To its left, the context assembled fresh for every call: cached identity, retrieved recall, volatile perception, and the recent window. To its right, the output and what is done with it: words, tool calls, silence, and an integrity gate. Below, three return loops carry state across calls — tool results rejoining the same request, the exchange being persisted into luna.sqlite and recalled later, and an offline dream pass in which the same box re-reads and rewrites that store." />
+<img src="docs/assets/architecture-overview.svg" width="880" alt="A conceptual diagram of Luna as an agent harness. At the centre is the LLM, drawn as a stateless black box that takes one array of messages in and emits a token stream plus tool-call intents out. To its left, the context assembled fresh for every call: cached identity, retrieved recall, volatile perception, and the recent window. To its right, the output and what is done with it: words, tool calls, silence, and an integrity gate. Below, three return loops carry state across calls — tool results rejoining the same request, the exchange being persisted into luna.sqlite and recalled later, and an offline dream pass in which the same box re-reads and rewrites that store." />
 
 <sub>The model is the one part nobody here wrote. Everything else is a decision about what it may see,
 what it may do, and what survives to the next call.</sub>
 
 </div>
 
-Five Bun workspace packages with a one-way dependency arrow: [`protocol`](packages/protocol) (the
-shared wire contract — a wire change that isn't reflected on both sides is a *compile error*),
-[`server`](packages/server) (the brain; owns all state and model calls),
-[`web`](packages/web) (a thin reactive view), [`music-cli`](packages/music-cli) (a vendored
-macOS Now-Playing observer), and [`desktop`](packages/desktop) (an optional
-Electron shell). The deep dive lives in [`ARCHITECTURE.md`](ARCHITECTURE.md).
+Five Bun workspace packages with a one-way dependency arrow: [`protocol`](packages/protocol) (the wire
+contract), [`server`](packages/server) (the brain — all state and every model call),
+[`web`](packages/web) (a thin reactive view, and the replay), [`music-cli`](packages/music-cli) (a
+macOS Now-Playing observer) and [`desktop`](packages/desktop) (an Electron shell). The deep dive is
+[`ARCHITECTURE.md`](ARCHITECTURE.md); the interactive map is the button above.
 
-<div align="center">
-
-<img src="docs/assets/architecture.svg" width="820" alt="Luna runtime topology: the desktop shell spawns and supervises web, server, and the GPT-SoVITS voice sidecar; web and server sit inside one shared Zod contract; server owns luna.sqlite behind a loopback boundary and reaches the model provider through a seam" />
-
-[![Open the interactive version](https://img.shields.io/badge/%E2%86%97%20Open%20the%20interactive%20version-2c3e50?style=for-the-badge)](https://alan-yu-2077.github.io/Luna/engineering/diagrams/architecture.html)
-
-<sub>The live version pans, zooms, traces a single relationship, and exports — every box also carries the
-source file it was drawn from, pinned to a commit.</sub>
-
-</div>
-
-## 🎬 Moments
-
-Real conversations — she jokes, she looks things up, she reads her own codebase, she remembers.
+## 🎬 Moments from the real app
 
 <table>
   <tr>
@@ -139,60 +72,62 @@ Real conversations — she jokes, she looks things up, she reads her own codebas
     <td width="50%"><img src="docs/assets/moment-empathy.png" alt="Working out an exam-grade problem together" /></td>
   </tr>
   <tr>
-    <td align="center"><sub><b>She has a sense of humor.</b> A running fries bit, played straight — mood pill flips to <i>Playful</i>.</sub></td>
-    <td align="center"><sub><b>She actually helps.</b> Does the grade math, and gets the emotional register right ("the cutoff itself, not your nerves").</sub></td>
+    <td align="center"><sub><b>A sense of humour.</b> A running bit, played straight — the mood pill flips to <i>Playful</i>.</sub></td>
+    <td align="center"><sub><b>Actual help.</b> Does the grade maths, and gets the emotional register right.</sub></td>
   </tr>
   <tr>
     <td><img src="docs/assets/moment-skill.png" alt="Saving a skill for her future self, then using it" /></td>
     <td><img src="docs/assets/moment-code.png" alt="Reading her own codebase to check the skill system" /></td>
   </tr>
   <tr>
-    <td align="center"><sub><b>She builds on herself.</b> Saves a skill "for a version of myself I haven't met yet," then uses it minutes later (<code>ran a command → shell exit 0</code>).</sub></td>
-    <td align="center"><sub><b>She can read her own code.</b> Searches the repo (<code>103 of 103 matches</code>) to answer how her own skill system works.</sub></td>
+    <td align="center"><sub><b>She builds on herself.</b> Saves a skill "for a version of myself I haven't met yet", then uses it.</sub></td>
+    <td align="center"><sub><b>She reads her own code</b> to answer how her own skill system works.</sub></td>
   </tr>
 </table>
 
-## 📚 Documentation
+## 📚 Reading the code
 
-**Reading this as a reference?** Start with [`ARCHITECTURE.md`](ARCHITECTURE.md) for the shape, then
-[`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) — 140+ per-version entries, each split
-into *Fact* (what changed) and *Inference* (why it mattered), including the versions that were wrong
-and the gaps that were never closed. That log, not this README, is the honest account of how she got
-built.
+Start with [`ARCHITECTURE.md`](ARCHITECTURE.md) for the shape, then
+[`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) — 250+ per-version entries, each split into
+*Fact* (what changed) and *Inference* (why it mattered), including the versions that were wrong. That
+log, not this page, is the honest account of how she was built.
 
-| Doc | What it covers |
+| | |
 | --- | --- |
-| [`docs/SETUP.md`](docs/SETUP.md) | Bring-your-own model & voice, step by step (the wizard does this for you) |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | The structural map: packages, wire contract, memory, tools, proactive rails |
-| [`ROADMAP.md`](ROADMAP.md) | Where things are heading, by theme |
-| [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) | The full per-version engineering log (130+ entries) |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Packages, the wire contract, memory, tools, the proactive rails, the replay |
+| [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md) | The per-version engineering log |
+| [`ROADMAP.md`](ROADMAP.md) | Where things went, by theme |
 | [`.env.example`](.env.example) | Every configuration knob, documented |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Dev workflow, tests, conventions |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Conventions, tests, workflow |
 
-## 🧪 Development
+## 🧪 Running it
+
+This repository is **the engineering, published for reading** — not a product. It was developed
+around a single instance on one machine, so there is no promise it runs on yours, and the voice and the
+avatar are not part of what is offered for reuse. If you want to try anyway:
+
+<details>
+<summary>Build from source (unsupported)</summary>
 
 ```sh
-bun test                                  # the whole suite, all packages
-bun run --cwd packages/server tsc --noEmit  # per-package typecheck (server/web/desktop/protocol)
+git clone https://github.com/Alan-Yu-2077/Luna.git
+cd Luna
+bun install
+cp .env.example .env   # set ANTHROPIC_API_KEY (or a compatible gateway)
+bun run dev            # server + web at http://localhost:5173
+bun test               # the whole suite
 ```
 
-Tests live next to the code (`*.test.ts`), the wire contract is `as`-free, and every risky feature
-lands behind a default-off env flag before its default flips. The server binds
-**loopback (`127.0.0.1`) by default**; set `LUNA_BIND_HOST=0.0.0.0` only on a trusted network.
+The server binds **loopback (`127.0.0.1`)** by default; memory is a local SQLite file and keys stay in
+your local config.
 
-## 🤝 Using this code
-
-This is a personal project published as a reference, not a supported product — **no promises about
-issues, PRs, or platform support.** That's the deal, and it's meant generously: the code is MIT, the
-per-version reasoning is all in [`docs/history/DEVELOPMENT.md`](docs/history/DEVELOPMENT.md), and
-[`CONTRIBUTING.md`](CONTRIBUTING.md) documents the conventions if you're forking or reading closely.
-Take what's useful; you don't owe anything back.
+</details>
 
 ## 📄 License
 
 [MIT](LICENSE), with one carve-out: the vendored **Live2D Cubism Core** runtime
-(`packages/web/public/live2dcubismcore.min.js`) is proprietary to Live2D Inc. and governed by its
-own license. See [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES).
+(`packages/web/public/live2dcubismcore.min.js`) is proprietary to Live2D Inc. and governed by its own
+license. See [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES).
 
 ## ❤️ Acknowledgements
 

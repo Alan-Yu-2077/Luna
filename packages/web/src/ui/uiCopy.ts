@@ -240,6 +240,10 @@ const UI_COPY = {
   'demo.switchLang': { en: '中文', zh: 'English' },
   'demo.playApp': { en: 'NetEase Cloud Music', zh: '网易云音乐' },
   'demo.playHint': { en: 'Click the icon', zh: '点一下图标' },
+  'demo.noAudio': {
+    en: 'Copyright: the replay cannot play the real track — imagine it playing.',
+    zh: '涉及版权问题，这里无法播放真实音频，请自行脑补。',
+  },
   'demo.recommended': { en: 'Recommended', zh: '推荐' },
   'demo.openFileHint': { en: 'Open the file', zh: '打开这个文件' },
   'demo.readOriginal': { en: 'Read the full paper on arXiv ↗', zh: '在 arXiv 上读全文 ↗' },
@@ -252,6 +256,7 @@ const UI_COPY = {
   'demo.notesPrev': { en: 'Previous sheet', zh: '上一张' },
   'demo.notesClose': { en: 'Close the notes', zh: '合上笔记' },
   'demo.notesCont': { en: '(cont.)', zh: '（续）' },
+  'demo.innerVoice': { en: '💭 inner voice', zh: '💭 内心 OS' },
   'demo.personaNote': {
     en: "Her persona file lives on the owner's machine — the replay doesn't carry it. In the app, this is where he edits the fixed core and reads what she has grown.",
     zh: '她的人格文件在主人的机器上，回放里不带。在 app 里，这一栏是主人改 Fixed 底色、看她自己长出来的 Evolving 的地方。',

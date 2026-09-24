@@ -2,6 +2,7 @@
 // freezes the page behind (inert, desaturated, its animations paused); clicking the top sheet slides it
 // out and tucks it under the pile, so the next one is on top — and the one after that is always visible
 // peeking out beneath. Demo-only DOM, like the rest of the director's devices: nothing inside her.
+import { toolCardLabel } from '../ui/toolLabels';
 import { t, type UiLang } from '../ui/uiCopy';
 import { escapeHtml, inlineHtml, say, snippetLines, sourceUrl, type DemoNotes, type NoteBlock, type SceneNotes } from './notes';
 
@@ -73,10 +74,13 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
 .demo-sheet p { margin: 0 0 11px; font-size: 14.5px; line-height: 1.72; color: var(--n-ink-2); }
 .demo-sheet code { font-family: var(--n-mono); font-size: 0.86em; background: rgba(120, 152, 186, 0.14); padding: 1px 4px; border-radius: 3px; }
 .demo-sheet b { color: var(--n-ink); }
-.demo-sheet .quote {
-  margin: 0 0 14px; padding: 2px 0 2px 12px; border-left: 3px solid var(--n-pencil-2);
-  font-family: var(--n-hand); font-size: 22px; line-height: 1.3; color: var(--n-ink-2);
-}
+.demo-sheet .nq { display: flex; margin: 2px 0 12px; }
+.demo-sheet .nq.luna { justify-content: flex-end; }
+.demo-sheet .nq.user { justify-content: flex-start; }
+.demo-sheet .nq .bubble, .demo-sheet .nc .card { font-family: var(--font); max-width: 88%; }
+.demo-sheet .nq .bubble { margin: 0; }
+.demo-sheet .nc { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; margin: 2px 0 12px; }
+.demo-sheet .nc .card { animation: none; }
 .demo-sheet .aside {
   margin: 6px 0 14px; font-family: var(--n-hand); font-size: 21px; line-height: 1.3; color: var(--n-red);
   transform: rotate(-0.6deg); transform-origin: left;
@@ -110,28 +114,19 @@ html.demo-frozen .luna-app * { animation-play-state: paused !important; }
 .demo-sheet .code-note { margin: 0 0 12px; font-size: 13px; line-height: 1.55; color: var(--n-pencil); }
 
 .demo-code-btn {
-  position: absolute; left: 50%; bottom: 34px; z-index: 6; transform: translateX(-50%) rotate(-1.5deg);
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 12px 20px 12px 16px; border: 0; cursor: pointer; text-align: left;
-  font-family: 'Caveat', 'Ma Shan Zheng', 'Kaiti SC', cursive; font-size: 24px; line-height: 1.15; color: #22314a;
-  background-color: #fbfaf6;
-  background-image: linear-gradient(rgba(120, 152, 186, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 152, 186, 0.2) 1px, transparent 1px);
-  background-size: 18px 18px;
-  box-shadow: 0 10px 26px rgba(34, 49, 74, 0.28), 0 0 0 2px #b2352c;
-  animation: demo-code-wiggle 2.8s ease-in-out infinite;
+  position: absolute; left: 50%; bottom: 34px; z-index: 6; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
+  padding: 11px 22px; border: 2px solid #fff; border-radius: 999px; cursor: pointer;
+  font-family: var(--font); font-size: 15px; font-weight: 600; color: var(--sky-text); background: var(--sky);
+  box-shadow: 0 4px 0 var(--sky-deep), 0 10px 24px rgba(90, 120, 160, 0.28);
+  animation: demo-code-bob 2.6s ease-in-out infinite;
 }
 .demo-code-btn[hidden] { display: none; }
-.demo-code-btn svg { flex: none; width: 22px; height: 44px; margin-top: -18px; }
-.demo-code-btn span { white-space: nowrap; }
-@media (max-width: 1100px) { .demo-code-btn { max-width: min(420px, 90%); } .demo-code-btn span { white-space: normal; } }
-.demo-code-btn:hover { box-shadow: 0 14px 30px rgba(34, 49, 74, 0.34), 0 0 0 3px #b2352c; }
+.demo-code-btn .glyph { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; font-weight: 700; opacity: 0.85; }
+.demo-code-btn:hover { background: var(--sky-deep); }
+.demo-code-btn:active { transform: translateX(-50%) translateY(2px); box-shadow: 0 2px 0 var(--sky-deep); }
 .menu-mode .demo-code-btn { display: none; }
-@keyframes demo-code-wiggle {
-  0%, 70%, 100% { transform: translateX(-50%) rotate(-1.5deg); }
-  76% { transform: translateX(-50%) rotate(1.8deg) scale(1.04); }
-  82% { transform: translateX(-50%) rotate(-2.4deg) scale(1.04); }
-  88% { transform: translateX(-50%) rotate(-1.5deg); }
-}
+@keyframes demo-code-bob { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .demo-code-btn { animation: none; } .demo-sheet, .demo-sheet.lift, .demo-notes { transition-duration: 0.01s; } }
 `;
 
@@ -179,7 +174,13 @@ export type NotesStack = { open(sceneId: string, eyebrow: string): boolean; clos
 
 export function mountNotesStack(
   doc: Document,
-  opts: { notes: DemoNotes; lang: UiLang; onFreeze?: (frozen: boolean) => void },
+  opts: {
+    notes: DemoNotes;
+    lang: UiLang;
+    onFreeze?: (frozen: boolean) => void;
+    // v0.51.0: who said a quoted line in this scene — the quote is drawn as that side's own bubble.
+    speaker?: (sceneId: string, text: string) => 'luna' | 'user' | null;
+  },
 ): NotesStack {
   ensureStyle(doc);
   const { notes, lang } = opts;
@@ -223,6 +224,7 @@ export function mountNotesStack(
   let busy = false;
   let open = false;
   let shown: { scene: SceneNotes; eyebrow: string } | null = null;
+  let shownId: string | null = null;
   let resizeTimer = 0;
   let flipTimer = 0;
   const animTimers: number[] = [];
@@ -296,8 +298,16 @@ export function mountNotesStack(
     switch (b.type) {
       case 'p':
         return `<p>${inlineHtml(say(b.text, lang))}</p>`;
-      case 'quote':
-        return `<p class="quote">${inlineHtml(say(b.text, lang))}</p>`;
+      case 'quote': {
+        const text = say(b.text, lang);
+        const who = (shownId !== null ? opts.speaker?.(shownId, text) : null) ?? 'luna';
+        return `<div class="nq ${who}"><div class="bubble ${who}">${escapeHtml(text)}</div></div>`;
+      }
+      case 'card':
+        return (
+          `<div class="nc"><div class="card tool">${escapeHtml(toolCardLabel(`🔧 ${b.tool}…`, lang))}</div>` +
+          `<div class="card tool">${escapeHtml(toolCardLabel(`🔧 ${b.summary}`, lang))}</div></div>`
+        );
       case 'aside':
         return `<p class="aside">${inlineHtml(say(b.text, lang))}</p>`;
       case 'steps':
@@ -449,6 +459,7 @@ export function mountNotesStack(
       if (!scene) return false;
       lastFocus = doc.activeElement instanceof HTMLElement ? doc.activeElement : null;
       shown = { scene, eyebrow };
+      shownId = sceneId;
       build(scene, eyebrow);
       if (doc.fonts.status !== 'loaded') void doc.fonts.ready.then(repaginate);
       root.setAttribute('aria-label', say(scene.hook, lang));

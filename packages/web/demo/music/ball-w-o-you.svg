@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="hsl(89 55% 62%)"/>
-      <stop offset="1" stop-color="hsl(175 60% 38%)"/>
+      <stop offset="0" stop-color="hsl(79 55% 62%)"/>
+      <stop offset="1" stop-color="hsl(147 60% 38%)"/>
     </linearGradient>
     <radialGradient id="r" cx="0.3" cy="0.25" r="0.8">
       <stop offset="0" stop-color="#fff" stop-opacity="0.35"/>
@@ -12,6 +12,6 @@
   <rect width="600" height="600" fill="url(#g)"/>
   <rect width="600" height="600" fill="url(#r)"/>
   <circle cx="300" cy="300" r="190" fill="none" stroke="#fff" stroke-opacity="0.22" stroke-width="14"/>
-  <text x="300" y="332" text-anchor="middle" font-family="Fredoka, 'Segoe UI', sans-serif" font-size="150" font-weight="600" fill="#fff" fill-opacity="0.92">HW</text>
-  <text x="300" y="530" text-anchor="middle" font-family="Fredoka, 'Segoe UI', sans-serif" font-size="30" fill="#fff" fill-opacity="0.85">Glass Animals</text>
+  <text x="300" y="332" text-anchor="middle" font-family="Fredoka, 'Segoe UI', sans-serif" font-size="150" font-weight="600" fill="#fff" fill-opacity="0.92">BW</text>
+  <text x="300" y="530" text-anchor="middle" font-family="Fredoka, 'Segoe UI', sans-serif" font-size="30" fill="#fff" fill-opacity="0.85">21 Savage</text>
 </svg>

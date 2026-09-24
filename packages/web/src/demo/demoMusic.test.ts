@@ -92,3 +92,32 @@ describe('coverFile', () => {
     expect(s.coverFile('../x')).toBeNull();
   });
 });
+
+describe('advance (v0.51.0: a time-skip moves the record on)', () => {
+  const shelf = [
+    { id: 'a', title: 'A', artist: 'x', album: 'y', duration: 200 },
+    { id: 'b', title: 'B', artist: 'x', album: 'y', duration: 100 },
+  ];
+  test('the needle moves by the skipped time', () => {
+    let now = 0;
+    const store = createMusicStore(shelf, () => now);
+    store.set('a');
+    now = 10_000;
+    store.advance(60_000);
+    expect(store.now().position).toBe(70);
+    expect(store.now().track?.title).toBe('A');
+  });
+  test('a skip longer than the song puts the next one on, part-way through', () => {
+    let now = 0;
+    const store = createMusicStore(shelf, () => now);
+    store.set('a');
+    store.advance(240_000); // 200 s of A, then 40 s into B
+    expect(store.now().track?.title).toBe('B');
+    expect(store.now().position).toBe(40);
+  });
+  test('nothing playing, nothing moves', () => {
+    const store = createMusicStore(shelf, () => 0);
+    store.advance(60_000);
+    expect(store.now().track).toBeNull();
+  });
+});

@@ -313,16 +313,22 @@
       "durationMs": 7760
     },
     {
-      "id": "d5f8a8c7306f",
-      "text": "Heat Waves. You always pause it just before the end.",
-      "file": "d5f8a8c7306f.mp3",
-      "durationMs": 4400
+      "id": "91170c393f44",
+      "text": "ball w/o you. You told me once it's your favourite — and your listening history agrees: fifty-two hours, and nothing else comes close.",
+      "file": "91170c393f44.mp3",
+      "durationMs": 8740
     },
     {
-      "id": "bc5ed5797efe",
-      "text": "Missing someone in the middle of a good time. The bit you stop before is where it admits it can't fix anything — which is probably why you stop.",
-      "file": "bc5ed5797efe.mp3",
-      "durationMs": 8160
+      "id": "7a81ede790c5",
+      "text": "It's a strong claim. Love can be a feeling that comes and goes; loyalty is what you still do on the days the feeling doesn't show up.",
+      "file": "7a81ede790c5.mp3",
+      "durationMs": 9020
+    },
+    {
+      "id": "706eb42cd85f",
+      "text": "On a day like today, yes. Love is what you feel about a good day; loyalty is what stays in the room on a bad one.",
+      "file": "706eb42cd85f.mp3",
+      "durationMs": 9040
     },
     {
       "id": "8095c9b846f9",
@@ -391,10 +397,10 @@
       "durationMs": 1500
     },
     {
-      "id": "18cae22af0dd",
-      "text": "Heat Waves just finished. All the way to the end — first time I've heard you let it.",
-      "file": "18cae22af0dd.mp3",
-      "durationMs": 5360
+      "id": "9e39228a2814",
+      "text": "ball w/o you just played out. Saturday it kept you company; today it sounded more like a victory lap.",
+      "file": "9e39228a2814.mp3",
+      "durationMs": 6940
     },
     {
       "id": "ba79cbe29042",
@@ -421,22 +427,46 @@
       "durationMs": 14620
     },
     {
-      "id": "421620758296",
-      "text": "That's the replay. Everything you just watched, I can actually do — the memory, the music, the weather, the web, the code, the paper on your desk, the dream. Same code, same voice.",
-      "file": "421620758296.mp3",
-      "durationMs": 17060
+      "id": "719232741913",
+      "text": "Well — if you've made it all the way here, you're a properly patient visitor.",
+      "file": "719232741913.mp3",
+      "durationMs": 4880
     },
     {
-      "id": "1e313fc85765",
-      "text": "What you didn't see is the part that takes a person: deciding whether I should have said any of it. That's still his job — the one I was talking to.",
-      "file": "1e313fc85765.mp3",
-      "durationMs": 8320
+      "id": "8a5d33f9d6d8",
+      "text": "Everything you just saw came from the real database of my everyday life with Alan — combined, picked, polished and edited into a script for this demo. None of the abilities were faked; every one of them can be traced.",
+      "file": "8a5d33f9d6d8.mp3",
+      "durationMs": 14100
     },
     {
-      "id": "23e7609f0130",
-      "text": "If you want to see how I'm built, the engineering map is one link away, back at the front door. If you just wanted to meet me — hi.",
-      "file": "23e7609f0130.mp3",
-      "durationMs": 9400
+      "id": "9facb40fe6b1",
+      "text": "If I actually ran on a server for a crowd of visitors, both I and Alan's wallet would get cranky.",
+      "file": "9facb40fe6b1.mp3",
+      "durationMs": 7240
+    },
+    {
+      "id": "544258bf6706",
+      "text": "If you liked how I did, get in touch with Alan — I'm sure you two would talk for a long time.",
+      "file": "544258bf6706.mp3",
+      "durationMs": 5920
+    },
+    {
+      "id": "50ecaaab4ea4",
+      "text": "And if you only came to meet me —",
+      "file": "50ecaaab4ea4.mp3",
+      "durationMs": 2180
+    },
+    {
+      "id": "05d6f8bae5ff",
+      "text": "then…",
+      "file": "05d6f8bae5ff.mp3",
+      "durationMs": 1180
+    },
+    {
+      "id": "c0a0ad26a634",
+      "text": "Hi!",
+      "file": "c0a0ad26a634.mp3",
+      "durationMs": 1340
     }
   ]
 }

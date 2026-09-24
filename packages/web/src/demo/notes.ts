@@ -14,6 +14,8 @@ export const NoteBlock = z.discriminatedUnion('type', [
   z.object({ type: z.literal('aside'), text: Text }),
   z.object({ type: z.literal('steps'), items: z.array(Text).min(2).max(8) }),
   z.object({ type: z.literal('flow'), items: z.array(Text).min(2).max(6) }),
+  // v0.51.0: a tool card from this scene, drawn as the chat draws it (its start label, then its summary).
+  z.object({ type: z.literal('card'), tool: z.string().min(1), summary: z.string().min(1) }),
   z.object({
     type: z.literal('code'),
     file: z.string().min(1),

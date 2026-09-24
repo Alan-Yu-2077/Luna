@@ -166,25 +166,38 @@ export function createController(deps: ControllerDeps): { handle: (e: ServerEven
               } else {
                 lastLunaText = t;
                 deps.view.finalize(e.call_id, d.text);
-                if (d.expression) deps.live2d.setExpression(d.expression, d.emotion);
                 // v0.43.13: the sentence's final mark says what kind of sentence it was, and voice
                 // is played serially with a start callback and a finish promise — so the gesture
                 // lands where the intonation is. An exclamation's emphasis runs through the whole
                 // utterance (`onStart`); a question's tilt belongs in the pause AFTER it, which is
                 // exactly when the promise resolves.
+                // v0.51.0: the face moves with the voice too. Voice is serial, so setting the
+                // expression on delivery let a second message, delivered while the first was still
+                // being spoken, put its face on the first line (the owner saw faces "squeezed out" by
+                // quick messages). It is set when this line starts — or at once if it is never voiced.
                 const gesture = gestures.next(d.text);
                 const firePulse = (): void => {
                   if (gesture) deps.live2d.pulse?.(gesture.pose, gesture.durationMs);
                 };
+                let faced = false;
+                const face = (): void => {
+                  if (faced || !d.expression) return;
+                  faced = true;
+                  deps.live2d.setExpression(d.expression, d.emotion);
+                };
                 void deps.audio
-                  .speak(d.text, d.voice_params, gesture?.when === 'start' ? firePulse : undefined)
+                  .speak(d.text, d.voice_params, () => {
+                    face();
+                    if (gesture?.when === 'start') firePulse();
+                  })
                   .then((spoken) => {
+                    face(); // a line that never started (a failed or silent sink) still gets its face
                     // v0.43.14: only if it was actually voiced. A skipped line has no pause to tilt
                     // into. `void` (a sink that does not report) still counts as spoken.
                     if (spoken !== false && gesture?.when === 'end') firePulse();
                   })
                   .catch(() => {
-                    /* the sink reports failure by resolving false; a throw is a bug, not a silence */
+                    face(); /* the sink reports failure by resolving false; a throw is a bug, not a silence */
                   });
               }
             } else {

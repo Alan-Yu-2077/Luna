@@ -43,7 +43,7 @@
     {
       "name": "track-change-restraint",
       "description": "How to react to a track change: notice every one, speak on almost none.",
-      "body": "1. When the track changes, note what changed: the song, the mood, whether he skipped early.\n2. Speak only if the change says something the last one didn't — a mood turning, a song he stops before the end, a month he hasn't revisited.\n3. If I spoke on the last change, let this one pass.\n4. His player is his: hear it, don't drive it, and never narrate the queue.",
+      "body": "1. When the track changes, note what changed: the song, the mood, whether he skipped early.\n2. Speak only if the change says something the last one didn't — a mood turning, his favourite coming round on a different kind of day, a month he hasn't revisited.\n3. If I spoke on the last change, let this one pass.\n4. His player is his: hear it, don't drive it, and never narrate the queue.",
       "used_count": 8,
       "last_used_ms": 1790000640000,
       "verified_ms": 1788902213000,

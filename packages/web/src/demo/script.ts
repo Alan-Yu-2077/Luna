@@ -109,7 +109,14 @@ export const Beat = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('pause'), ms: z.number().int().nonnegative() }),
   // Time passes: the curtain (a director device — the app has no such thing), under which the
   // compiler's clock simply moves on. Never inside a turn.
-  z.object({ kind: z.literal('skip'), label: z.string().min(1), ms: z.number().int().positive().optional() }),
+  // `ms` is how long the curtain stays on screen; `elapsedMs` (v0.51.0) is how much story time it
+  // stands for — the turntable moves on by that much ("Four minutes later" = 240000).
+  z.object({
+    kind: z.literal('skip'),
+    label: z.string().min(1),
+    ms: z.number().int().positive().optional(),
+    elapsedMs: z.number().int().positive().optional(),
+  }),
   // The turntable: what is playing now (a track id from the music block), or nothing.
   z.object({ kind: z.literal('music'), track: z.string().regex(SLUG).nullable() }),
   // v0.48.3: HIS hand on the player. She never starts his music — he does, in his own player, and
@@ -117,6 +124,10 @@ export const Beat = z.discriminatedUnion('kind', [
   // the track starts on the click, and the next line waits for it. Never inside a turn.
   z.object({ kind: z.literal('press_play'), track: z.string().regex(SLUG), label: z.string().min(1) }),
   // v0.49.0: HIS hands again — back at his desk, he opens the folder she left and the file in it.
+  // v0.51.0: the curtain call's two devices — a cleared chat (a fresh page for her last word to the
+  // visitor), and her inner voice: a card in the chat, not a bubble, not spoken, left up to be read.
+  z.object({ kind: z.literal('clear') }),
+  z.object({ kind: z.literal('inner'), text: z.string().min(1), ms: z.number().int().positive().optional() }),
   // The director draws the desktop, the folder window and the document's first page; the next line
   // waits until he closes it. `doc` is what the first page shows (the facts on a title page).
   z.object({

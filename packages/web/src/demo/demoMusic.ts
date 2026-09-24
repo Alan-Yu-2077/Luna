@@ -9,6 +9,9 @@ import type { TrackDef } from './script';
 
 export type MusicStore = {
   set(trackId: string | null): void;
+  // v0.51.0: a time-skip curtain moves the record on too — "four minutes later" is four minutes of
+  // needle, not a card still at the second it showed before the curtain.
+  advance(ms: number): void;
   now(): MusicNow;
   control(rawBody: string): MusicNow | null; // null = bad op (the route answers 400)
   coverFile(hash: string): string | null; // demo-relative path of a generated cover
@@ -60,6 +63,24 @@ export function createMusicStore(tracks: TrackDef[], clock: () => number = () =>
       }
       const i = tracks.findIndex((t) => t.id === trackId);
       if (i >= 0) start(i);
+    },
+    advance(ms) {
+      if (idx < 0 || !playing || ms <= 0) return;
+      // Walk whole records until the time is spent: a curtain longer than a song puts the next one on.
+      let left = ms / 1000;
+      for (let guard = 0; guard < tracks.length * 4 && left > 0; guard++) {
+        const t = tracks[idx];
+        if (!t) return;
+        const pos = base + (clock() - since) / 1000;
+        const remaining = t.duration - pos;
+        if (left < remaining) {
+          base = pos + left;
+          since = clock();
+          return;
+        }
+        left -= remaining;
+        start((idx + 1) % tracks.length);
+      }
     },
     now,
     control(rawBody) {

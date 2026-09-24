@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { ServerEvent } from '@luna/protocol';
-import { compileScene, compileScript, dreamCues, estimateSpeechMs, moreInTurn, PACING, type Cue } from './compile';
+import { compileScene, compileScript, dreamCues, estimateSpeechMs, moreInTurn, PACING, readingMs, speakerIn, type Cue } from './compile';
 import { DemoScript, type Scene } from './script';
 
 // v0.46.0 — the script compiler. What it pins: every frame is a valid ServerEvent (the wsClient
@@ -450,4 +450,57 @@ describe('the 💭 second thought and tool notes', () => {
     };
     expect(DemoScript.safeParse(bad).success).toBe(false);
   });
+});
+
+test('speakerIn tells his lines from hers (whole lines or excerpts) — the notes draw quotes as bubbles', () => {
+  const compiled = compileScript(
+    DemoScript.parse({
+      version: 1,
+      scenes: [
+        {
+          id: 's',
+          title: 'S',
+          beats: [
+            { kind: 'user', text: 'Did you sleep well?' },
+            { kind: 'luna', text: 'I dream, which is a different thing.' },
+          ],
+        },
+      ],
+    }),
+  );
+  const scene = compiled.scenes[0];
+  expect(speakerIn(scene, 'Did you sleep well?')).toBe('user');
+  expect(speakerIn(scene, 'a different thing')).toBe('luna');
+  expect(speakerIn(scene, 'not in the scene')).toBeNull();
+});
+
+test('the curtain call: clear first, then an inner-voice card after her last word, left up to be read', () => {
+  const inner = 'A thought she keeps to the card.';
+  const compiled = compileScript(
+    DemoScript.parse({
+      version: 1,
+      scenes: [
+        {
+          id: 'c',
+          title: 'C',
+          beats: [
+            { kind: 'clear' },
+            { kind: 'proactive', delayMs: 100, lines: [{ text: 'One.' }] },
+            { kind: 'inner', text: inner },
+            { kind: 'proactive', delayMs: 100, lines: [{ text: 'Two.' }] },
+          ],
+        },
+      ],
+    }),
+    () => 1000,
+  );
+  const cues = compiled.scenes[0]?.prelude.cues ?? [];
+  const stages = cues.filter((c) => c.kind === 'stage');
+  expect(stages.map((c) => (c.kind === 'stage' ? c.stage.kind : ''))).toEqual(['clear', 'inner']);
+  const lastOneFrame = Math.max(...cues.filter((c) => c.kind === 'frame' && c.frame.type === 'tool.finished').map((c) => c.at).slice(0, 1));
+  const innerAt = stages[1]?.at ?? 0;
+  expect(innerAt).toBeGreaterThanOrEqual(lastOneFrame + 1000); // after "One." has been spoken
+  const secondWake = cues.filter((c) => c.kind === 'frame' && c.frame.type === 'proactive.started')[1];
+  expect((secondWake?.at ?? 0) - innerAt).toBeGreaterThanOrEqual(readingMs(inner));
+  expect(readingMs('短')).toBe(3500);
 });

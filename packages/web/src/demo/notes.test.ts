@@ -65,6 +65,26 @@ describe.skipIf(!existsSync(notesPath))('demo/notes.json', () => {
     expect(bad).toEqual([]);
   });
 
+  // v0.51.0: a card block is a tool card this scene really shows — the same tool, the same summary line.
+  test('every card is a tool card of its scene (name and summary as the tape has them)', () => {
+    const bad: string[] = [];
+    const script = tape('en');
+    for (const [id, scene] of Object.entries(notes().scenes)) {
+      const beats = script.scenes.find((s) => s.id === id)?.beats ?? [];
+      const cards = new Set<string>();
+      for (const b of beats) {
+        if (b.kind === 'tool') cards.add(`${b.name}\u0000${b.summary}`);
+        if (b.kind === 'proactive') for (const c of [...(b.tools ?? []), ...(b.then_tools ?? [])]) cards.add(`${c.name}\u0000${c.summary}`);
+      }
+      for (const sheet of scene.sheets) {
+        for (const b of sheet.blocks) {
+          if (b.type === 'card' && !cards.has(`${b.tool}\u0000${b.summary}`)) bad.push(`${id}: ${b.tool} — ${b.summary}`);
+        }
+      }
+    }
+    expect(bad).toEqual([]);
+  });
+
   // A quote may be an excerpt, but a verbatim one: contiguous text of a line the scene really says.
   test('every quote is (part of) a line the scene really says, in each language', () => {
     const bad: string[] = [];

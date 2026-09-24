@@ -13,8 +13,24 @@
          lunaConfig points the avatar + voice at the demo's static assets (relative — the page lives
          under /Luna/ on GitHub Pages), lunaDemo names where the tape lives. -->
     <script src="./demo/bridge.js"></script>
+    <!-- v0.51.0: shown from the first byte, before the 1 MB bundle arrives; the app removes it the
+         moment the entrance card is up. -->
+    <style>
+      #demo-splash { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 14px; background: #eef4fb; color: #5b7fa6;
+        font-family: "Fredoka", "PingFang SC", system-ui, sans-serif; }
+      #demo-splash strong { font-size: 26px; letter-spacing: 0.04em; color: #27496b; }
+      #demo-splash .dots { display: flex; gap: 8px; }
+      #demo-splash .dots i { width: 10px; height: 10px; border-radius: 50%; background: #9cc3ea;
+        animation: demo-splash-bob 1.1s ease-in-out infinite; }
+      #demo-splash .dots i:nth-child(2) { animation-delay: 0.15s; }
+      #demo-splash .dots i:nth-child(3) { animation-delay: 0.3s; }
+      #demo-splash p { margin: 0; font-size: 12px; letter-spacing: 0.12em; }
+      @keyframes demo-splash-bob { 0%, 80%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-8px); opacity: 1; } }
+    </style>
   </head>
   <body>
+    <div id="demo-splash" aria-live="polite"><strong>Luna</strong><div class="dots"><i></i><i></i><i></i></div><p>loading · 加载中</p></div>
     <div id="app"></div>
     <script type="module" src="./src/app.ts"></script>
   </body>

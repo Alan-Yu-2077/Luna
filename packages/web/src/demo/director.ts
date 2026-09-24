@@ -12,12 +12,12 @@
 
 import { t, type UiLang } from '../ui/uiCopy';
 import type { StageCue } from './compile';
-import { CLIP_SVG } from './notesStack';
 
 export type DirectorRefs = {
   input: HTMLInputElement;
   sendBtn: HTMLButtonElement;
   modelStage: HTMLElement;
+  chatLog: HTMLElement;
 };
 
 export type Director = {
@@ -31,6 +31,8 @@ export type Director = {
   pressPlay(label: string, onPlay: () => void): void;
   // v0.49.0: back at his desk — a drawn desktop, the folder she left, the file in it, its first page.
   openFile(file: OpenFileCue): void;
+  // v0.51.0: her inner voice in the curtain call — a card in the chat, not a bubble.
+  inner(text: string): void;
   dispose(): void;
 };
 
@@ -40,6 +42,8 @@ export const TYPE_MS = 45;
 export const TYPE_LEAD_MS = 500;
 // The curtain's fades, inside the skip's own duration.
 export const CURTAIN_FADE_MS = 450;
+// How long the "no real audio" note stays after the play click — long enough to read twice.
+export const NO_AUDIO_NOTICE_MS = 3800;
 
 const STYLE = `
 .demo-pill {
@@ -93,6 +97,14 @@ const STYLE = `
 @keyframes demo-sweep-min { from { transform: rotate(0deg); } to { transform: rotate(720deg); } }
 @keyframes demo-sweep-hour { from { transform: rotate(0deg); } to { transform: rotate(60deg); } }
 .demo-curtain .demo-curtain-label { font-size: 16px; letter-spacing: 0.08em; color: #c9d4e3; }
+
+.demo-inner {
+  align-self: flex-end; max-width: 88%; margin: 2px 0; padding: 9px 13px 10px; border-radius: 14px;
+  background: #fff; border: 1.5px dashed var(--lavender-deep); color: var(--ink-soft);
+  animation: chat-in var(--m-soft) var(--ease-pop);
+}
+.demo-inner-tag { display: block; margin-bottom: 3px; font-size: 10.5px; letter-spacing: 0.06em; color: var(--muted); }
+.demo-inner p { margin: 0; font-size: 12.5px; line-height: 1.6; font-style: italic; }
 
 .demo-play { gap: 16px; }
 body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none; }
@@ -158,6 +170,9 @@ body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none
 .demo-play .demo-play-name { font-size: 13px; letter-spacing: 0.06em; color: #e8edf5; }
 .demo-play .demo-curtain-label { max-width: min(460px, calc(100vw - 48px)); text-align: center; line-height: 1.5; }
 .demo-play .demo-play-hint { font-size: 12px; letter-spacing: 0.08em; color: #8fa6bf; }
+.demo-play.noticing .demo-play-app { cursor: default; }
+.demo-play.noticing .demo-play-app::after { animation: none; opacity: 0; }
+.demo-play.noticing .demo-curtain-label { color: #f3d9a6; }
 
 .demo-guide {
   position: fixed; inset: 0; z-index: 900; display: flex; align-items: center; justify-content: center;
@@ -179,6 +194,10 @@ body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none
   box-shadow: 0 3px 0 var(--sky-deep);
 }
 .demo-guide .demo-guide-enter:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--sky-deep); }
+.demo-guide .demo-guide-enter.loading {
+  cursor: progress; color: var(--sky-text); box-shadow: 0 3px 0 var(--sky-deep);
+  background: linear-gradient(90deg, var(--sky-deep) var(--p, 0%), var(--sky) var(--p, 0%));
+}
 .demo-guide .demo-guide-langs { display: flex; gap: 14px; justify-content: center; margin: 18px 0 4px; flex-wrap: wrap; }
 .demo-guide .demo-guide-lang {
   flex: 1 1 180px; max-width: 240px; border: none; cursor: pointer; font: inherit; color: var(--ink);
@@ -273,10 +292,12 @@ export function mountDirector(
   codeBtn.type = 'button';
   codeBtn.className = 'demo-code-btn';
   codeBtn.hidden = true;
-  codeBtn.innerHTML = CLIP_SVG;
+  const codeGlyph = doc.createElement('span');
+  codeGlyph.className = 'glyph';
+  codeGlyph.textContent = '</>';
   const codeLabel = doc.createElement('span');
   codeLabel.textContent = t('demo.codeNotes');
-  codeBtn.appendChild(codeLabel);
+  codeBtn.append(codeGlyph, codeLabel);
   let codeIndex = -1;
   codeBtn.addEventListener('click', () => {
     if (codeIndex >= 0) opts.onNotes?.(codeIndex);
@@ -307,7 +328,9 @@ export function mountDirector(
   appBtn.type = 'button';
   appBtn.className = 'demo-play-app';
   appBtn.innerHTML =
-    '<svg viewBox="0 0 60 60" aria-hidden="true"><path fill="#fff" d="M37 10v26.5a7.5 7.5 0 1 1-4-6.6V17.8l-12 3.4v19.3a7.5 7.5 0 1 1-4-6.6V16.9L37 10z"/></svg>';
+    '<svg viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">' +
+    '<circle cx="26" cy="37" r="9" stroke-width="4.6"/><path d="M35 37V14" stroke-width="4.6"/>' +
+    '<path d="M35 14c3.2 1.4 7.6 3.4 9.2 8.2" stroke-width="4"/></g></svg>';
   const appName = doc.createElement('div');
   appName.className = 'demo-play-name';
   const playLabel = doc.createElement('div');
@@ -387,19 +410,33 @@ export function mountDirector(
     // The next line is typed once the room is lit again.
     if (text !== null) setTimeout(() => typeIn(text), CURTAIN_FADE_MS);
   };
+  let noticeTimer: ReturnType<typeof setTimeout> | undefined;
   const closeGates = (): void => {
     gate = null;
     onPlay = null;
     pendingArm = null;
-    play.classList.remove('on');
+    clearTimeout(noticeTimer);
+    appBtn.disabled = false;
+    play.classList.remove('on', 'noticing');
     desk.classList.remove('on');
   };
+  // v0.51.0 (owner): the click starts the record — and the room says plainly why nothing is heard: the
+  // replay cannot carry the real track. The note stays up long enough to read, then the room lights.
   appBtn.addEventListener('click', () => {
     if (gate !== 'play') return;
     const start = onPlay;
-    play.classList.remove('on');
+    onPlay = null;
     start?.();
-    release();
+    playLabel.textContent = t('demo.noAudio');
+    playHint.textContent = '';
+    appBtn.disabled = true;
+    play.classList.add('noticing');
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => {
+      play.classList.remove('on', 'noticing');
+      appBtn.disabled = false;
+      release();
+    }, NO_AUDIO_NOTICE_MS);
   });
 
   const FOLDER =
@@ -566,6 +603,19 @@ export function mountDirector(
       desk.classList.add('on');
     },
 
+    inner(text) {
+      const card = doc.createElement('div');
+      card.className = 'demo-inner';
+      const tag = doc.createElement('span');
+      tag.className = 'demo-inner-tag';
+      tag.textContent = t('demo.innerVoice');
+      const body = doc.createElement('p');
+      body.textContent = text;
+      card.append(tag, body);
+      refs.chatLog.appendChild(card);
+      refs.chatLog.scrollTop = refs.chatLog.scrollHeight;
+    },
+
     dispose() {
       disarm();
       closeGates();
@@ -630,7 +680,7 @@ export const PICKER_COPY = {
 
 export const GUIDE_COPY: Record<
   UiLang,
-  { title: string; sub: string; p1: string; p2: string; how: string; enter: string }
+  { title: string; sub: string; p1: string; p2: string; how: string; enter: string; loading: string }
 > = {
   en: {
     title: 'Luna · a replay',
@@ -647,6 +697,7 @@ export const GUIDE_COPY: Record<
       'Diary, Skills and Dream. After each scene, the note clipped to the stage opens the engineering notes: ' +
       'why she did that, and the code behind it.',
     enter: 'Enter',
+    loading: 'Getting her ready… {pct}%',
   },
   zh: {
     title: 'Luna · 回放',
@@ -655,10 +706,13 @@ export const GUIDE_COPY: Record<
     p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
     how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，舞台上别着的那张便签会打开工程笔记：她为什么这么做，背后是哪段代码。',
     enter: '进入',
+    loading: '正在把她接过来… {pct}%',
   },
 };
 
-export type GuideHandle = { language: Promise<UiLang>; dispose(): void };
+// v0.51.0: `progress(pct)` holds Enter until her files are here (null = ready) — the first visit
+// downloads ~10 MB, and entering an empty stage is worse than a counter.
+export type GuideHandle = { language: Promise<UiLang>; progress(pct: number | null): void; dispose(): void };
 
 // `lang` null → the card opens on the language choice; a language (a shared `?lang=` link, Replay ↻)
 // → straight to the guide in it. `language` resolves the moment one is known.
@@ -679,6 +733,18 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
     return el;
   };
 
+  let pct: number | null = 0;
+  let enterBtn: HTMLButtonElement | null = null;
+  let enterLang: UiLang = 'en';
+  const paintEnter = (): void => {
+    if (!enterBtn) return;
+    const c = GUIDE_COPY[enterLang];
+    enterBtn.disabled = pct !== null;
+    enterBtn.classList.toggle('loading', pct !== null);
+    enterBtn.style.setProperty('--p', `${pct ?? 100}%`);
+    enterBtn.textContent = pct === null ? c.enter : c.loading.replace('{pct}', String(Math.floor(pct)));
+  };
+
   const showGuide = (lang: UiLang): void => {
     const c = GUIDE_COPY[lang];
     guide.setAttribute('aria-label', c.title);
@@ -692,7 +758,11 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
     enter.type = 'button';
     enter.className = 'demo-guide-enter';
     enter.textContent = c.enter;
+    enterBtn = enter;
+    enterLang = lang;
+    paintEnter();
     enter.addEventListener('click', () => {
+      if (pct !== null) return;
       guide.classList.add('leaving');
       setTimeout(() => guide.remove(), 600);
       opts.onEnter?.();
@@ -740,7 +810,14 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
     }
     card.append(h, p(PICKER_COPY.prompt, 'demo-guide-sub'), row);
   }
-  return { language, dispose: () => guide.remove() };
+  return {
+    language,
+    progress(p) {
+      pct = p === null ? null : Math.max(0, Math.min(99, p));
+      paintEnter();
+    },
+    dispose: () => guide.remove(),
+  };
 }
 
 // v0.50.1 (owner) — phones are not adapted: the replay is a desk-sized show (the chat beside her, the

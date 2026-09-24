@@ -10,11 +10,17 @@ import type { Beat, DemoScript, DreamBlock, LunaLine, OpenFileBeat, Scene, ToolC
 // `sink` (direct choreography), and `stage` (the director's devices — a curtain, the turntable —
 // which the app never sees). The dream block compiles to the same frames the real cycle emits.
 
+// v0.51.0 (owner: "a real reply takes time, and even the replay has to speak — bubbles must not pop"):
+// the model's own latency before it answers and before each call, a readable stream, and her messages
+// paced by her voice — the next one starts arriving as the current line is ending, the way a model
+// writing its next message while she talks would land, never three faces ahead of the voice.
 export const PACING = {
-  thinkMs: 700, // turn.started → the first tool frame: her thinking pose gets its moment
+  thinkMs: 1500, // turn.started → the first tool frame: the model's time-to-first-token, her thinking pose
   chunkChars: 3,
-  chunkMs: 25, // ≈120 chars/s — what a streamed message looks like arriving
+  chunkMs: 40, // ≈75 chars/s — what a streamed message looks like arriving
   gapMs: 300, // between consecutive frames of one turn
+  toolLeadMs: 800, // the model writing a tool call before it starts
+  voiceOverlapMs: 800, // the next message begins streaming this long before the current line's voice ends
   toolMs: 900, // a tool call that names no `ms`
   toolSettleMs: 150,
   toolNoteMs: 160, // started → the progress note
@@ -33,13 +39,16 @@ export type SinkCall =
 // `await` = the tape holds here until the visitor acts — a finished dream waits for ☀️ Wake, exactly
 // as the real server leaves her in `finished_idle` until dream.wake arrives.
 export type StageCue =
-  | { kind: 'skip'; label: string; ms: number }
+  | { kind: 'skip'; label: string; ms: number; elapsedMs?: number }
   | { kind: 'music'; track: string | null }
   // v0.48.3: the visitor presses play in "his" player — the director gates the next line on it.
   | { kind: 'press_play'; track: string; label: string }
   // v0.49.0: back at his desk — the folder she left, the file in it.
   | { kind: 'open_file'; folder: string; file: string; label: string; doc: OpenFileBeat['doc'] }
-  | { kind: 'await'; what: 'wake' };
+  | { kind: 'await'; what: 'wake' }
+  // v0.51.0: the curtain call — the chat cleared; her inner voice as a card.
+  | { kind: 'clear' }
+  | { kind: 'inner'; text: string };
 
 export type Cue =
   | { at: number; kind: 'frame'; frame: ServerEvent }
@@ -57,6 +66,22 @@ export type CompiledScene = { id: string; title: string; prelude: Run; turns: Tu
 export type Compiled = { scenes: CompiledScene[]; dream: Run | null };
 
 export type DurationLookup = (text: string) => number | undefined;
+
+// v0.51.0: who said a (quoted, possibly excerpted) line in a scene — the engineering notes draw a quote
+// as that side's own bubble. Her lines are the runs' assistant text; his are the turns he sends.
+export function speakerIn(scene: CompiledScene | undefined, text: string): 'luna' | 'user' | null {
+  if (!scene || text === '') return null;
+  const runs = [scene.prelude, ...scene.turns.map((t) => t.run)];
+  if (scene.turns.some((t) => t.userText.includes(text))) return 'user';
+  if (runs.some((r) => r.turns.some((rt) => rt.assistant_text.includes(text)))) return 'luna';
+  return null;
+}
+
+// How long an inner-voice card stays before the next line — a reading pace, slower for Chinese.
+export function readingMs(text: string): number {
+  const perChar = /[\u4e00-\u9fff]/.test(text) ? 150 : 50;
+  return Math.max(3500, 1200 + text.length * perChar);
+}
 
 export function estimateSpeechMs(text: string): number {
   return PACING.speechLeadMs + text.length * PACING.speechCharMs;
@@ -165,6 +190,9 @@ class RunBuilder {
   // A `message` tool call as the server streams it: started → text deltas → the delivery envelope.
   private message(line: LunaLine, isFinal: boolean): void {
     const callId = this.ids.call();
+    // Paced by her voice: not before the frame clock, and not while more than the overlap of the
+    // current line is still to be spoken.
+    this.t = Math.max(this.t, this.speechEnd - PACING.voiceOverlapMs);
     const delivery: MessageDelivery = {
       text: line.text,
       segments: [],
@@ -198,6 +226,7 @@ class RunBuilder {
   private tool(call: ToolCall): void {
     const callId = this.ids.call();
     const ms = call.ms ?? PACING.toolMs;
+    this.t += PACING.toolLeadMs;
     this.frame(this.t, { type: 'tool.started', call_id: callId, tool_name: call.name, input: {} });
     if (call.note !== undefined) {
       this.frame(this.t + Math.min(PACING.toolNoteMs, ms), {
@@ -248,7 +277,11 @@ class RunBuilder {
       case 'skip': {
         this.settle();
         const ms = beat.ms ?? PACING.skipMs;
-        this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'skip', label: beat.label, ms } });
+        this.cues.push({
+          at: this.t,
+          kind: 'stage',
+          stage: { kind: 'skip', label: beat.label, ms, ...(beat.elapsedMs !== undefined ? { elapsedMs: beat.elapsedMs } : {}) },
+        });
         this.t += ms;
         return;
       }
@@ -259,6 +292,17 @@ class RunBuilder {
         // After her last word lands; the run then ends and the next line arms behind the prompt.
         this.settle();
         this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'press_play', track: beat.track, label: beat.label } });
+        return;
+      case 'clear':
+        this.settle();
+        this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'clear' } });
+        this.t += PACING.gapMs;
+        return;
+      case 'inner':
+        // After her last word has been spoken, and left up long enough to read.
+        this.settle();
+        this.cues.push({ at: this.t, kind: 'stage', stage: { kind: 'inner', text: beat.text } });
+        this.t += beat.ms ?? readingMs(beat.text);
         return;
       case 'open_file':
         this.settle();
@@ -316,7 +360,16 @@ export function moreInTurn(beats: readonly Beat[], i: number): boolean {
   for (let j = i + 1; j < beats.length; j++) {
     const k = beats[j]?.kind;
     if (k === 'luna' || k === 'tool') return true;
-    if (k === 'user' || k === 'proactive' || k === 'skip' || k === 'dream' || k === 'press_play' || k === 'open_file') {
+    if (
+      k === 'user' ||
+      k === 'proactive' ||
+      k === 'skip' ||
+      k === 'dream' ||
+      k === 'press_play' ||
+      k === 'open_file' ||
+      k === 'clear' ||
+      k === 'inner'
+    ) {
       return false;
     }
   }

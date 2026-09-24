@@ -24,13 +24,17 @@ describe('demoRoute', () => {
 describe('createDemoFetch', () => {
   test('routes a data read to the file and hands the init through', async () => {
     const calls: string[] = [];
-    const f = createDemoFetch(BASES, async (u) => {
+    const inits: Array<RequestInit | undefined> = [];
+    const f = createDemoFetch(BASES, async (u, init) => {
       calls.push(u);
+      inits.push(init);
       return new Response('{"entries":[]}');
     });
-    const res = await f('/api/data/diaries');
+    const res = await f('/api/data/diaries', { headers: { accept: 'application/json' } });
     expect(res.ok).toBe(true);
     expect(calls).toEqual(['./demo/zh/data/diaries.json']);
+    // v0.51.0: revalidated like the tape, with the caller's init kept.
+    expect(inits).toEqual([{ headers: { accept: 'application/json' }, cache: 'no-cache' }]);
   });
 
   test('the voice health line hears what the real sidecar says while her voice plays', async () => {
