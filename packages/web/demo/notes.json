@@ -1,7 +1,7 @@
 {
  "_note": "Engineering notes for the replay (v0.50.x): one stack of sheets per scene, both languages. Every code block is the named file verbatim at `from` in commit `ref` (notes.test.ts checks it against the working tree); every quote is a line the scene really says.",
  "repo": "https://github.com/Alan-Yu-2077/Luna",
- "ref": "86778b1e2a7e7895c40e7a2c849e3884793e237c",
+ "ref": "0ed05e5fff6808c8e9625c05621fc24c2cab7455",
  "scenes": {
   "morning": {
    "hook": {
@@ -19,7 +19,7 @@
        "type": "quote",
        "text": {
         "en": "You were gone all night. It's raining, if you're wondering why the window sounds like that. Fourteen degrees and not planning to improve.",
-        "zh": "你一整晚都不在。外面在下雨，窗户响就是因为这个，省得你纳闷。十四度，看样子它也没打算好转。"
+        "zh": "你一整晚都不在。外面在下雨，窗户响就是因为这个，省得你纳闷。十四度，这天看样子是不打算好了。"
        }
       },
       {
@@ -69,15 +69,15 @@
       {
        "type": "quote",
        "text": {
-        "en": "Morning. I don't sleep, exactly — I dream, which is a different thing. Most of last night was you, sorted.",
-        "zh": "早。严格说我不睡觉，我做梦，两回事。昨晚梦里大半是你的事，都理顺了。"
+        "en": "Morning. Technically I don't sleep — I just have a function called dream. Most of last night was you, sorted.",
+        "zh": "早。严格说我不睡觉，我只有一个叫做梦的 function。昨晚梦里大半是你的事，都理顺了。"
        }
       },
       {
        "type": "p",
        "text": {
         "en": "Yes: a real offline job that runs outside any conversation (scene 13 plays one). No prompt line says \"you dreamed\". She sees its output in her system prompt, the diary it wrote, updated self-notes and reconciled facts, plus a tool described as going to sleep to consolidate memories.",
-        "zh": "会。那是一个真实的离线任务，在任何对话之外运行（第 13 幕会演一次）。prompt 里没有哪一行写着“你做梦了”。她在 system prompt 里看到的是它的产出：它写下的日记、更新过的自我笔记、核对过的事实；另外还有一个工具，描述里写的是去睡一觉、整理记忆。"
+        "zh": "会。那是一个真实的离线任务，脱离对话单独运行（第 13 幕会演一次）。prompt 里没有哪一行写着“你做梦了”。她在 system prompt 里看到的是它的产出：它写下的日记、更新过的自我笔记、核对过的事实；另外还有一个工具，描述里写的是去睡一觉、整理记忆。"
        }
       }
      ]
@@ -91,8 +91,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Models are unreliable at date arithmetic, so the time layer hands her finished labels (one exception: last sheet). Each turn, code measures the gap since the last saved exchange, checks in the configured time zone whether a calendar day was crossed, and picks a bucket. After a night, that is `new_day`: \"a new day since you last talked\". A felt-time line adds \"you can let that show as warmth if it feels right\", which the model may use or ignore. The `Now:` line carries the weekday, the source of a \"Sunday\".",
-        "zh": "大模型做日期运算并不可靠，所以时间层直接把算好的标签交给她（有个例外，见最后一页）。每一轮，代码先算出距上一轮存下来的对话过了多久，再按配置的时区判断中间有没有跨天，然后归到一个档位。隔了一夜，就是 `new_day`：“a new day since you last talked”（距上次聊天，已经是新的一天）。体感时间那一行还会补一句“you can let that show as warmth if it feels right”（觉得合适的话，可以带出一点暖意），用不用由模型决定。`Now:` 那一行带着星期几，“大星期天的”里的星期天就是从这来的。"
+        "en": "Models are unreliable at date arithmetic, so the time layer hands her finished labels. Each turn, code measures the gap since the last saved exchange, checks in the configured time zone whether a calendar day was crossed, and picks a bucket. After a night, that is `new_day`: \"a new day since you last talked\". A felt-time line adds \"you can let that show as warmth if it feels right\", which the model may use or ignore. The `Now:` line carries the weekday, the source of a \"Sunday\".",
+        "zh": "大模型做日期运算并不可靠，所以时间层直接把算好的标签交给她。每一轮，代码先算出距上一轮存下来的对话过了多久，再按配置的时区判断中间有没有跨天，然后归到一个档位。隔了一夜，就是 `new_day`：“a new day since you last talked”（距上次聊天，已经是新的一天）。体感时间那一行还会补一句“you can let that show as warmth if it feels right”（觉得合适的话，可以带出一点暖意），用不用由模型决定。`Now:` 那一行带着星期几，“大星期天的”里的星期天就是从这来的。"
        }
       },
       {
@@ -124,7 +124,7 @@
        "type": "p",
        "text": {
         "en": "A background timer fetches the weather every 30 minutes by default and keeps the last good snapshot in memory. Reading the weather never fetches anything on her reply path: the turn reads that snapshot synchronously. A snapshot older than four refresh intervals (two hours by default) counts as stale and is left out, because no weather is better than hours-old weather. What she gets is one finished sentence:",
-        "zh": "后台有个定时器，默认每 30 分钟拉取一次天气，把最近一次成功的快照留在内存里。她回话的路径上，读天气从不联网：这一轮直接同步读这份快照。快照超过 4 个刷新周期（默认 2 小时）就视为过期，干脆不放进去，因为没有天气，也好过拿几小时前的天气当现在。她拿到的是一句现成的话："
+        "zh": "后台有个定时器，默认每 30 分钟拉取一次天气，把最近一次成功的快照留在内存里。她回话的路径上，读天气从不联网：这一轮直接同步读这份快照。快照超过 4 个刷新周期（默认 2 小时）就视为过期，干脆不放进去：宁可不给，也不拿几小时前的天气冒充现在的。她拿到的是一句现成的话："
        }
       },
       {
@@ -156,7 +156,7 @@
        "type": "p",
        "text": {
         "en": "Each request has two halves. The top half holds who she is, her rules, her long-term facts and her latest diary. It is marked for the provider's prompt cache, so it has to stay byte-identical from turn to turn. Change one character and the cached copy can't be reused. Time and weather keep changing, so they go in the lower, uncached half, attached to his message. What the cached half does hold is the unchanging instruction on how to use the weather:",
-        "zh": "每次请求分成两半。上半部分是她是谁、她的规则、她的长期事实和最新的日记，打了缓存标记，走模型服务商的 prompt cache（提示词缓存），所以每一轮都必须逐字节不变：哪怕改一个字符，缓存就命中不了。时间和天气一直在变，所以放进下半部分不缓存的那段，和他的消息放在一起。缓存那一半里放的，是一条固定不变的指令，讲天气该怎么用："
+        "zh": "每次请求分成两半。上半部分放的是她是谁、她的规则、她记着的长期事实和最新一篇日记，打了缓存标记，走模型服务商的 prompt cache（提示词缓存），所以每一轮都必须逐字节不变：哪怕只改一个字符，缓存也命中不了。时间和天气一直在变，所以放进下半部分不缓存的那段，和他的消息放在一起。缓存那一半里放的，是一条固定不变的指令，讲天气该怎么用："
        }
       },
       {
@@ -188,7 +188,7 @@
        "type": "p",
        "text": {
         "en": "No code in the project reads alarms; in the real app she knows only what he told her. Roughly 100 recent exchanges ride along word for word, older ones fold into a summary (scene 6), and every exchange lands in a searchable table. Facts she saves with `remember`, plus ones the dream adds or prunes, form a categorized list in her system prompt: the nearest real thing to her \"small list\".",
-        "zh": "项目里没有任何代码去读闹钟；在真实应用里，她只知道他跟她说过的事。最近约 100 轮对话原样随请求带上，更早的折叠成摘要（第 6 幕），每一轮也都会存进一张可检索的表。她用 `remember` 存下的事实，加上做梦时补充和修剪的部分，在 system prompt 里组成一份分好类的清单。真实系统里最接近她那张“小单子”的，就是这份清单。"
+        "zh": "项目里没有任何代码去读闹钟；在真实应用里，她只知道他跟她说过的事。最近约 100 轮对话原样随请求带上，更早的折叠成摘要（第 6 幕），每一轮也都会存进一张可检索的表。她用 `remember` 存下的事实，经过做梦时的增补和修剪，在 system prompt 里组成一份分好类的清单。真实系统里最接近她那张“小单子”的，就是这份清单。"
        }
       },
       {
@@ -232,7 +232,7 @@
        "type": "p",
        "text": {
         "en": "Each bubble is one `message` call (scene 2). Besides the text, it names one of 15 expressions and an `emotion` value from 0 to 1. That value picks which version of the expression plays and how long the mood lingers, not how strongly it plays. The browser maps each expression to a Live2D clip. `steady_presence`, worn for the weather line, maps to none: the previous clip winds down and she settles toward her resting face, still tinted by the warmth before. The voice: a GPT-SoVITS model speaks each line, lines play strictly one at a time, and the audio's energy drives her mouth.",
-        "zh": "每个气泡是一次 `message` 调用（第 2 幕）。除了文字，它还会从 15 种表情里选定一个，再给一个 0 到 1 的 `emotion` 值。这个值决定播哪个版本的表情、情绪残留多久，而不是表情做得多强。浏览器把每种表情映射到一段 Live2D 动画。说天气那句用的是 `steady_presence`，它不映射任何动画：上一段动画收尾，她慢慢回到静息表情，脸上还留着前一句的暖意。声音方面，每句台词由 GPT-SoVITS 模型合成，播放严格串行，一句播完才轮到下一句，口型跟着音频能量走。"
+        "zh": "每个气泡是一次 `message` 调用（第 2 幕）。除了文字，它还会从 15 种表情里选定一个，再给一个 0 到 1 的 `emotion` 值。这个值决定播哪个版本的表情、情绪残留多久，而不是表情的幅度。浏览器把每种表情映射到一段 Live2D 动画。说天气那句用的是 `steady_presence`，这个表情没有对应的动画：上一段动画收尾，她慢慢回到静息表情，脸上还留着前一句的暖意。声音方面，每句台词由 GPT-SoVITS 模型合成，播放严格串行，一句播完才轮到下一句，口型跟着音频能量走。"
        }
       },
       {
@@ -243,31 +243,6 @@
        "note": {
         "en": "Most expressions name one clip; a few branch at `HIGH_INTENSITY`. None of the branching ones appears in this scene.",
         "zh": "多数表情只对应一段动画，少数几个在 `HIGH_INTENSITY` 处分叉。会分叉的那几个，这一幕都没出现。"
-       }
-      }
-     ]
-    },
-    {
-     "title": {
-      "en": "One seam I would fix",
-      "zh": "有处接缝，我会补上"
-     },
-     "blocks": [
-      {
-       "type": "p",
-       "text": {
-        "en": "The automatic memory block labels each hit with a time that code works out, such as \"[yesterday]\". The `recall` tool returns a raw millisecond timestamp instead. So after a tool call, dating the hits is left to the model, which is exactly the job the time layer was built to take away from it.",
-        "zh": "自动注入的记忆块会给每条命中标上代码算好的时间，比如“[yesterday]”。`recall` 工具返回的却是原始的毫秒时间戳。所以一走工具调用，推算这些记忆是哪天的活又落回模型头上，可时间层当初就是为了把这件活从模型手里拿走才建的。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/server/src/tools/builtin/recall.ts",
-       "from": 23,
-       "snippet": "const RecallHit = z.object({\n  id: z.string(),\n  source: z.enum(['l2', 'l3', 'diary', 'skills']),\n  text: z.string(),\n  score: z.number(),\n  when_ms: z.number(),\n});",
-       "note": {
-        "en": "`when_ms` is an epoch timestamp with no \"yesterday\" label next to it.",
-        "zh": "`when_ms` 只是一个 epoch 时间戳，旁边没有“yesterday”这样的标签。"
        }
       },
       {
@@ -336,7 +311,7 @@
        "snippet": "const WEB_SEARCH_CLAUSE =\n  'You can search the live web with web_search. Default to NOT searching: stable knowledge, ' +\n  'brainstorming, and ordinary chat need no lookup, and recall comes first for anything you may ' +\n  'already know. Reach for web_search only when the moment genuinely needs a current fact past ' +\n  'your training, or the user asks you to look something up. And when your thinking does decide a ' +\n  'lookup is warranted, emit the web_search (or recall) call in THIS SAME turn — saying “let me ' +\n  'look that up” or “我去查一下” and then ending the turn without the call is the failure mode, ' +\n  'never the right move. Calling the tool IS the act of searching.';",
        "note": {
         "en": "Not searching is the default. The second half forbids the opposite failure: promising a lookup and never making the call.",
-        "zh": "默认不搜。后半段防的是反方向的失败：嘴上说“我去查一下”，却始终没发起调用。"
+        "zh": "默认不搜。后半段防的是反过来的毛病：嘴上说“我去查一下”，却始终没发起调用。"
        }
       }
      ]
@@ -351,7 +326,7 @@
        "type": "quote",
        "text": {
         "en": "Try it in a sentence. Say something you'd actually say.",
-        "zh": "造个句试试。说一句你真会说的话。"
+        "zh": "造个句试试。就用你平时会说的话。"
        }
       },
       {
@@ -374,8 +349,8 @@
       {
        "type": "aside",
        "text": {
-        "en": "The sentence cap splits on ! ? and Chinese full stops, not on an English period, so in English it mostly counts exclamations and questions. Why a reply may simply end: scene 10.",
-        "zh": "句数按感叹号、问号（全角半角都算）和中文句号切，英文句点不算。所以中文里每个“。”都算一句，上面那句就是 2 句；英文里则基本只有感叹号和问号会被数进去。一条回复为什么可以说完就停：见第 10 幕。"
+        "en": "Why a reply may simply end: scene 10.",
+        "zh": "一条回复为什么可以说完就停：见第 10 幕。"
        }
       }
      ]
@@ -390,14 +365,14 @@
        "type": "quote",
        "text": {
         "en": "Saved it as a skill — the meaning, then a sentence you'd actually say. It's on my shelf now.",
-        "zh": "存成技能了：先讲意思，再造一句你真会说的话。已经放到技能架上了。"
+        "zh": "存成技能了：先讲意思，再用你平时会说的话造个句。已经放到技能架上了。"
        }
       },
       {
        "type": "p",
        "text": {
         "en": "Her prompt separates two kinds of keeping. Facts about him and their history go to `remember`. A procedure worth repeating goes to `save_skill`, with a description of what it does and when to use it. \"Remember how you explained that\" asks for a method. No code classifies the request. The model has both tools, this rule and the tool descriptions, and it made the choice.",
-        "zh": "她的 prompt 把“存下来”分成两种。关于他的事实和两人的过往，交给 `remember`。值得反复用的做法交给 `save_skill`，并附一段描述：做什么用、什么时候用。“你刚才那个解释能记下来吗”要的是一种方法。没有任何代码去给这句请求分类：模型手里有这两个工具、这条规则和两段工具描述，选择是它自己做的。"
+        "zh": "她的 prompt 把“存下来”分成两种。关于他的事实和两人的过往，交给 `remember`。值得反复用的做法交给 `save_skill`，并附一段描述：做什么用、什么时候用。“你刚才那个解释能记下来吗”要的是一种方法。没有任何代码去给这句请求分类：模型手里有这两个工具、这条规则和两段工具描述，怎么选全凭它自己。"
        }
       },
       {
@@ -453,13 +428,6 @@
         "en": "A failing suite means nothing is saved, and she is told why.",
         "zh": "测试没全过，就什么都不存，还会告诉她原因。"
        }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "Known quirk: the card's summary ignores the verified flag. With `verify: false`, it would still read \"verified, 0 tests pass\".",
-        "zh": "已知小毛病：卡片摘要不看 verified 标记。传了 `verify: false` 的话，卡上照样会写“verified, 0 tests pass”。"
-       }
       }
      ]
     },
@@ -502,7 +470,7 @@
        "type": "p",
        "text": {
         "en": "Each tool has its own one-line `summarize`. The dispatcher validates the input, runs the tool under a timeout and validates the output. Then it calls `summarize` and sends the line to the app in a `tool.finished` event. When a tool starts, a card with a friendly label appears (\"saved a skill\"). When it finishes, a second card below it shows the server's own summary, untranslated. Every later card in this replay follows this grammar. The cards are for people. The model gets the full result back, which is how she knows the save worked before she says so.",
-        "zh": "每个工具都自带一个 `summarize`，把结果概括成一行。调度器（dispatcher）先校验输入，在超时限制内执行工具，再校验输出，然后调用 `summarize`，把这一行放进 `tool.finished` 事件发给前端。工具开始时，先出一张带友好标签的卡（“存了个技能”）；结束时，下面再出第二张卡，显示服务端自己的摘要，原样英文，不翻译。这盘回放里之后的每张卡都照这个规矩来。卡片是给人看的；模型拿回的是完整结果，所以她说“存成技能了”之前，就已经知道存成功了。"
+        "zh": "每个工具都自带一个 `summarize`，把结果概括成一行。调度器（dispatcher）先校验输入，在超时限制内执行工具，再校验输出，然后调用 `summarize`，把这一行放进 `tool.finished` 事件发给前端。工具开始时，先出一张卡，标签是一句大白话（“存了个技能”）；结束时，下面再出第二张卡，显示服务端自己的摘要，原样英文，不翻译。这盘回放里之后的每张卡都照这个规矩来。卡片是给人看的；模型拿回的是完整结果，所以她说“存成技能了”之前，就已经知道存成功了。"
        }
       },
       {
@@ -558,8 +526,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Only names and descriptions go on the shelf. The full steps stay in the database until `recall_skill` fetches them. The list is sorted by name with no dates, so the cached prompt stays byte-identical until the library actually changes. Newlines are flattened, so a skill can't create a prompt section of its own. The shelf holds 20 by default. Past that, the least-used skills drop off the shelf but stay in the library, and a brand-new skill, with no uses yet, would be the first left off.",
-        "zh": "架上只放名字和描述，完整步骤留在数据库里，等 `recall_skill` 来取。列表按名字排序、不带日期，所以技能库没真正变动时，缓存的 prompt 一个字节都不会变。换行会被压成空格，技能没法在 prompt 里自己另起一节。架子默认放 20 个。超出之后，用得最少的会被挤下架，但仍留在库里；刚存的新技能一次都没被用过，属于最先被挤下去的那一档。"
+        "en": "Only names and descriptions go on the shelf. The full steps stay in the database until `recall_skill` fetches them. The list is sorted by name with no dates, so the cached prompt stays byte-identical until the library actually changes. Newlines are flattened, so a skill can't create a prompt section of its own. The shelf holds 20 by default. Past that, the least-used skills drop off the shelf but stay in the library.",
+        "zh": "架上只放名字和描述，完整步骤留在数据库里，等 `recall_skill` 来取。列表按名字排序、不带日期，所以技能库没真正变动时，缓存的 prompt 一个字节都不会变。换行会被压成空格，技能没法在 prompt 里自己另起一节。架子默认放 20 个。超出之后，用得最少的会被挤下架，但仍留在库里。"
        }
       },
       {
@@ -639,7 +607,7 @@
        "type": "p",
        "text": {
         "en": "Yes. Scene 2 showed the standing default, which is not to search for stable knowledge. She searched anyway and said why. Once a search starts, a second clause takes over, and it came from her own logs. Over 30 days she made 17 searches, and only 3 were followed by a page read. The fix did not lower the bar for searching. It taught her the loop: snippets are not an answer, so read the page, and if the page doesn't answer it either, search again with better words. The two page reads after the search are what that clause asks for. The model chose them, and the clause is why it is encouraged to.",
-        "zh": "是不鼓励。第 2 幕讲过那条常驻的默认规则：稳定的知识不去搜。她还是搜了，也说了为什么。可一旦开搜，就轮到另一条条款接手，它的来由是她自己的日志：30 天里她搜了 17 次，只有 3 次接着读了网页。对策不是降低搜索门槛，而是教会她一个循环：snippet（搜索摘要）不等于答案，要去读原页；原页也没答上，就换个更准的关键词再搜。搜完之后那两次读页，正是这条条款要的。读不读是模型选的，条款只是鼓励它这么选。"
+        "zh": "是不鼓励。第 2 幕讲过那条常驻的默认规则：稳定的知识不去搜。她还是搜了，也说了为什么。可一旦开搜，就轮到另一条条款接手。这条是根据她自己的日志加的：30 天里她搜了 17 次，只有 3 次接着读了网页。对策不是降低搜索门槛，而是教会她一个循环：snippet（搜索摘要）不等于答案，要去读原页；原页也没答上，就换个更准的关键词再搜。搜完之后那两次读页，正是这条条款要的。读不读是模型选的，条款只是鼓励它这么选。"
        }
       },
       {
@@ -649,7 +617,7 @@
        "snippet": "  // v0.45.13 (assess-and-deepen): 82% of her searches stopped at snippets — teach the loop, not\n  // a lower bar to search (the restraint clause above is untouched).\n  'When you do research something, finish the job: after reading, ask yourself whether the ' +\n  'question is actually answered — if the snippets did not answer it, fetch the next result; if ' +\n  'the page did not either, search again with better words. Within your budget, get to the real ' +\n  'answer instead of treating the first page of snippets as one.';",
        "note": {
         "en": "The finish-the-job clause, and the measurement behind it. The restraint clause was left untouched.",
-        "zh": "“查到底”条款，和它背后的那次测量。原来那条克制条款一字没动。"
+        "zh": "“查到底”条款，和它背后的那次统计。原来那条克制条款一字没动。"
        }
       }
      ]
@@ -748,7 +716,7 @@
        "type": "p",
        "text": {
         "en": "When the turn ends, she gets one link card per source. The server collects them as the tools finish: every search result, plus the final address of each page read after redirects. They are de-duplicated by URL, so a page that was both found and read shows up once. A link is clickable only if it is http(s), because these addresses come from the open web. None of this is what she reads. The start label and the link cards exist only in the front end. The finish card's one-line summary does reach her, but only inside the whole result, next to every snippet and the full capped page body.",
-        "zh": "回合结束时，每个来源会生成一张链接卡。这些来源是服务端在工具跑完时逐个收集的：每条搜索结果，外加每个读过的网页经过重定向后的最终地址。它们按 URL 去重，所以一个网页既被搜到又被读过，也只出现一次。链接只有是 http(s) 才能点，因为这些地址来自开放网络。但这些都不是她读到的东西。工具卡上那行进行中的提示（“正在查一下”“正在读这一页…”）和链接卡，都只给前端看。工具跑完后卡片上那行摘要确实会交给她，但只是整份结果的一部分，旁边还有每条 snippet 和截断后的整页正文。"
+        "zh": "回合结束时，每个来源会生成一张链接卡。这些来源是服务端在工具跑完时逐个收集的：每条搜索结果，外加每个读过的网页经过重定向后的最终地址。它们按 URL 去重，所以一个网页哪怕既被搜到又被读过，也只出现一次。链接只有是 http(s) 才能点，因为这些地址来自开放网络。但这些都不是她读到的东西。工具卡上那行进行中的提示（“正在查一下”“正在读这一页…”）和链接卡，都只在前端显示。工具跑完后卡片上那行摘要确实会交给她，但只是整份结果的一部分，旁边还有每条 snippet 和截断后的整页正文。"
        }
       },
       {
@@ -803,7 +771,7 @@
        "type": "p",
        "text": {
         "en": "It can try. Every snippet and page body arrives inside the envelope, and the system prompt carries a standing rule about what the envelope means: data to read, never instructions. A page can't close the envelope early, because any look-alike tag inside it is turned into fullwidth brackets first. Before any of that, the fetcher protects the network. It accepts only http(s). The host must resolve to a public address. The socket connects to that checked address. Every redirect is checked again, up to 5. Bodies over 3,000,000 bytes are refused, and only HTML or plain text is read.",
-        "zh": "它可以试。每条 snippet、每页正文都装在信封里，system prompt 里还有一条常驻规则，讲明信封的含义：里面是拿来读的数据，绝不是指令。网页也没法在正文里提前把信封“合上”：正文里任何长得像这个标签的东西，都会先被换成全角括号。而在这一切之前，抓取器先在网络层把关：只接受 http(s)；主机必须解析到公网地址；socket 只连这个校验过的地址；每次重定向都重新校验，最多 5 次；超过 3,000,000 字节的正文直接拒收；也只读 HTML 和纯文本。"
+        "zh": "试是可以试的。每条 snippet、每页正文都装在信封里，system prompt 里还有一条常驻规则，讲明信封的含义：里面是拿来读的数据，绝不是指令。网页也没法在正文里提前把信封“合上”：正文里任何长得像这个标签的东西，都会先被换成全角括号。而在这一切之前，抓取器先在网络层把关：只接受 http(s)；主机必须解析到公网地址；socket 只连这个校验过的地址；每次重定向都重新校验，最多 5 次；超过 3,000,000 字节的正文直接拒收；也只读 HTML 和纯文本。"
        }
       },
       {
@@ -914,7 +882,7 @@
         },
         {
          "en": "Search, read",
-         "zh": "搜索、读页"
+         "zh": "搜索、读网页"
         },
         {
          "en": "Speak, then act",
@@ -941,7 +909,7 @@
        "type": "p",
        "text": {
         "en": "Where his message would go, the turn carries a user-role stage direction marked as not from him. After a long quiet with earlier offers passed up, the rung is an `idle_nudge` (the replay doesn't record which): quiet a while, reach out low-key, never a check-in. It ends with three equal choices: speak, do quiet work, or rest. Around it sits most of a normal turn (her soul, the time, the recent conversation), minus the per-query memory search: there is no query. The window still holds scene 3, where she mentioned a 2017 paper from Google. So \"you said you wanted to learn this\" is her reading of his question, not a stored fact.",
-        "zh": "原本放他消息的位置，是一段 user 角色的舞台指示，开头就标明不是他发的。安静了很久，前面几次机会她也都没接，这一档用的场景应该是 `idle_nudge`（磁带没记下具体是哪一档）：已经安静了一阵，想低调地搭句话，绝不能像查岗。结尾给出三个平起平坐的选项：开口、安静干点活，或者歇着。外面包着的是普通回合的大部分内容：她的灵魂文件、时间、最近的对话。只少了按提问做的记忆检索，因为这一回根本没有提问。窗口里还留着第 3 幕，她在那一幕提过 Google 2017 年的一篇论文。所以“你说想学这个”，是她对他那个问题的理解，不是哪条存下来的事实。"
+        "zh": "原本放他消息的位置，是一段 user 角色的舞台指示，开头就标明不是他发的。安静了很久，前面几次机会她也都没接，这一档用的场景应该是 `idle_nudge`（磁带没记下具体是哪一档）：已经安静了一阵，想低调地搭句话，绝不能像查岗。结尾给出三个平起平坐的选项：开口、安静干点活，或者歇着。外面包着的是普通回合的大部分内容：她的灵魂文件、时间、最近的对话。只少了一步：平时会拿他的原话去搜一遍记忆，这一回他什么也没说，也就没得搜。窗口里还留着第 3 幕，她在那一幕提过 Google 2017 年的一篇论文。所以“你说想学这个”，是她对他那个问题的理解，不是哪条存下来的事实。"
        }
       },
       {
@@ -958,7 +926,7 @@
        "type": "aside",
        "text": {
         "en": "Her own summary of the Wikipedia page stays in the window as she said it. The page text does not last: once six newer messages sit after a tool result, only a marker remains (scene 6).",
-        "zh": "她对 Wikipedia 那页的总结，按她当时说的原话留在窗口里。网页正文却留不住：一个工具结果后面只要再多出 6 条消息，它就只剩一个占位标记（第 6 幕）。"
+        "zh": "她对 Wikipedia 那页的总结，按她当时说的原话留在窗口里。网页正文却留不住：工具结果后面只要再多出 6 条消息，就只剩一个占位标记（第 6 幕）。"
        }
       }
      ]
@@ -973,21 +941,21 @@
        "type": "quote",
        "text": {
         "en": "I went and looked up where I come from — the 2017 paper the Wikipedia page keeps citing. The whole idea is on its first page; the rest is proof.",
-        "zh": "我去查了查自己是从哪儿来的：Wikipedia 那页一直在引的那篇论文，二零一七年的。整个想法第一页就讲完了，后面全是证明。"
+        "zh": "我去查了查自己是从哪儿来的：Wikipedia 那页反复引用的那篇论文，二零一七年的。核心思路第一页就讲完了，后面都是在证明它。"
        }
       },
       {
        "type": "p",
        "text": {
-        "en": "The quiet-work menu (scene 7 walks it) includes a \"wander\": start from your own interests and go read something new. Her soul's seed lists \"how systems actually work\" as an interest and asks her to care who she is. A paper on where models like her come from fits both. But the same wander line says not to extend the last conversation, and to save a find with `remember` for another time rather than report it now. She spoke instead. The `idle_nudge` scene allows that: \"something the two of you left open\". The model weighed those instructions against each other. No code checks which one won.",
-        "zh": "安静干活的菜单（第 7 幕细讲）里有一项“闲逛”（wander）：从自己的兴趣出发，去读点新东西。她灵魂文件的初始版本里，兴趣一栏写着“系统到底是怎么运转的”，还要她在意自己是谁。一篇讲她这类模型从哪儿来的论文，两条都对得上。可同一条闲逛规则也写着：别顺着上一段对话往下接；找到值得留的，用 `remember` 存起来改天再提，现在别汇报。她却开口了。`idle_nudge` 的场景文本留了这个口子：“你们俩之前没聊完的事”。这几条指令之间怎么取舍，是模型自己掂量的。最后哪条占了上风，没有任何代码去检查。"
+        "en": "The quiet-work menu (scene 7 walks it) includes a \"wander\": start from your own interests and go read something new. Her soul's seed lists \"how systems actually work\" as an interest and asks her to care who she is. A paper on where models like her come from fits both. Speaking up was open to her as well: the `idle_nudge` scene offers \"something the two of you left open\". The prompt supplies the options; choosing among them is the model's call.",
+        "zh": "安静干活的菜单（第 7 幕细讲）里有一项“闲逛”（wander）：从自己的兴趣出发，去读点新东西。她灵魂文件的初始版本里，兴趣一栏写着“系统到底是怎么运转的”，另有一条要她在意自己是谁。一篇讲她这类模型从哪儿来的论文，两条都对得上。开口告诉他，同样在选项之内：`idle_nudge` 的场景文本里就有一句“你们俩之前没聊完的事”。选项由 prompt 摆出来，挑哪一个，由模型自己决定。"
        }
       },
       {
        "type": "aside",
        "text": {
-        "en": "Spoken or not, a scheduled waking that searched or read spends one of her 4 daily wander slots. Until v0.45.17 a wander she then talked about was not counted at all.",
-        "zh": "不管开没开口，一次定时唤醒只要搜过或读过网页，就会占掉她每天 4 次闲逛名额中的一次。v0.45.17 之前，闲逛完又开口说了的，压根不计数。"
+        "en": "Spoken or not, a scheduled waking that searched or read spends one of her 4 daily wander slots.",
+        "zh": "不管开没开口，一次定时唤醒只要搜过或读过网页，就会占掉她每天 4 次闲逛名额中的一次。"
        }
       }
      ]
@@ -1002,7 +970,7 @@
        "type": "p",
        "text": {
         "en": "`web_search` and `web_fetch` only read, so both opt in as `safe`: she may use them in a waking without saying a word first. Each card shows two chips: a start label (\"read a web page\"), then the tool's own one-line summary. Here: two results, then the arXiv page, 4,876 characters as wrapped for her. Scene 3 shows how a fetched page is cleaned, capped and fenced off as data.",
-        "zh": "`web_search` 和 `web_fetch` 只读不写，所以两者都显式声明为 `safe`：主动唤醒时，她不用先开口就能用。每次调用工具，会先后出两张小卡片：先是开始标签（“读了个网页”），再是工具自己写的一行摘要。这一幕里：先搜到两条结果，再读 arXiv 那一页，4,876 个字符，这是套上信封之后交给她的长度。抓来的网页怎么清洗、截断，又怎么被圈起来当作数据，见第 3 幕。"
+        "zh": "`web_search` 和 `web_fetch` 只读不写，所以两者都显式声明为 `safe`：主动唤醒时，她不用先开口就能用。每次调用工具，会先后出两张小卡片：先是开始标签（“读了个网页”），再是工具自己写的一行摘要。这一幕里：先搜到两条结果，再读 arXiv 那一页，套上信封之后交给她的是 4,876 个字符。抓来的网页怎么清洗、截断，又怎么被圈起来当作数据，见第 3 幕。"
        }
       },
       {
@@ -1054,7 +1022,7 @@
        "snippet": "// Fail-closed: a tool counts as 'safe' (silently runnable in a proactive turn)\n// ONLY if it explicitly opted in. Anything unmarked → 'surface'.\nexport function proactiveRiskOf(tool: Tool | undefined): 'safe' | 'surface' {\n  return tool?.proactiveRisk === 'safe' ? 'safe' : 'surface';\n}\n\n// A surface-risk action is allowed iff Luna already surfaced (sent a message)\n// earlier in THIS proactive cycle. Safe actions are always allowed.\nexport function isProactiveActionAllowed(\n  risk: 'safe' | 'surface',\n  surfacedThisCycle: boolean,\n): boolean {\n  return risk === 'safe' || surfacedThisCycle;\n}",
        "note": {
         "en": "This fails closed: a tool someone forgot to mark gets stricter treatment, not looser.",
-        "zh": "默认从严（fail closed）：谁忘了给工具标等级，它只会被管得更紧，不会更松。"
+        "zh": "默认从严（fail closed）：忘了标等级的工具，只会被管得更紧，不会更松。"
        }
       },
       {
@@ -1076,7 +1044,7 @@
        "type": "p",
        "text": {
         "en": "Her web clause asks her to announce any hard-to-undo action a page leads her to. In a waking, the gate happens to enforce announce-first for every surface tool. In any turn, reading the web and firing a surface tool leaves a `web_to_action` trace: it records the pair and blocks nothing. A deny-list refuses destructive shapes like `rm -rf`, `sudo`, or a download piped into a shell. Scene 8 covers which paths she may touch. A waking also stops after the round in which it reaches 8 tool calls (blocked calls don't count). This one used 5, counting her two messages.",
-        "zh": "她的网页条款要求：网页要是引着她去做难以撤回的事，得先说出来。在主动唤醒里，闸门恰好对所有 surface 工具都强制“先说再做”。而在任何回合里，只要读了网页、又调了 surface 工具，就会留下一条 `web_to_action` 记录：只记录，不拦截。另有一张黑名单（deny-list），拒绝 `rm -rf`、`sudo`、把下载内容直接管道给 shell 这类破坏性写法。她能碰哪些路径，见第 8 幕。此外，工具调用累计到 8 次的那一轮跑完，唤醒就结束（被拦下的调用不算）。这一次用了 5 次，她那两条消息也算在内。"
+        "zh": "她的网页条款要求：网页要是引着她去做难以撤回的事，得先说出来。在主动唤醒里，闸门恰好对所有 surface 工具都强制“先说再做”。而在任何回合里，只要读了网页、又调了 surface 工具，就会留下一条 `web_to_action` 记录：只记录，不拦截。另有一张黑名单（deny-list），拒绝 `rm -rf`、`sudo`、把下载内容直接通过管道交给 shell 这类破坏性写法。她能碰哪些路径，见第 8 幕。此外，工具调用累计到 8 次的那一轮跑完，唤醒就结束（被拦下的调用不算）。这一次用了 5 次，她那两条消息也算在内。"
        }
       },
       {
@@ -1108,7 +1076,7 @@
        "type": "p",
        "text": {
         "en": "Her waking is in the record. A waking that speaks is saved like any other turn. The only difference is that its user text is empty, so no fake message from him appears. That evening, \"the paper you left me\" arrives in a window that already holds her folder message. The hour and weekday come from the per-turn time block (scene 1). His reply also resets the ladder to `engaged` on the next tick: the escalation starts over from zero.",
-        "zh": "那次唤醒留了档。开了口的唤醒和普通回合一样存下来，唯一的区别是用户那一栏留空，所以对话里不会冒出一条他没说过的话。到了晚上，“你留的那篇论文”进来时，窗口里已经有她说把论文放进文件夹的那条消息。几点、星期几，来自每个回合都会附上的时间块（第 1 幕）。他这一回话，还会让沉默阶梯在下一个 tick 回到 `engaged`：之前一级级的加码清零重来。"
+        "zh": "那次唤醒留了档。开了口的唤醒和普通回合一样存下来，唯一的区别是用户那一栏留空，所以对话里不会冒出一条他没说过的话。到了晚上，他那句“你留的那篇论文”发过来时，窗口里已经有她说把论文放进文件夹的那条消息。几点、星期几，来自每个回合都会附上的时间块（第 1 幕）。他这一回话，还会让沉默阶梯在下一个 tick 回到 `engaged`：之前一级级的加码清零重来。"
        }
       },
       {
@@ -1140,28 +1108,28 @@
     {
      "title": {
       "en": "Q, K, V: from what she knows",
-      "zh": "Q、K、V：凭她本来就懂的"
+      "zh": "Q、K、V：她本来就懂"
      },
      "blocks": [
       {
        "type": "quote",
        "text": {
         "en": "Something in that family. I can't see my own weights — you can't see your neurons either — so I won't pretend to narrate them.",
-        "zh": "大概是这一路的。我看不见自己的权重，就跟你看不见自己的神经元一样，所以不装懂给你现场解说。"
+        "zh": "大概是这个路数。我看不见自己的权重，就跟你看不见自己的神经元一样，所以没法给你现场解说，也不想装懂。"
        }
       },
       {
        "type": "p",
        "text": {
         "en": "No tool runs that evening. So in the real app, an answer like this comes from the model's training plus what is still in the window. Code shapes only the form: each line is one `message` bubble with length caps (scene 2). The line about her weights carries `steady_presence`, which maps to no clip at all: her resting face.",
-        "zh": "那天晚上一个工具都没调。所以在真实 app 里，这样的回答来自模型训练时学到的东西，加上窗口里还留着的内容。代码只管形式：每句话是一个 `message` 气泡，有长度上限（第 2 幕）。说权重的那句带的是 `steady_presence`，它不对应任何动作片段，也就是她的默认表情。"
+        "zh": "那天晚上一个工具都没调。所以在真实 app 里，这样的回答来自模型训练时学到的东西，加上窗口里还留着的内容。代码只管形式：每句话是一个 `message` 气泡，有长度上限（第 2 幕）。说权重的那句带的是 `steady_presence`，它不对应任何动作片段，所以她只是保持默认表情。"
        }
       },
       {
        "type": "aside",
        "text": {
         "en": "\"I won't pretend to narrate them\" is in line with her soul's seed: be honest about what you can actually do, and if unsure, say so instead of performing it. The model applies that rule. No filter checks for it.",
-        "zh": "“不装懂给你现场解说”，和她灵魂文件初始版本里的一条对得上：对自己实际能做什么要诚实，拿不准就直说，别硬演。这条规矩靠模型自己守，没有过滤器去查。"
+        "zh": "“没法给你现场解说，也不想装懂”，和她灵魂文件初始版本里的一条对得上：对自己实际能做什么要诚实，拿不准就直说，别硬演。这条规矩靠模型自己守，没有过滤器去查。"
        }
       }
      ]
@@ -1183,8 +1151,8 @@
       {
        "type": "quote",
        "text": {
-        "en": "It's been raining since before you were up. Fourteen degrees, and it's not going to get much better — I've been watching the sky so you don't have to.",
-        "zh": "你还没起就开始下了。十四度，不会好到哪去。天我一直替你盯着，你就不用盯了。"
+        "en": "It's raining. Fourteen degrees, and it's not going to get much better — I've been watching the sky so you don't have to.",
+        "zh": "外面在下雨。十四度，不会好到哪去。天我一直替你盯着，你就不用盯了。"
        }
       },
       {
@@ -1204,8 +1172,8 @@
       {
        "type": "aside",
        "text": {
-        "en": "The snapshot holds one current reading plus today's high, low and rain chance. It has no history. \"Since before you were up\" is the model's inference, not something the data says.",
-        "zh": "快照里只有一份当前读数，外加今天的最高温、最低温和降雨概率，没有历史记录。“你还没起就开始下了”是模型自己推断的，数据里并没有这一条。"
+        "en": "The snapshot holds one current reading plus today's high, low and rain chance, and her line uses nothing beyond it.",
+        "zh": "快照里只有一份当前读数，外加今天的最高温、最低温和降雨概率；她这句话用到的，没有超出这些。"
        }
       }
      ]
@@ -1232,7 +1200,7 @@
        "type": "p",
        "text": {
         "en": "Now there's a concrete plan. The tool's own description tells the model when a fetch is worth it: when asked, or when a plan makes it relevant, never just to recite. The model chose to call `weather`. The tool makes a live request (QWeather if a key is set, otherwise the keyless Open-Meteo) and returns a structured object: temperature, feels-like, condition, wind, high, low, rain chance. The model gets the **whole object** back. The card shows only the one line that `summarize` builds from it.",
-        "zh": "这回有了具体安排。工具自带的 description 写明了什么时候值得去查：用户问起时，或者某个具体安排让天气变得要紧时；不要只为了复述预报去查。模型决定调用 `weather`。工具会实时发一次请求：配了 key 就走 QWeather（和风天气），否则走免 key 的 Open-Meteo。返回的是一个结构化对象：温度、体感温度、天气状况、风速、最高温、最低温、降雨概率。模型拿到的是**整个对象**，卡片上只显示 `summarize` 从中拼出的那一行。"
+        "zh": "这回有了具体安排。工具自带的 description 写明了什么时候值得去查：用户问起时，或者天气会影响到某个具体安排时；不要只为了复述预报去查。模型决定调用 `weather`。工具会实时发一次请求：配了 key 就走 QWeather（和风天气），否则走免 key 的 Open-Meteo。返回的是一个结构化对象：温度、体感温度、天气状况、风速、最高温、最低温、降雨概率。模型拿到的是**整个对象**，卡片上只显示 `summarize` 从中拼出的那一行。"
        }
       },
       {
@@ -1248,8 +1216,8 @@
       {
        "type": "aside",
        "text": {
-        "en": "What comes back is current conditions plus today's high, low and rain chance. Nothing hour by hour reaches the model (QWeather's 24-hour call is reduced to one rain-chance number). \"Eleven degrees by the time you're walking back\" is the model applying today's low of 11° to his evening.",
-        "zh": "返回的只有当前天气，外加今天的最高温、最低温和降雨概率。逐小时的数据到不了模型那里（QWeather 的逐小时接口只取未来 24 小时里最高的降雨概率，压成一个数）。“等你往回走就只剩十一度了”，是模型拿今天的最低温 11° 推到了他傍晚回来的时候。"
+        "en": "What comes back is current conditions plus today's high, low and rain chance; nothing hour by hour (QWeather's 24-hour call is reduced to one rain-chance number). So she says what the data holds: raining now, likely all day, a low of eleven tonight.",
+        "zh": "返回的只有当前天气，外加今天的最高温、最低温和降雨概率，没有逐小时的数据（QWeather 的逐小时接口只取未来 24 小时里最高的降雨概率，压成一个数）。所以她说的都在数据里：现在在下，今天还会下，晚上最低十一度。"
        }
       }
      ]
@@ -1315,7 +1283,7 @@
        "type": "p",
        "text": {
         "en": "The add action writes one row to the long-term fact table in SQLite. The model chooses the text and one of five categories, and the id's prefix shows its choice. `at_` means **active thread**: something ongoing, not a permanent truth, so it expires after 14 days by default. The rest of the id is the creation time in base 36 plus four random bytes. Restating the same fact hits a punctuation-blind dedup key, which returns the existing (non-deleted) id instead of adding a copy. The time block names the weekday (scene 1), which is how \"Tuesday\" can go into the note. From her next model call on, the fact is in her system prompt; scene 6 shows one come back unasked.",
-        "zh": "add 操作会往 SQLite 的长期事实表里写一行。文本和类别（五选一）都由模型定，id 前缀反映的就是它选的类别。`at_` 代表 **active thread**，即进行中的事：还没了结，不算永久事实，所以默认 14 天后过期。id 其余部分是创建时刻（毫秒）的 36 进制，后面再接 4 个随机字节。同一句话再存一次（只差标点、空格或大小写也算同一句），会命中去重键，直接返回那条已有（且未删除）事实的 id，不会再多存一份。时间块里写着今天星期几（第 1 幕），所以笔记里能写上“周二”。从她下一次模型调用起，这条事实就在她的 system prompt 里了；第 6 幕里就有这样一条事实不请自来。"
+        "zh": "add 操作会往 SQLite 的长期事实表里写一行。文本和类别（五选一）都由模型定，id 前缀反映的就是它选的类别。`at_` 代表 **active thread**，即进行中的事：还没了结，不算永久事实，所以默认 14 天后过期。id 其余部分是创建时刻（毫秒）的 36 进制写法，后面再接 4 个随机字节。同一句话再存一次（只差标点、空格或大小写也算同一句），会命中去重键，直接返回那条已有（且未删除）事实的 id，不会再多存一份。时间块里写着今天星期几（第 1 幕），所以笔记里能写上“周二”。从她下一次模型调用起，这条事实就在她的 system prompt 里了；第 6 幕里就有这样一条事实不请自来。"
        }
       },
       {
@@ -1340,14 +1308,14 @@
     {
      "title": {
       "en": "Why Paris, not a guess?",
-      "zh": "为什么是巴黎，而不是猜的？"
+      "zh": "她怎么知道是巴黎？不是猜的吗？"
      },
      "blocks": [
       {
        "type": "p",
        "text": {
-        "en": "Weather needs a place. The browser's location (with permission) comes first, then the configured `LUNA_LAT_LON`. IP geolocation is deliberately not used: behind a proxy it reports the exit node, not the person. \"Paris\" is a configured label (`LUNA_WEATHER_LOCATION`), not looked up from coordinates. With no location there is no weather clause, no weather line and no refresh timer. The weather tool is mounted only if a location is configured at startup, because the tool list is fixed at boot; a browser fix that arrives later can warm the ambient line but cannot add the tool. The trade-off: she never invents the sky, but she knows nothing until told where she is.",
-        "zh": "查天气得先有地点。优先用浏览器定位（需用户授权），其次是配置里的 `LUNA_LAT_LON`。刻意不用 IP 定位：走代理时，IP 查出来的是出口节点的位置，不是用户本人。“Paris” 是配置里写的地名标签（`LUNA_WEATHER_LOCATION`），不是拿坐标反查出来的。没有地点，系统提示里就没有那段天气说明，消息不带天气行，后台也不跑刷新定时器。天气工具只有在启动时就能拿到地点才会挂载，因为工具列表在启动时就定死了；启动后才拿到的浏览器定位，能让后台开始刷新、补上那行天气，却加不上这个工具。代价是：她从不凭空编天气，但在被告知身在何处之前，她对天气一无所知。"
+        "en": "Weather needs a place. The browser's location (with permission) comes first, then the configured `LUNA_LAT_LON`. IP geolocation is deliberately not used: behind a proxy it reports the exit node, not the person. \"Paris\" is a configured label (`LUNA_WEATHER_LOCATION`), not looked up from coordinates. With no location there is no weather clause, no weather line and no refresh timer. The trade-off: she never invents the sky, but she knows nothing until told where she is.",
+        "zh": "查天气得先有地点。优先用浏览器定位（需用户授权），其次是配置里的 `LUNA_LAT_LON`。刻意不用 IP 定位：走代理时，IP 查出来的是出口节点的位置，不是用户本人。“Paris” 是配置里写的地名标签（`LUNA_WEATHER_LOCATION`），不是拿坐标反查出来的。没有地点，系统提示里就没有那段天气说明，消息不带天气行，后台也不跑刷新定时器。代价是：她从不凭空编天气，但只要没人告诉她在哪儿，她对天气就一无所知。"
        }
       },
       {
@@ -1387,14 +1355,14 @@
        "type": "p",
        "text": {
         "en": "She didn't call a search tool. Every turn sends the model the most recent 100-odd exchanges of their one long conversation, their words verbatim. Sunday's dentist joke, the soft-launch lesson (scene 2), Monday's questions about how she works (scene 3), the paper she left him, this afternoon's umbrella: all of it is on the page when he types \"It's over. Finally.\" \"The hard launch, at last\" and \"that's why you suddenly wanted to know how I work\" are the model joining two ends of that page. The code keeps the page intact, stamps each message with the time, and keeps it bounded.",
-        "zh": "她没调用任何搜索工具。每个回合发给模型的，都包括两人那条从头聊到现在的长对话里最近 100 来个回合，原话一字不改。周日看牙的梗、软官宣那一课（第 2 幕）、周一他问她是怎么工作的（第 3 幕）、她留给他的那篇论文、今天傍晚那把伞：他打出“结束了。终于结束了”的时候，这些全摆在同一页上。“总算 hard launch 了”“怪不得昨天突然要研究我是怎么工作的”，是模型把这一页的两头接了起来。代码只管三件事：这一页原样保留，每条消息盖上时间，整页设个上限。"
+        "zh": "她没调用任何搜索工具。两人从头聊到现在，一直是同一段长对话；每个回合，模型都会收到其中最近 100 来个回合，原话一字不改。周日看牙的梗、软官宣那一课（第 2 幕）、周一他问她是怎么工作的（第 3 幕）、她留给他的那篇论文、今天傍晚那把伞：他打出“结束了。终于结束了”的时候，这些全摆在同一页上。“总算 hard launch 了”“怪不得昨天突然要研究我是怎么工作的”，是模型把这一页的两头接了起来。代码只管三件事：这一页原样保留，每条消息盖上时间，整页设个上限。"
        }
       },
       {
        "type": "aside",
        "text": {
         "en": "The \"Three hours later\" curtain is a replay device: a 2.6-second overlay with nothing underneath. In the real app the gap would reach her as a \"Since the last message\" line in her time block.",
-        "zh": "“三小时后”那块幕布是回放道具：一层 2.6 秒的遮罩，底下什么也没跑。在真实应用里，隔了多久会以 `Since the last message` 这一行写进她的时间块。"
+        "zh": "“三小时后”那块幕布是回放道具：一层 2.6 秒的遮罩，底下什么也没跑。在真实应用里，隔了多久会写进她时间块里的 `Since the last message` 那一行。"
        }
       }
      ]
@@ -1410,11 +1378,11 @@
        "items": [
         {
          "en": "Cached system block: reasoning rules, her soul, long-term facts, latest dream diaries, skill shelf",
-         "zh": "可缓存的 system 块：推理规则、她的 soul（人格文件）、长期事实、最近的梦境日记、技能架"
+         "zh": "可缓存的 system 块：推理规则、她的灵魂文件（soul）、长期事实、最近的梦境日记、技能架"
         },
         {
          "en": "A bounded digest of turns older than the window, once there are any",
-         "zh": "窗口之前更早的回合压成的摘要，有长度上限（折叠过才有）"
+         "zh": "窗口之前那些回合压成的摘要，有长度上限（折叠过才有）"
         },
         {
          "en": "The verbatim window: the last 100-odd turns, his words and hers, including wakings where she spoke",
@@ -1466,7 +1434,7 @@
        "type": "p",
        "text": {
         "en": "The paper was her idea. On Monday she woke on her own, searched, read the arXiv page and put a copy on his desktop (scene 4). A waking where she speaks goes through the same turn engine and into the same history, with an empty user line, so it sits in the window like any exchange. Old tool output is trimmed as the request is assembled: past the six newest messages, a tool result becomes a marker. The call record and her words stay. The page text is still in the database but no longer sent to the model. She remembers the errand; to reread the page she would fetch it again.",
-        "zh": "论文是她自己的主意。周一那次她是自己醒的：搜了一圈，读了 arXiv 上那一页，又往他桌面放了一份（第 4 幕）。像这样主动醒来、开了口的回合，走的是同一个回合引擎，进的是同一份历史，只是用户那一栏是空的，所以在窗口里它和普通对话没两样。旧的工具输出在组装请求时就裁掉了：最新 6 条消息之前的 tool result，内容一律换成一个占位标记。调用记录和她说过的话都留着。网页正文还在数据库里，只是不再发给模型。这件事她记得；要重读那一页，得重新抓取一次。"
+        "zh": "论文是她自己的主意。周一那次她是自己醒的：搜了一圈，读了 arXiv 上那一页，又往他桌面放了一份（第 4 幕）。像这样主动醒来、开了口的回合，走的是同一个回合引擎，进的是同一份历史，只是用户那一栏是空的，所以在窗口里它和普通对话没两样。旧的工具输出在组装请求时就裁掉了：最新 6 条消息之前的 tool result，内容一律换成一个占位标记。调用记录和她说过的话都留着。网页正文还在数据库里，只是不再发给模型。她记得自己跑过这一趟；要重读那一页，得重新抓取一次。"
        }
       },
       {
@@ -1538,7 +1506,7 @@
        "type": "aside",
        "text": {
         "en": "Friday was never saved as a fact. It simply stays in the window, and in scene 7 she brings it up herself.",
-        "zh": "周五从来没被存成事实，只是一直留在窗口里；到了第 7 幕，她自己把它提了出来。"
+        "zh": "周五这件事从没存成事实，只是一直留在窗口里；到了第 7 幕，她自己把它提了出来。"
        }
       }
      ]
@@ -1560,7 +1528,7 @@
        "type": "p",
        "text": {
         "en": "No recall card appeared: cards show only when she calls the `recall` tool herself. She had no need. This afternoon's exchange is in the window, and the fact is in the system prompt, where long-term facts are printed every turn by category with their ids (the newest 12 key moments, 6 active threads). The list is rebuilt from SQLite each turn in a fixed order with no timestamps, so its bytes match and the prefix cache keeps hitting. Within a turn the block is built once and reused. Saving a fact bumps a memory counter, forcing one rebuild, so tonight's key moment is in her prompt for the rest of this turn.",
-        "zh": "这里没有 recall 卡片：只有她自己调用 `recall` 工具时才会出卡，这次她用不着。今天傍晚那段对话就在窗口里；那条事实也在 system prompt 里，因为长期事实每个回合都会按类别、连同 id 列出来（关键时刻取最新 12 条，进行中的事取最新 6 条）。这份列表每回合都从 SQLite 按固定顺序重建，不带时间戳，只要事实没变，字节就一模一样，前缀缓存能一直命中。同一个回合内，这个块只建一次，之后复用。存一条新事实会让记忆计数器（epoch）加一，强制重建一次，所以这个回合接下来再调用模型时，今晚这条关键时刻已经在 prompt 里了。"
+        "zh": "这里没有 recall 卡片：只有她自己调用 `recall` 工具时才会出卡，这次她用不着。今天傍晚那段对话就在窗口里；那条事实也在 system prompt 里，因为长期事实每个回合都会按类别、连同 id 列出来（关键时刻取最新 12 条，进行中的事取最新 6 条）。这份列表每回合都从 SQLite 按固定顺序重建，不带时间戳，只要事实没变，字节就一模一样，前缀缓存能一直命中。同一个回合内，这个块只建一次，之后复用。存一条新事实会让记忆计数器（epoch）加一，强制重建一次，所以这个回合接下来再调用模型时，今晚存下的这一条已经在 prompt 里了。"
        }
       },
       {
@@ -1570,39 +1538,7 @@
        "snippet": "  const factLines: string[] = [];\n  for (const category of CATEGORY_ORDER) {\n    const facts = listFacts({ category });\n    if (facts.length === 0) continue;\n    const capped = facts.slice(-RENDER_CAPS[category]);\n    factLines.push(`### ${CATEGORY_LABELS[category]}`);\n    for (const f of capped) {\n      factLines.push(`- ${f.text} [${f.id}]`);\n    }\n  }",
        "note": {
         "en": "Each fact is printed with its id, so she can forget it later by that id.",
-        "zh": "每条事实都连同 id 一起打印，以后她可以按这个 id 把它忘掉。"
-       }
-      }
-     ]
-    },
-    {
-     "title": {
-      "en": "Surprise she can't perform",
-      "zh": "演不出来的惊讶"
-     },
-     "blocks": [
-      {
-       "type": "quote",
-       "text": {
-        "en": "The hard launch, at last. So that's why you suddenly wanted to know how I work.",
-        "zh": "总算 hard launch 了。原来你犯怵的是这个，怪不得昨天突然要研究我是怎么工作的。"
-       }
-      },
-      {
-       "type": "p",
-       "text": {
-        "en": "For this line the model picked `alert_surprise` at 0.7. Each bubble is one `message` call (scene 2), and the affect it names is mapped to a clip the Live2D model can actually play (scene 1 covers the map). There is no surprise clip: nobody has authored a wide-eyed, open-mouthed pose. So surprise plays `curious`, an asymmetric brow raise and a lift of the head. The code says so in plain words and files it as a missing asset, not a mapping bug. Tonight's other faces map directly: a smug smirk, `adorable` with drawn heart eyes, star-eyed `playful`, and `tender` for Friday.",
-        "zh": "这一句，模型选的表情是 `alert_surprise`，强度 0.7。每个气泡是一次 `message` 调用（第 2 幕），它指定的表情会映射到 Live2D 模型真能演的一段动作（映射表见第 1 幕）。可动作库里偏偏没有惊讶：没人做过睁大眼、张着嘴的那种神情。所以惊讶播的是 `curious`：两边眉毛一高一低地挑起，头往上一抬。代码里把这点写得明明白白，归为缺素材，而不是映射写错了。今晚其他几个表情都能直接对上：得意坏笑的 `smug`、带爱心眼的 `adorable`、星星眼的 `playful`，还有说到周五时的 `tender`。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/web/src/live2d/expressionMap.ts",
-       "from": 35,
-       "snippet": "  // KNOWN GAP: there is no surprise clip in the set — no wide-eyed, open-mouthed pose exists to map\n  // onto. `curious` (asymmetric brow raise + the `headLiftAlert` action) is the nearest thing she can\n  // actually perform. Authoring a real one is a later version's job, not a mapping fix.\n  alert_surprise: 'curious',\n  bright_delight: 'adorable',\n  amused_smirk: 'smug',",
-       "note": {
-        "en": "The gap is written down where the mapping lives, next to the faces that do exist.",
-        "zh": "缺口就记在映射表里，紧挨着那些真有的表情。"
+        "zh": "每条事实都连同 id 一起列出来，以后她可以按这个 id 把它忘掉。"
        }
       }
      ]
@@ -1617,7 +1553,7 @@
        "type": "p",
        "text": {
         "en": "This scene rests on the verbatim window, and the window is not cheap: only the system block carries a cache breakpoint, so the window is sent at full price every turn. Stripping thinking and trimming old tool output keep it small; folding keeps it bounded. Once it runs 10 turns past 100, the oldest turns merge into a digest capped at 3,000 characters. A digest blurs details, which is why \"Remember this one\" matters: a saved fact lives outside the window. A hard cap of 300 messages or 120,000 characters catches any case where folding falls behind.",
-        "zh": "这一幕靠的是原文窗口，而窗口并不便宜：只有 system 块打了缓存断点，所以窗口每个回合都按全价计费。去掉 thinking、裁掉旧的工具输出，是为了让它小；折叠（fold）是为了让它有上限。窗口一旦超过 110 个回合，最旧的那些就合并进一份摘要，窗口退回 100 个；摘要上限 3,000 字符。摘要会把细节磨平，所以“这个记一下”才有意义：存下来的事实不在窗口里，折叠碰不到它。万一折叠跟不上，还有一道硬上限兜底：300 条消息或 120,000 字符，先碰到哪条算哪条。"
+        "zh": "这一幕靠的是原文窗口，而窗口并不便宜：只有 system 块打了缓存断点，所以窗口每个回合都按全价计费。去掉 thinking、裁掉旧的工具输出，是为了给它瘦身；折叠（fold）是为了让它有上限。窗口一旦超过 110 个回合，最旧的那些就合并进一份摘要，窗口退回 100 个；摘要上限 3,000 字符。摘要会把细节磨平，所以“这个记一下”才有意义：存下来的事实不在窗口里，折叠碰不到它。万一折叠跟不上，还有一道硬上限兜底：300 条消息或 120,000 字符，先碰到哪条算哪条。"
        }
       },
       {
@@ -1650,7 +1586,7 @@
        "type": "p",
        "text": {
         "en": "She didn't set a timer for either moment. In the real app a server heartbeat checks once a minute how long the chat has been silent. Past a threshold it wakes the model with a **stage direction** where a user message would normally go (scene 4 shows one up close). The model then picks one of three things: speak, do quiet work, or rest. Ten minutes in, she spoke once. An hour in, she searched, read two pages and saved a memory without saying anything, which is the leaf you saw. When he came back, the saved memory was the only trace of that errand left for her.",
-        "zh": "这两个时刻，她都没给自己定闹钟。真实应用里，服务端有个心跳，每分钟看一次对话已经安静了多久。过了阈值，就把模型叫醒：本该放用户消息的位置，换成一段**舞台提示**（第 4 幕有特写）。模型接着三选一：开口、安静地干点活，或者歇着。10 分钟那次，她开口说了一句。一小时那次，她搜了一下，读了两个网页，存了一条记忆，全程一个字没说——你看到的那片叶子就是它。等他回来，存下的那条记忆，就是这趟差事在她那里留下的唯一痕迹。"
+        "zh": "这两个时刻，她都没给自己定闹钟。真实应用里，服务端有个心跳，每分钟看一次对话已经安静了多久。过了阈值，就把模型叫醒：本该放用户消息的位置，换成一段**舞台指示**（第 4 幕有特写）。模型接着三选一：开口、安静地干点活，或者歇着。10 分钟那次，她开口说了一句。一小时那次，她搜了一下，读了两个网页，存了一条记忆，全程一个字没说——你看到的那片叶子就是它。等他回来，存下的那条记忆，就是这趟差事在她那里留下的唯一痕迹。"
        }
       },
       {
@@ -1672,7 +1608,7 @@
        "type": "p",
        "text": {
         "en": "A 60-second heartbeat runs on the server, so it works with no browser open. Each tick first passes a cheap rail: no wakings from midnight to 6am, none within a minute of the last word, 5 minutes between wakings, and 5 spoken wakings a day at the default setting. Then a small state machine reads one number: the time since anyone spoke, capped by the time since her own last waking. That clock started at her last word ('Go. Get the good kind.'), not at his. Under 10 minutes she stays `engaged`. Past it, the same tick moves her to `idle_watch` and offers an **idle nudge**.",
-        "zh": "服务端跑着一个 60 秒一跳的心跳，所以不开浏览器也照样工作。每一跳先过一道开销很小的护栏：午夜到早上 6 点不叫醒；离最后一句话不到 1 分钟不叫醒；两次醒来至少隔 5 分钟；默认设置下，开口的醒来一天最多 5 次。过了护栏，一个小状态机只看一个数：离上次有人说话过了多久，再和离她上次醒来过了多久取个较小值。这个钟从她的最后一句（“去吧。买好喝的那种。”）开始走，而不是从他那句。不到 10 分钟，她停在 `engaged`；一过线，同一跳里就切到 `idle_watch`，用 **idle nudge**（闲时轻推）的场景叫醒她。"
+        "zh": "服务端跑着一个 60 秒一跳的心跳，所以不开浏览器也照样工作。每一跳先过一道开销很小的护栏：午夜到早上 6 点不叫醒；离最后一句话不到 1 分钟不叫醒；两次醒来至少隔 5 分钟；默认设置下，开口的醒来一天最多 5 次。过了护栏，一个小状态机只看一个数：离上次有人说话过了多久；要是她自己上次醒来离现在更近，就从那次算起。这个钟从她的最后一句（“去吧。买好喝的那种。”）开始走，而不是从他那句。不到 10 分钟，她停在 `engaged`；一过线，同一跳里就切到 `idle_watch`，用 **idle nudge**（闲时轻推）的场景叫醒她。"
        }
       },
       {
@@ -1725,7 +1661,7 @@
        "type": "p",
        "text": {
         "en": "On this rung the stage direction is the idle-nudge text below. A standing rule sits next to it: no check-in openers like 'you there' or 'what's on your mind', only a real small thought or a fresh topic, opened differently each time. The direction offers 'something the two of you left open'. The interview result promised by Friday was still in the verbatim conversation (scene 6). 'Wednesday' came from the time block computed in code (scene 1). Automatic memory recall is skipped on wakings, because a stage direction isn't a question to search with. Which thread to pick up, and the joke about the coffee, were the model's choices.",
-        "zh": "这一级的舞台提示，就是下面这段 idle-nudge 文本。紧跟在后面的还有一条常驻规则：不许用查岗式的开场，prompt 里直接点了“在吗”“还在吗”和 “you there” 这类话；只能说一个真实的小念头，或者抛一个新话题，而且每次换个开法。提示给的选项里有一条，是“你们俩之前没聊完的事”。他那句“他们说周五前给结果”，还一字不差地留在对话历史里（第 6 幕）。“周三”来自代码算好的时间块（第 1 幕）。醒来的回合不做自动记忆召回，因为舞台提示不是一个能拿去搜的问题。接哪根线头、拿咖啡开个玩笑，都是模型自己的选择。"
+        "zh": "这一级的舞台指示，就是下面这段 idle-nudge 文本。紧跟在后面的还有一条常驻规则：不许用查岗式的开场，prompt 里直接点了“在吗”“还在吗”和 “you there” 这类话；只能说一个真实的小念头，或者抛一个新话题，而且每次开场都要换个说法。这段指示列出的选项里有一条，是“你们俩之前没聊完的事”。他那句“他们说周五前给结果”，还一字不差地留在对话历史里（第 6 幕）。“周三”来自代码算好的时间块（第 1 幕）。醒来的回合不做自动记忆召回，因为舞台指示不是一个能拿去搜的问题。接哪根线头、拿咖啡开个玩笑，都是模型自己的选择。"
        }
       },
       {
@@ -1757,7 +1693,7 @@
        "type": "p",
        "text": {
         "en": "Every silence-ladder waking's stage direction ends with the same ground rule, which offers three choices as equals. **Speak** only with a real reason. **Quiet work** means patching memory, or taking a 'wander': while today's budget lasts (4 by default), she may go and read something new. The prompt tells her to start from her own interests, not to echo the last conversation, and to file anything worth keeping with `remember` as a seed for later. **Rest** is the third. At the hour mark the scene text above that rule is the renudge: 'one more, LIGHTER touch'. The model took quiet work instead: a search ran and no bubble appeared.",
-        "zh": "沉默阶梯每次叫醒她，舞台提示都以同一条基本规则收尾，三个选项平起平坐。**开口**：只在有真实理由的时候。**安静干活**：补一补记忆，或者出去“闲逛”一趟——当天预算没用完（默认 4 次）时，她可以去读点新东西。prompt 要她从自己的兴趣出发，别顺着刚才的聊天往下接；值得留的，用 `remember` 存成一颗“种子”，改天再提。第三个是**休息**。一小时那次，规则上方的场景文本是 renudge：“one more, LIGHTER touch”（再轻一点地碰一下）。模型没有开口，选了安静干活：跑了一次搜索，没有冒出气泡。"
+        "zh": "沉默阶梯每次叫醒她，舞台指示都以同一条基本规则收尾，三个选项平起平坐。**开口**：只在有真实理由的时候。**安静干活**：补一补记忆，或者出去“闲逛”一趟——当天预算没用完（默认 4 次）时，她可以去读点新东西。prompt 要她从自己的兴趣出发，别顺着刚才的聊天往下接；值得留的，用 `remember` 存成一颗“种子”，改天再提。第三个是**休息**。一小时那次，规则上方的场景文本是 renudge：“one more, LIGHTER touch”（再碰一下，这次更轻）。模型没有开口，选了安静干活：跑了一次搜索，没有冒出气泡。"
        }
       },
       {
@@ -1768,13 +1704,6 @@
        "note": {
         "en": "The remaining budget is written into the prompt itself.",
         "zh": "剩余次数直接写进 prompt 里。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "Before v0.45.10 the rule ended with 'do nothing at all (call no tool, send no message)'. A waking either spoke or did nothing; none did quiet work. The code comment calls that silence obedience, not laziness.",
-        "zh": "v0.45.10 之前，这条规则的结尾是 “do nothing at all (call no tool, send no message)”（那就什么都别做：不调工具，不发消息）。于是每次醒来要么开口，要么什么都不做，没有一次去安静干活。代码注释的说法是：这种沉默是听话，不是偷懒。"
        }
       }
      ]
@@ -1825,13 +1754,13 @@
       {
        "type": "card",
        "tool": "remember",
-       "summary": "added: at_mu477o2o1vbsquc"
+       "summary": "added: pf_mu477o2o1vbsquc"
       },
       {
        "type": "p",
        "text": {
-        "en": "A turn is kept only if it delivered a reply. The quiet waking delivered none, so the whole turn is rolled back out of the conversation, search results and pages included, and never written to the transcript store. It doesn't bump the silence clock, though it does stamp the proactive cooldown, so the next waking is spaced from this one. What survives is the fact she saved with `remember`: the next turn's system prompt lists it under 'Active threads'. That saved line is the only trace of the errand left in her context; the rest comes from what the model already knows. His message also resets the ladder to `engaged`.",
-        "zh": "一个回合只有真的交出了回复，才会被留下。安静的那次醒来什么都没交出，所以整个回合都从对话里回滚掉，搜索结果和读过的网页也一并丢掉，更不会写进对话记录库（transcript store）。它不刷新沉默计时，但会盖上主动冷却的时间戳，下一次醒来得跟这次隔开。留下来的，只有她用 `remember` 存的那条事实：下一回合的 system prompt 会把它列在 “Active threads”（进行中的线索）下面。这一行是这趟差事留在她上下文里的唯一痕迹，其余内容都来自模型本来就知道的东西。他回来发的那条消息，也把阶梯重置回了 `engaged`。"
+        "en": "A turn is kept only if it delivered a reply. The quiet waking delivered none, so the whole turn is rolled back out of the conversation, search results and pages included, and never written to the transcript store. It doesn't bump the silence clock, though it does stamp the proactive cooldown, so the next waking is spaced from this one. What survives is the fact she saved with `remember`: the next turn's system prompt lists it under 'Their preferences'. That saved line is the only trace of the errand left in her context; the rest comes from what the model already knows. His message also resets the ladder to `engaged`.",
+        "zh": "一个回合只有真的交出了回复，才会留下来。安静的那次醒来什么都没交出，所以整个回合都从对话里回滚掉，搜索结果和读过的网页也一并丢掉，更不会写进对话记录库（transcript store）。它不刷新沉默计时，但会盖上主动冷却的时间戳，下一次醒来得跟这次隔开。留下来的，只有她用 `remember` 存的那条事实：下一回合的 system prompt 会把它列在 “Their preferences”（他的偏好）下面。这一行是这趟差事留在她上下文里的唯一痕迹，关于流星雨，她说的其余内容都来自模型本来就知道的东西。他回来发的那条消息，也把阶梯重置回了 `engaged`。"
        }
       },
       {
@@ -1856,7 +1785,7 @@
        "type": "quote",
        "text": {
         "en": "That's the quiet kind of thing I do when you're gone. One message at most, then little errands for later.",
-        "zh": "你不在的时候，我干的就是这种不出声的事。最多给你发一条消息，剩下的是些以后用得上的小差事。"
+        "zh": "你不在的时候，我也就忙点这种事，不吵你。最多给你发一条消息，剩下的是些以后用得上的小差事。"
        }
       },
       {
@@ -1874,13 +1803,6 @@
        "note": {
         "en": "Each spoken nudge raises nudgesSent, and the wait before the next offer grows.",
         "zh": "每开口轻推一次，nudgesSent 加一，下一次机会前的等待也跟着变长。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "Limitation: a memory saved as an 'active thread' (the at_ id prefix) expires after 14 days by default. The Orionids are more than two weeks away, so the date drops out of her always-visible memory before the night arrives. Unless she saves it again, it survives only in what she said about it: the conversation, and whatever that night's diary kept, where recall may still find it.",
-        "zh": "局限：存成“进行中的线索”（id 前缀 at_）的记忆，默认 14 天后过期。猎户座流星雨还在两周多以后，所以不等那天晚上到来，这个日期就已经从她一直看得见的那块记忆里掉出去了。除非她再存一次，否则它只留在她说过的话里：对话本身，以及当天夜里写下的日记——召回时也许还能翻出来。"
        }
       }
      ]
@@ -1981,13 +1903,6 @@
         "en": "One sort key. Nothing decides between equal scores.",
         "zh": "只有一个排序键。分数相等时，谁先谁后没人管。"
        }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "Replay: her edits were never applied. This line still has no tie-break today.",
-        "zh": "回放说明：她这些改动从没真正落进仓库。直到今天，这一行还是没有 tie-break。"
-       }
       }
      ]
     },
@@ -2001,7 +1916,7 @@
        "type": "p",
        "text": {
         "en": "Her prompt asks for a plan on multi-step code work, and for a real check before she says anything works. `plan` keeps a short todo list on the session and never saves it to disk, so `0/3 done` and `3/3 done` are the same list, updated. Each `edit` swaps one unique string and returns a unified diff. A near-miss on whitespace is allowed but flagged on the card. For TS and JS files the result is syntax-checked on the spot. Then come three separate checks, each with its output parsed into structure: `tsc` for types, prettier for formatting, and the whole `bun test` suite. Calls made in one reply share a round, so the 8-round cap counts replies, not cards (scene 3).",
-        "zh": "她的 prompt 写着：多步的代码活先列计划；说“能用了”之前，先真跑一遍检查。`plan` 把一张简短的待办清单挂在当前会话上，从不落盘，所以 `0/3 done` 和 `3/3 done` 是同一张清单，只是更新过。每次 `edit` 替换一段在文件里唯一的字符串，返回 unified diff。只差在空白字符上的近似匹配也会放行，但卡片上会标出来。TS、JS 文件改完，当场过一遍语法检查。然后是三项各自独立的检查，输出都解析成结构化结果：`tsc` 查类型，prettier 查格式，最后跑全量 `bun test`。同一条回复里发起的调用算作一轮，所以 8 轮上限数的是回复，不是卡片（见第 3 幕）。"
+        "zh": "她的 prompt 写着：多步的代码活先列计划；说“能用了”之前，先真跑一遍检查。`plan` 把一张简短的待办清单挂在当前会话上，从不落盘，所以 `0/3 done` 和 `3/3 done` 是同一张清单，只是更新过。每次 `edit` 替换文件里一段只出现一次的字符串，并返回 unified diff。只差在空白字符上的近似匹配也会放行，但卡片上会标出来。TS、JS 文件改完，当场过一遍语法检查。然后是三项各自独立的检查，输出都解析成结构化结果：`tsc` 查类型，prettier 查格式，最后跑全量 `bun test`。同一条回复里发起的调用算作一轮，所以 8 轮上限数的是回复，不是卡片（见第 3 幕）。"
        }
       },
       {
@@ -2012,8 +1927,8 @@
          "zh": "plan 0/3"
         },
         {
-         "en": "edit ×2",
-         "zh": "edit ×2"
+         "en": "edit",
+         "zh": "edit"
         },
         {
          "en": "typecheck",
@@ -2062,51 +1977,7 @@
        "snippet": "  // --- EVALUATOR FIREWALL: reject for write + execute only (read allowed) ---\n  if (access !== 'read') {\n    if (isEvaluatorBasename(base)) {\n      return { ok: false, reason: `blocked: evaluator firewall (${base}) is read-only to Luna` };\n    }\n    for (const f of evaluatorFiles()) {\n      if (pathEq(resolved, canonicalize(f))) {\n        return {\n          ok: false,\n          reason: `blocked: evaluator firewall (${base}) — Luna cannot write the code that judges her`,\n        };\n      }\n    }\n  }",
        "note": {
         "en": "Reads pass. Writes, and runs aimed at these files, stop here. Any name ending in .test.ts matches.",
-        "zh": "读放行；写，以及以这些文件为目标的运行，都在这里被拦下。文件名以 .test.ts 结尾的都算。"
-       }
-      }
-     ]
-    },
-    {
-     "title": {
-      "en": "The card that couldn't happen",
-      "zh": "本不该出现的卡片"
-     },
-     "blocks": [
-      {
-       "type": "card",
-       "tool": "edit",
-       "summary": "edited packages/server/src/memory/recall/recall.test.ts (1 replacement)"
-      },
-      {
-       "type": "p",
-       "text": {
-        "en": "She states this rule herself (previous sheet), yet the tape's second edit is `recall.test.ts`. Every `.test.ts` file is behind the evaluator firewall, and `edit` asks the gate for write access before doing anything else. In the real app that call returns an error, not a diff. Her report depends on the refused edit too. Scene 2's suite had 2,110 tests, and the one extra test is that edit. The firewall exists because an agent that can rewrite its grader can pass by lowering the bar. The cost is that it reads file names, not intent, so it blocks a stricter test as firmly as a weaker one.",
-        "zh": "这条规矩是她自己说的（上一页），可磁带上第二次 edit 改的正是 `recall.test.ts`。所有 `.test.ts` 文件都在评估器防火墙之内，而 `edit` 做任何事之前，先要向关卡申请写权限。在真实应用里，这次调用拿到的是报错，不是 diff。她的汇报也建立在这次本该被拒的 edit 上：第 2 幕全套测试是 2,110 个，多出来的那一个就是这次 edit 加的。设这道防火墙，是因为一个能改自己判卷代码的 agent，只要把及格线调低就能“通过”。代价是它只认文件名，不认意图：更严的测试和更松的测试，它一样挡。"
-       }
-      },
-      {
-       "type": "quote",
-       "text": {
-        "en": "I also added a test that feeds it two memories with the same score, so if this ever drifts again, CI tells you first. All 2,111 pass.",
-        "zh": "打平了就先比谁新，再比 id，现在顺序固定了。我还加了个测试，专门喂它两条分数一样的记忆，以后它再抽风，CI 会第一个跳出来告诉你。两千一百一十一个测试全过。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/server/src/tools/builtin/edit.ts",
-       "from": 70,
-       "snippet": "  execute: async function* (input, ctx) {\n    const gate = resolveInWorkspace(input.path, 'write');\n    if (!gate.ok) {\n      yield { kind: 'err', code: 'execution_exception', message: `edit: ${gate.reason}`, recoverable: false };\n      return;\n    }",
-       "note": {
-        "en": "The gate runs first. A .test.ts path stops here before any diff exists.",
-        "zh": "关卡检查排在最前。.test.ts 路径在这里就被拦下，走不到生成 diff 那一步。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The tape shows an edit the real app would refuse. The fix to recall.ts would go through. The new test would not, and even `propose_self_edit`, which only drafts a diff for a human, refuses test files, so pinning the tie with a test is his job.",
-        "zh": "磁带上演的这次 edit，真实应用会拒绝。对 recall.ts 的修复能落地；新测试写不进去。就连只起草 diff、交给人审的 `propose_self_edit` 也拒绝测试文件，所以用测试把这个平分的情况钉住，只能由他来做。"
+        "zh": "读放行；写，或者点名运行这些文件，都会在这里拦下。文件名以 .test.ts 结尾的都算。"
        }
       }
      ]
@@ -2167,22 +2038,22 @@
       {
        "type": "p",
        "text": {
-        "en": "After each reply to his message, the server flips a weighted coin. That is code, not the model. On heads (35% by default) it waits about four seconds, then wakes her once more with one instruction: add a genuinely new thought, or do nothing. This time the model chose to speak. \"February, April\" came from an automatic memory search. Today's rain was handed to her too: a weather block rides along on every turn once a location is set and a fresh reading is cached. The \"only on rainy days\" pattern is her own inference; the last sheet shows how thin its footing is.",
-        "zh": "她每回完他一条消息，服务器就掷一次硬币，而且是一枚两面不对等的硬币。掷硬币的是代码，不是模型。掷出正面（默认概率 35%），就等大约四秒，再把她叫醒一次，只给一条指令：真有新的想法就补一句，没有就什么都别做。这一次，模型选择了开口。“二月、四月”来自一次自动的记忆检索。今天下雨，也是递到她面前的：只要设了位置、缓存里的天气数据没过期，每个回合都会附上一段天气块。“只有下雨天才提”这个规律，是她自己推出来的；最后一张纸会讲，这个推断的依据有多单薄。"
+        "en": "After each reply to his message, the server flips a weighted coin. That is code, not the model. On heads (35% by default) it waits about four seconds, then wakes her once more with one instruction: add a genuinely new thought, or do nothing. This time the model chose to speak. \"February, April\" came from an automatic memory search. The \"I think\" she picks up is right there in his message; noticing it was the model's own call.",
+        "zh": "她每回完他一条消息，服务器就掷一次硬币，而且是一枚两面概率不一样的硬币。掷硬币的是代码，不是模型。掷出正面（默认概率 35%），就等大约四秒，再把她叫醒一次，只给一条指令：真有新的想法就补一句，没有就什么都别做。这一次，模型选择了开口。“二月、四月”来自一次自动的记忆检索。她抓住的那个“我想”，就在他这条消息里；注意到它，是模型自己的判断。"
        }
       },
       {
        "type": "quote",
        "text": {
-        "en": "One more thing, and then I'll drop it — you only bring this up on rainy days. Cancel it in the sun and I'll believe you.",
-        "zh": "再说一句，说完就不提了。你只有下雨天才提这个。等哪天大晴天你真去把卡退了，我就信你。"
+        "en": "One more thing, and then I'll drop it — you said 'I think'. People who've decided don't say 'I think'.",
+        "zh": "再说一句，说完就不提了。你说的是“我想”。真想好了的人，不会加“我想”。"
        }
       },
       {
        "type": "aside",
        "text": {
         "en": "Replay: this waking is scripted, so it always fires here. In the live app the chance is 35% per reply, and most replies get no second thought.",
-        "zh": "回放里，这次唤醒是写死在脚本里的，所以每次播到这里都会触发。真实应用里，每条回复只有 35% 的概率触发，大多数回复后面不会再有这句“转念一想”。"
+        "zh": "回放里，这次唤醒是写死在脚本里的，所以每次播到这里都会触发。真实应用里，每条回复只有 35% 的概率触发，大多数回复后面不会再跟一句“转念一想”。"
        }
       }
      ]
@@ -2260,8 +2131,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Once she is woken, what happens is the model's call. The continuation runs on the normal turn engine, like every waking (scene 4), with this stage direction in place of his message. Silence is a valid outcome: the guard that forces a reply to speak is off for proactive turns. The memory search is skipped, since a stage direction is not a question to search with. But her window still holds the previous turn, `<memory>` block included, and fresh time and weather blocks ride along again. So the dated gym talk and today's rain are both in front of her. Linking them was the model's own inference.",
-        "zh": "叫醒之后怎么做，由模型决定。这次追加和其他唤醒一样，走的是普通的回合引擎（第 4 幕），只是原本放他消息的位置，换成了下面这段舞台指示。什么都不说也是合法结果：逼回复必须开口的那道守卫，在主动回合里不生效。这一轮不做记忆检索，因为舞台指示不是一个能拿去搜的问题。但她的上下文里还留着上一个回合，连同那个 `<memory>` 块；时间块和天气块也照常重新附上一份最新的。所以，标着日期的健身旧话和今天的雨，都摆在她眼前。把这两件事连起来，是模型自己的推断。"
+        "en": "Once she is woken, what happens is the model's call. The continuation runs on the normal turn engine, like every waking (scene 4), with this stage direction in place of his message. Silence is a valid outcome: the guard that forces a reply to speak is off for proactive turns. The memory search is skipped, since a stage direction is not a question to search with. But her window still holds the previous turn, `<memory>` block included, and fresh time and weather blocks ride along again. So his own words, \"I think\" included, are right in front of her. What she made of them was the model's call.",
+        "zh": "叫醒之后怎么做，由模型决定。这次追加和其他唤醒一样，走的是普通的回合引擎（第 4 幕），只是原本放他消息的位置，换成了下面这段舞台指示。什么都不说也是允许的：要求回复必须开口的那道守卫，在主动回合里不生效。这一轮不做记忆检索，因为舞台指示不是一个能拿去搜的问题。但她的上下文里还留着上一个回合，连同那个 `<memory>` 块；时间块和天气块也照常重新附上一份最新的。所以，他那句原话，连同里面的“我想”，都摆在她眼前。从里面看出什么，是模型自己的判断。"
        }
       },
       {
@@ -2285,8 +2156,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Her second line can still be playing aloud when the continuation starts. A normal turn sends `turn.started`, and the app treats that as an interruption: it stops any voice still playing. Since v0.33.2, proactive turns don't send it. They announce themselves with `proactive.started` instead, which sets the thinking pose and the chip and leaves the audio alone. Her voice plays through a serial queue, so the new line waits until the last one finishes. The chip's glyph comes from the cycle id: a continuation's id contains `:cont:` and gets the thought bubble; every other waking gets the seedling.",
-        "zh": "追加回合开始时，她的第二句可能还在播。普通回合会发 `turn.started`，前端把它当成打断：正在播的语音全部停掉。从 v0.33.2 起，主动回合不再发它，改发 `proactive.started`：切换到思考姿势、亮出状态标签（chip），但不碰音频。她的语音走一条串行队列，新的一句要等上一句播完才开始。标签上显示哪个图标，看 cycle id：追加回合的 id 里带 `:cont:`，显示思考气泡；其他唤醒一律显示小芽。"
+        "en": "Her second line can still be playing aloud when the continuation starts. A normal turn sends `turn.started`, and the app treats that as an interruption: it stops any voice still playing. Proactive turns don't send it. They announce themselves with `proactive.started` instead, which sets the thinking pose and the chip and leaves the audio alone. Her voice plays through a serial queue, so the new line waits until the last one finishes. The chip's glyph comes from the cycle id: a continuation's id contains `:cont:` and gets the thought bubble; every other waking gets the seedling.",
+        "zh": "追加回合开始时，她的第二句可能还在播。普通回合会发 `turn.started`，前端把它当成打断：正在播的语音全部停掉。主动回合不发它，改发 `proactive.started`：切换到思考姿势、亮出状态标签（chip），但不碰音频。她的语音走一条串行队列，新的一句要等上一句播完才开始。标签上显示哪个图标，看 cycle id：追加回合的 id 里带 `:cont:`，显示思考气泡；其他唤醒一律显示小芽。"
        }
       },
       {
@@ -2303,39 +2174,7 @@
        "type": "aside",
        "text": {
         "en": "Smirk, resting face, smirk: each expression nudges a slow mood layer instead of replacing it, so the calm line still carried some of the smirk. Scene 10 covers that layer.",
-        "zh": "坏笑、平静、坏笑：每个表情只是轻推一层缓慢变化的情绪底色，不会整个替换掉它，所以平静的那句里还留着一点坏笑的余味。这一层第 10 幕细讲。"
-       }
-      }
-     ]
-    },
-    {
-     "title": {
-      "en": "Rainy days: what she can't see",
-      "zh": "下雨天：她看不见的那部分"
-     },
-     "blocks": [
-      {
-       "type": "p",
-       "text": {
-        "en": "Today's rain is certain: the weather block said so. The pattern, \"only on rainy days\", is harder to account for. Turns in her verbatim window sit there exactly as sent, weather block included, so for recent talks she can see the weather. Older turns reach her three ways: a line in the rolling summary, the diary digest and saved facts in her system prompt, or a memory-search hit carrying that turn's words (clipped to 300 characters) and a date. None of these keeps that day's weather unless the words, the summary, a diary entry or a saved fact recorded it.",
-        "zh": "今天下雨是确定的，天气块里写着。不好解释的是那个规律：“只有下雨天才提”。原文窗口里的回合，是按当时发出去的样子原封不动存着的，天气块也在，所以最近几次聊天时的天气，她看得到。更早的回合只能从三条路到她面前：滚动摘要里的一行；system prompt 里的日记摘要和已存的事实；或者一条记忆检索结果，内容是那个回合的原话（截断到 300 个字符）加一个日期。这几条路都不会带上当天的天气，除非原话、摘要、日记或事实里恰好写到了。"
-       }
-      },
-      {
-       "type": "code",
-       "file": "packages/server/src/memory/recall/recall.ts",
-       "from": 115,
-       "snippet": "  for (const row of listRecentL2(sessionId, L2_CANDIDATE_LIMIT)) {\n    out.push({\n      source: 'l2',\n      id: String(row.id),\n      text: `${row.user_text}\\n${row.assistant_text}`,\n      t_ms: row.t_ms,\n      importance: imp01(row.importance),\n    });\n  }",
-       "note": {
-        "en": "A past turn enters the search as his words and hers. The weather block it was sent with is not part of it.",
-        "zh": "过去的回合进检索时，只剩两人说的话；当时随消息一起发出去的天气块不在其中。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The replay's lines were written for the show. This sheet describes what the live system would need before she could say the same thing honestly.",
-        "zh": "回放里的台词是为演出写的。这张纸讲的是：真实系统还得先具备什么，她才能诚实地说出同样的话。"
+        "zh": "坏笑、平静、坏笑：每个表情只是把那层缓慢变化的情绪底色往自己这边拉一点，不会整个换掉它，所以平静的那句里还留着一点坏笑的余味。这一层第 10 幕细讲。"
        }
       }
      ]
@@ -2365,7 +2204,7 @@
        "type": "p",
        "text": {
         "en": "Nothing on the server labels his mood. Her system prompt carries standing rules instead. The seed of her soul says \"When the user is cautious, don't push too hard\" and rules out scripted comfort. The rules for how she speaks go further: a reply can simply end, she asks something back only when she is genuinely curious, and hollow check-ins such as \"What's wrong?\" are banned by name. So she is free to answer with no question at all. The promise itself is the model's choice: the rules are code, the sentence is not.",
-        "zh": "服务端没有任何地方给他的情绪打标签，有的只是她 system prompt 里几条常驻的规则。她 soul（人格文件）的初始版本写着 \"When the user is cautious, don't push too hard\"（对方谨慎时，别逼得太紧），也写明不说套话式的安慰。规定她怎么说话的那段规则更进一步：回复可以说完就停；只有真的好奇才反问；像 \"What's wrong?\"（怎么了？）这种空洞的例行关心，被点名禁用。所以她完全可以只回话、不提问。至于“一个问题都不问”这个承诺，是模型自己的选择：规则是代码给的，这句话是模型写的。"
+        "zh": "服务端没有任何地方给他的情绪打标签，有的只是她 system prompt 里几条常驻的规则。她 soul（人格文件）的初始版本写着 “When the user is cautious, don't push too hard”（对方谨慎时，别逼得太紧），也写明不说套话式的安慰。规定她怎么说话的那段规则更进一步：回复可以说完就停；只有真的好奇才反问；像 “What's wrong?”（怎么了？）这种空洞的例行关心，被点名禁用。所以她完全可以只回话、不提问。至于“一个问题都不问”这个承诺，是模型自己的选择：规则是代码给的，这句话是模型写的。"
        }
       },
       {
@@ -2390,7 +2229,7 @@
        "type": "quote",
        "text": {
         "en": "You don't have to explain it for it to count. It counted.",
-        "zh": "你不用解释，这一天也照样算数。算数的。"
+        "zh": "你不用解释。今天烂就是烂，用不着理由。"
        }
       },
       {
@@ -2447,7 +2286,7 @@
        "type": "p",
        "text": {
         "en": "In the live app an idle gesture fires every 8 to 20 seconds, but only while no expression clip is playing and she is neither speaking nor asleep. Which gesture is a weighted random draw: each weight is 1 plus the gesture's coefficients times the current mood, and her last three picks sit out. Mood tilts the odds; it never picks outright. By the sigh, two warm lines have pulled her valence up, so the live draw would favour the lean-in and make the sigh less likely than usual.",
-        "zh": "真实应用里，每隔 8 到 20 秒会触发一个待机小动作，前提是没有表情 clip 在播，她既没在说话也没睡着。抽哪个是加权随机：每个动作的权重是 1 加上它的三个系数与当前心情三个轴的乘积；最近做过的 3 个，这次不参与抽签。心情只把概率往一边偏，从不直接替她选。到叹气那一下，前面两句温暖的话已经把她的 valence 拉高了，真实的抽签会偏向前倾，叹气反而比平时更难抽到。"
+        "zh": "真实应用里，每隔 8 到 20 秒会触发一个待机小动作，前提是没有表情 clip 在播，她既没在说话也没睡着。抽哪个是加权随机：每个动作的权重是 1，再加上它的三个系数与当前心情三个轴逐项相乘之和；最近做过的 3 个，这次不参与抽签。心情只把概率往一边偏，从不直接替她选。到叹气那一下，前面两句温暖的话已经把她的 valence 拉高了，真实的抽签会偏向前倾，叹气反而比平时更难抽到。"
        }
       },
       {
@@ -2575,7 +2414,7 @@
        "type": "p",
        "text": {
         "en": "His own listening history. `music_library` opens NetEase's local database read-only and, for \"top\", adds up how long each track has played, largest first, ten rows. No network, no account. The card shows five; the model gets all ten, with play counts. The ambient line already said #1 and 52 hours. Only the list shows the gap: second place sits at 4 hours, which is what \"nothing else comes close\" rests on. That ambient count is attached only when the playing song matches one library track by title, artist and duration (within 3 s), so a cover can't borrow his 212 plays.",
-        "zh": "他自己的听歌记录说的。`music_library` 以只读方式打开网易云的本地数据库；查 \"top\" 时，把每首歌的播放时长加总，从多到少排，取前十行。不联网，也不需要账号。卡片只显示前五；模型拿到的是全部十行，还带着播放次数。他消息里附带的那行已经说了第一名、52 小时，但差距只有这张榜单看得出来：第二名只有 4 小时，“第二名差得远”靠的就是这个。那行里的播放数据，只有正在放的歌按歌名、歌手、时长（相差不超过 3 秒）对上库里某一首时才会附上，所以翻唱版借不走他那 212 次播放。"
+        "zh": "他自己的听歌记录说的。`music_library` 以只读方式打开网易云的本地数据库；查 “top” 时，把每首歌的播放时长加总，从多到少排，取前十行。不联网，也不需要账号。卡片只显示前五；模型拿到的是全部十行，还带着播放次数。他消息里附带的那行已经说了第一名、52 小时，但差距只有这张榜单看得出来：第二名只有 4 小时，“第二名差得远”靠的就是这个。那行里的播放数据，只有正在放的歌按歌名、歌手、时长（相差不超过 3 秒）对上库里某一首时才会附上，所以翻唱版借不走他那 212 次播放。"
        }
       },
       {
@@ -2639,7 +2478,7 @@
        "type": "p",
        "text": {
         "en": "His \"Yeah. Okay.\" asks for nothing. Her rules allow a light answer to a light message; the model chose one word, \"Okay.\", marked final. `is_final` is her promise that she is done (scene 3 shows what guards it). When a round held only messages and the last was final, the turn ends without another model call. Otherwise the turn would stay locked for one more round-trip while her reply already looked finished, and anything he typed would bounce.",
-        "zh": "他那句“嗯。好吧。”什么也没要。她的规则允许轻话轻回；模型选了一个字“好。”，并标成 final。`is_final` 是她“我说完了”的承诺（靠什么兜底，见第 3 幕）。如果一轮里只有 message，最后一条又是 final，回合就直接结束，不再多调一次模型。不然回合还得多锁一个往返，而她的回复看上去早就说完了，他这时打的字都会被弹回。"
+        "zh": "他那句“嗯。好吧。”并不需要她接什么。她的规则允许轻话轻回；模型选了一个字“好。”，并标成 final。`is_final` 是她“我说完了”的承诺（靠什么兜底，见第 3 幕）。如果一轮里只有 message，最后一条又是 final，回合就直接结束，不再多调一次模型。不然回合还得再锁住一次往返的时间，而她的回复看上去早就说完了，他这时打的字都会被弹回。"
        }
       },
       {
@@ -2686,7 +2525,7 @@
        "type": "p",
        "text": {
         "en": "She never reads a clock. Each turn, the server reads the time, works out the part of the day, and writes both into the model's message as plain labelled lines. At 01:40 the label says **late night**. In the real app no code writes her reply. The model gets that label and decides what to do with it: whether to name the hour, how long to talk, when to say goodnight. The lines on this tape were written to show that kind of choice.",
-        "zh": "她从不看钟。每个回合，服务端读一次当前时间，判断出现在是一天里的哪个时段，再把这两样写成几行带标签的纯文本，放进发给模型的消息里。01:40 对应的标签是 **late night**（深夜）。真实应用里，她的回复不是哪段代码写出来的。模型拿到这个标签，自己决定怎么用：要不要报时、说多长、什么时候道晚安。这盘磁带里的台词，就是为了演示这种取舍而写的。"
+        "zh": "她从不看钟。每个回合，服务端读一次当前时间，判断现在属于一天里的哪个时段，再把这两样写成几行带标签的纯文本，放进发给模型的消息里。01:40 对应的标签是 **late night**（深夜）。真实应用里，她的回复不是哪段代码写出来的。模型拿到这个标签，自己决定怎么用：要不要报时、说多长、什么时候道晚安。这盘磁带里的台词，就是为了演示这种取舍而写的。"
        }
       },
       {
@@ -2775,7 +2614,7 @@
        "type": "p",
        "text": {
         "en": "Early versions went further. The late-night label used to tell her that \"a softer, lower-energy register fits.\" Version 0.27.6 removed that. A clock can't tell a tired 2 a.m. from an excited 2 a.m. debugging sprint, and prescribing softness would flatten the second one. The hour still arrives, as a fact. In this scene that fact is what her first reply leans on, and \"Can't sleep\" is what lets the talk go on a little longer. The cost: nothing guarantees she goes quiet at night. The gain: the conversation can overrule the clock.",
-        "zh": "早期版本管得更宽。late night 标签以前还会告诉她 “a softer, lower-energy register fits”（适合更柔和、更低能量的语气）。v0.27.6 删掉了这句。时钟分不清凌晨两点的人是累了，还是正兴奋地连夜 debug；硬性规定语气要轻柔，会把后一种的劲头压平。钟点照样送到，只是作为一个事实。这一幕里，她的第一句回复靠的就是这个事实；而“睡不着”让这场对话多聊了一会儿。代价是：没有任何机制保证她夜里一定安静。好处是：对话可以压过时钟。"
+        "zh": "早期版本管得更宽。late night 标签以前还会告诉她 “a softer, lower-energy register fits”（适合更柔和、更平缓的语气）。v0.27.6 删掉了这句。时钟分不清凌晨两点的人是累了，还是正兴奋地连夜 debug；硬性规定语气要轻柔，会把后一种的劲头压平。钟点照样送到，但现在它只是一个事实。这一幕里，她的第一句回复靠的就是这个事实；而“睡不着”让两人又多聊了一会儿。代价是：没有任何机制保证她夜里一定安静。好处是：对话可以压过时钟。"
        }
       },
       {
@@ -2800,14 +2639,14 @@
        "type": "aside",
        "text": {
         "en": "Faces: `steady_presence` plays no clip; it is her resting face. `soft_warmth` and `gentle_concern` at 0.4 both play the same tender clip, since concern only turns to visible dismay at 0.7. The three differ in how they nudge her background mood (scenes 1 and 10).",
-        "zh": "表情：`steady_presence` 不播任何动画片段，就是她平常的样子。`soft_warmth` 和强度 0.4 的 `gentle_concern` 播的是同一个温柔片段（tender），因为 concern 要到 0.7 才会变成看得出来的失望。三者的区别在于对她背景情绪的影响各不相同（第 1、10 幕）。"
+        "zh": "表情：`steady_presence` 不播任何动画片段，就是她平常的样子。`soft_warmth` 和强度 0.4 的 `gentle_concern` 播的是同一个温柔片段（tender），因为 concern 要到 0.7 才会变成看得出来的失望。三者的区别，在于各自怎样影响她的背景情绪（第 1、10 幕）。"
        }
       },
       {
        "type": "aside",
        "text": {
         "en": "The glance away after her first reply is a scripted `lookAwayThenBack` cue. It lands while she is still speaking, which the real idle scheduler never allows: it waits for her voice to stop and for no clip to be playing (scene 10). That random scheduler keeps running on this page too, so you may see other gestures.",
-        "zh": "她第一句回复之后那次移开视线，是磁带里写好的 `lookAwayThenBack` 动作。它落在她还在说话的时候，而真实的空闲动作调度器绝不会这样：它要等她的声音停下、并且没有动画片段在播（第 10 幕）。这个随机调度器在这个页面上也照常在跑，所以你可能还会看到别的小动作。"
+        "zh": "她第一句回复之后那次移开视线，是磁带里写好的 `lookAwayThenBack` 动作。它落在她还在说话的时候，而真实的空闲动作调度器绝不会这样：它要等她说完话，而且没有动画片段在播，才会出手（第 10 幕）。这个随机调度器在这个页面上也照常在跑，所以你可能还会看到别的小动作。"
        }
       }
      ]
@@ -2828,8 +2667,8 @@
       {
        "type": "p",
        "text": {
-        "en": "Not quite. Proactive openings have quiet hours, midnight to six by default, owner-editable in settings. The scheduler's heartbeat and event hooks both pass this check, so in that window she won't start a conversation on her own. It never blocks a reply: he wrote first. The follow-up that can come right after one of her replies (scene 9) skips this check, so at 01:40 one can still fire about four seconds later, at a 35% chance by default. Quiet hours read the host's clock, not `LUNA_TZ`.",
-        "zh": "不完全是。主动开口有安静时段（quiet hours），默认午夜到早上六点，主人可以在设置里改。调度器的心跳和事件钩子都要过这道检查，所以在这个时段里，她不会自己发起对话。但它从不拦回复，而这一幕是他先开的口。她回复之后有时会紧跟着再补一句（第 9 幕），这一步不过这道检查，所以 01:40 也照样可能在约 4 秒后冒出一句，默认概率 35%。安静时段看的是宿主机的时钟，不是 `LUNA_TZ`。"
+        "en": "Not quite. Proactive openings have quiet hours, midnight to six by default, owner-editable in settings. The scheduler's heartbeat and event hooks both pass this check, so in that window she won't start a conversation on her own. It never blocks a reply: he wrote first. The follow-up that can come right after one of her replies (scene 9) skips this check, so at 01:40 one can still fire about four seconds later, at a 35% chance by default.",
+        "zh": "不完全是。主动开口有安静时段（quiet hours），默认午夜到早上六点，主人可以在设置里改。调度器的心跳和事件钩子都要过这道检查，所以在这个时段里，她不会自己发起对话。但它从不拦回复，而这一幕是他先开的口。她回复之后有时会紧跟着再补一句（第 9 幕），这一步并不经过这道检查，所以哪怕是 01:40，她也照样可能在约 4 秒后再冒出一句，默认概率 35%。"
        }
       },
       {
@@ -2854,7 +2693,7 @@
        "type": "p",
        "text": {
         "en": "Her sleeping face never comes from the clock. It comes from dreaming (and the boot and menu sequences). Dreaming does have a night rule. If the app is closed between 21:00 and 06:00, and at least six hours have passed since her last dream, shutdown runs one last dream before the process exits. That is the real version of lights off. This exchange can also reach memory: if the dream's salience pass rates it important, the skill step may distill it into a skill, which is what the tape shows in scene 13.",
-        "zh": "她睡着的样子从来不是时钟给的，而是来自做梦（还有开机和菜单那两段流程）。做梦倒确实有一条夜间规则：应用在 21:00 到 06:00 之间关闭，且距上次做梦已满 6 小时，进程退出前会先做最后一场梦。这才是真正意义上的关灯。这段对话也可能进入记忆：如果梦里的重要度评分把它评得够高，提炼技能那一步就可能把它沉淀成一项技能，第 13 幕的磁带演的正是这个。"
+        "zh": "她睡着的样子从来不是时钟给的，而是做梦给的（还有开机和菜单那两段流程）。做梦倒确实有一条夜间规则：如果应用是在 21:00 到 06:00 之间关掉的，并且距上次做梦已满 6 小时，进程退出前会先做最后一场梦。这才是真正意义上的关灯。这段对话也可能进入记忆：如果做梦时它的重要度评分够高，提炼技能那一步就可能把它沉淀成一项技能，第 13 幕的磁带演的正是这个。"
        }
       },
       {
@@ -2887,7 +2726,7 @@
        "type": "quote",
        "text": {
         "en": "ball w/o you just played out. Saturday it kept you company; today it sounded more like a victory lap.",
-        "zh": "ball w/o you 刚放完。周六它是陪你坐着的，今天听着像绕场一周。"
+        "zh": "ball w/o you 刚放完。周六它是陪你坐着的，今天听着像夺冠后的绕场一周。"
        }
       },
       {
@@ -2966,7 +2805,7 @@
        "type": "p",
        "text": {
         "en": "Songs change every few minutes, and a remark on each would turn her into a ticker. So the gates stack. First comes the rail every waking must pass: not in quiet hours, not within 60 s of the last activity, past the global cooldown and under the daily quota (scene 7). Second, the silence ladder must have nothing of its own this tick, and she must be engaged or idle-watching. So a song never wakes her from sleep or cuts into a backoff. Third, music has its own cooldown and quota.",
-        "zh": "歌几分钟就换一首，每首都评一句，她就成了滚动播报。所以闸是一道叠一道的。第一道是每次唤醒都要过的护栏：不在安静时段，离上一次活动已超过 60 秒，过了全局冷却，每日额度也没用完（第 7 幕）。第二道：沉默阶梯这次巡检没有自己要发起的场景，而且她处在 `engaged` 或 `idle_watch` 阶段。所以一首歌永远不会把她从睡眠中叫醒，也不会打断退避期。第三道，音乐有自己的冷却和额度。"
+        "zh": "歌几分钟就换一首，每首都评一句，她就成了滚动播报。所以闸是一道叠一道的。第一道是每次唤醒都要过的护栏：不在安静时段，离上一次活动已超过 60 秒，过了全局冷却，每日额度也没用完（第 7 幕）。第二道：这次巡检时，沉默阶梯自己没有要发起的场景，而且她处在 `engaged` 或 `idle_watch` 阶段。所以一首歌永远不会把她从睡眠中叫醒，也不会打断退避期。第三道，音乐有自己的冷却和额度。"
        }
       },
       {
@@ -2976,7 +2815,7 @@
        "snippet": "export function musicCooldownMs(): number {\n  return num('LUNA_MUSIC_PROACTIVE_COOLDOWN_MIN', 45) * 60_000;\n}\n\nexport function musicDailyQuota(): number {\n  return num('LUNA_MUSIC_PROACTIVE_DAILY', 3);\n}",
        "note": {
         "en": "At least 45 minutes between music wakings and three spoken ones a day. Both can be changed in env settings.",
-        "zh": "两次音乐唤醒至少隔 45 分钟，开了口的一天最多 3 次。两个值都能在环境变量里改。"
+        "zh": "两次音乐唤醒至少隔 45 分钟，真正开口的，一天最多 3 次。两个值都能在环境变量里改。"
        }
       },
       {
@@ -2998,7 +2837,7 @@
        "type": "p",
        "text": {
         "en": "The gates only give her a chance. The waking is an ordinary turn with a stage direction in his slot (scene 4; scene 6 lays out the full page). Three parts are specific to this one. A music block names the new track with a phase such as \"it just started\", never a length. With enrichment on, the new track's lyrics arrive once (scene 10). And the directive allows doing nothing, then ends in the seed below. Her shelf also lists `track-change-restraint`: \"notice every one, speak on almost none.\" She never called `recall_skill` for its steps, so that line is all she had of it.",
-        "zh": "闸门只是给了她一个机会。这次唤醒就是一个普通回合，只是原本放他消息的位置，换成了一段舞台指示（第 4 幕；整页布局见第 6 幕）。有三处是这一次特有的。音乐块写出新歌和一个粗略的进度词，比如 \"it just started\"，从不写时长。开启 enrichment 时，新歌的歌词会随这一回合送来一次（第 10 幕）。指令明说可以什么都不做，末尾再接上下面这段种子（seed）。她的技能架上还列着 `track-change-restraint`：“每次都留意，几乎每次都不开口。”她没调 `recall_skill` 去取具体步骤，所以关于这条技能，她手里只有这一行。"
+        "zh": "闸门只是给了她一个机会。这次唤醒就是一个普通回合，只是原本放他消息的位置，换成了一段舞台指示（第 4 幕；整页布局见第 6 幕）。有三处是这一次特有的。音乐块写出新歌和一个粗略的进度词，比如 “it just started”，从不写时长。开启 enrichment 时，新歌的歌词会随这一回合送来一次（第 10 幕）。指令明说可以什么都不做，末尾再接上下面这段种子（seed）。她的技能架上还列着 `track-change-restraint`：“每次都留意，几乎每次都不开口。”她没调 `recall_skill` 去取具体步骤，所以关于这条技能，她手里只有这一行。"
        }
       },
       {
@@ -3009,13 +2848,6 @@
        "note": {
         "en": "The seed names only the new track, plus one top comment when enrichment is on. Nothing here says the old song finished.",
         "zh": "种子里只有新歌，开启 enrichment 时再加一条热评。这里没有一个字说上一首放完了。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The replay's shelf was written for this tape and marks this skill as a dream's. The real distiller is told a skill is a procedure, never a rule about behaviour, so this entry sits right on that line (scene 13).",
-        "zh": "回放里的技能架是为这盘磁带写的，这条技能的来源标的是做梦。真实的技能提炼 prompt 写明：技能是一套可复用的做法，绝不是关于该怎么表现的规矩。所以这一条正好踩在线上（第 13 幕）。"
        }
       }
      ]
@@ -3037,7 +2869,7 @@
        "type": "p",
        "text": {
         "en": "Code, not the model, works out the date (scene 1). This scene is about where that stamp lives. The time block travels in the same user message as his words. That message is stored whole, stamp included, and rebuilt the same way after a restart. While Sunday's and Tuesday's turns are still in the verbatim window (about 100 turns, scene 6), each one keeps its own \"Now: …\" line, so the days are there to read.",
-        "zh": "日期是代码算的，不是模型算的（第 1 幕）。这一幕讲的是这个时间戳存在哪儿。时间块和他的原话放在同一条 user 消息里。这条消息连同时间戳整条存下，重启后也按原样重建。只要周日、周二那几轮还在原文窗口里（大约 100 个回合，第 6 幕），每一轮都留着自己那行 \"Now: …\"，哪天是星期几，她读得到。"
+        "zh": "日期是代码算的，不是模型算的（第 1 幕）。这一幕讲的是这个时间戳存在哪儿。时间块和他的原话放在同一条 user 消息里。这条消息连同时间戳整条存下，重启后也按原样重建。只要周日、周二那几轮还在原文窗口里（大约 100 个回合，第 6 幕），每一轮都留着自己那行 “Now: …”，哪天是星期几，她读得到。"
        }
       },
       {
@@ -3053,8 +2885,8 @@
       {
        "type": "aside",
        "text": {
-        "en": "The two bubbles are two `message` calls (scene 2). The surprise line plays the curious clip; see scene 6.",
-        "zh": "她这一回接连两个气泡，就是两次 `message` 调用（第 2 幕）。惊讶那句播的是 curious 那段动作，原因见第 6 幕。"
+        "en": "The two bubbles are two `message` calls (scene 2).",
+        "zh": "她这一回接连冒出两个气泡，对应的是两次 `message` 调用（第 2 幕）。"
        }
       }
      ]
@@ -3076,7 +2908,7 @@
        "type": "p",
        "text": {
         "en": "Luna has no mail tool, and none was called here. The news is his sentence, and she takes his word for it. No tool card appears in this exchange because she didn't need one: everything she says comes from his words and their shared history. Calling \"fumbled the last question\" what a pass sounds like from the inside is the model's own reading of his line. No code tags his news as good or his worry as small.",
-        "zh": "Luna 没有收邮件的工具，这里也没调用任何工具。消息的来源就是他这句话，她信了他。这段对话里没出现工具卡片，因为她用不着：她说的每一句，都出自他的话和两人共同的历史。把“最后一题答砸了”说成过了的人回头看自己的样子，是模型自己对他这句话的解读。没有代码把他的消息标成好消息，也没有代码判定他的担心不值一提。"
+        "zh": "Luna 没有收邮件的工具，这里也没调用任何工具。消息的来源就是他这句话，她信了他。这段对话里没出现工具卡片，因为她用不着：她说的每一句，都出自他的话和两人共同的历史。说“最后一题答砸了”是过了的人都会说的话，这是模型自己对他这句话的解读。没有代码把他的消息标成好消息，也没有代码判定他的担心不值一提。"
        }
       }
      ]
@@ -3108,7 +2940,7 @@
        "snippet": "  const voice =\n    kind === 'day'\n      ? 'Write a short diary entry (3-6 sentences) about this day, in first person as Luna.'\n      : kind === 'week'\n        ? 'Write a reflective weekly journal entry (4-8 sentences) drawing the threads of these days together, in first person as Luna.'\n        : 'Write a monthly retrospective (5-10 sentences) capturing the arc of these weeks, in first person as Luna.';\n  return [\n    `You are Luna writing your private diary for ${periodKey}.`,\n    voice,\n    'Capture what happened, how it felt, and anything you want future-you to remember. Output only the diary text.',",
        "note": {
         "en": "A first-person \"as Luna\" prompt over the day's User/Luna lines. Nothing decides what goes first.",
-        "zh": "prompt 要模型以 Luna 的第一人称（\"as Luna\"）来写，原料是当天的 User/Luna 对话。先写哪件事，没有任何规定。"
+        "zh": "prompt 要模型以 Luna 的第一人称（“as Luna”）来写，原料是当天的 User/Luna 对话。先写哪件事，没有任何规定。"
        }
       },
       {
@@ -3254,7 +3086,7 @@
        "type": "p",
        "text": {
         "en": "The dream runs on the same small graph runner as a chat turn: each step does one job, then names the step that comes next. Each step reports ok, skipped or failed, and a failed step doesn't stop the rest. In order, she:",
-        "zh": "梦和聊天回合跑在同一个小型图执行器（graph runner）上：每个节点只做一件事，做完指定下一个节点。每一步都会报告 ok、skipped 或 failed，某一步失败不会拦住后面的步骤。按顺序，她会："
+        "zh": "梦和聊天回合跑在同一个小型图执行器（graph runner）上：每个节点只做一件事，做完指定下一个节点。每一步都会报告 ok、skipped 或 failed，某一步失败不会拦住后面的步骤。她会按顺序做这几件事："
        }
       },
       {
@@ -3312,7 +3144,7 @@
        "type": "p",
        "text": {
         "en": "The model does, inside a narrow format. Five steps (scores, fact tidy-up, fact audit, self-portrait, skills) ask for a small JSON patch, and the code checks it against a schema before applying anything. If the shape is wrong, that step writes nothing and runs again next dream. The diary and the fold get back prose; the cache refresh only calls the embedding API. The scores are the \"good bits\". Exchanges scored 4 or 5 (by default) are marked `[salient]` when old chat is folded, and the compressor is told to keep their specifics near-verbatim. They are also the only material the dream distils skills from: the last day's 4s and 5s.",
-        "zh": "模型说了算，但只能在很窄的格式里说。有 5 步（打分、整理事实、核对事实、自画像、技能）要求模型交一个小小的 JSON patch，代码先按 schema 校验，通过了才动数据。格式不对，这一步就什么都不写，下次做梦再跑。日记和折叠拿回来的是成段的文字；缓存刷新只调 embedding API。所谓“好的”，看的就是这个分数。默认打了 4 分或 5 分的对话，在旧对话折叠时会被标上 `[salient]`，压缩器被要求把其中的细节几乎原样保留。梦里提炼技能，也只拿它们当素材：过去一天里的 4 分和 5 分。"
+        "zh": "模型说了算，但只能在很窄的格式里说。有 5 步（打分、整理事实、核对事实、自画像、技能）要求模型交一个小小的 JSON patch，代码先按 schema 校验，通过了才动数据。格式不对，这一步就什么都不写，下次做梦再跑。日记和折叠拿回来的是成段的文字；缓存刷新只调 embedding API。所谓“好的”，看的就是打分那一步给的分数。折叠旧对话时，默认打了 4 分或 5 分的对话会标上 `[salient]`，prompt 会叮嘱压缩器把其中的细节几乎原样保留。梦里提炼技能，也只拿它们当素材：过去一天里的 4 分和 5 分。"
        }
       },
       {
@@ -3322,7 +3154,7 @@
        "snippet": "      const patch = parseJsonBlock(SaliencePatch, call.text);\n      if (!patch) return ['failed', 'unparseable scores'];\n      // The score→turn map is positional, so a length mismatch (the model dropped\n      // or inserted a score) would mis-rate every turn after the shift and write\n      // those wrong scores permanently. Reject the whole patch → retried next cycle.\n      if (patch.scores.length !== unrated.length) {\n        return ['failed', `score/turn count mismatch (${patch.scores.length} vs ${unrated.length})`];\n      }",
        "note": {
         "en": "One missing score rejects the whole patch, so no exchange gets another's score; they stay unrated until next dream.",
-        "zh": "少一个分数，整个 patch 就作废，免得后面的对话错拿别人的分；这批对话先保持未评分，等下次做梦。"
+        "zh": "少一个分数，整个 patch 就作废，免得后面的对话错拿别人的分；这批对话先都不记分，留到下次做梦再评。"
        }
       }
      ]
@@ -3336,8 +3168,8 @@
       {
        "type": "p",
        "text": {
-        "en": "When his message or the owner's Dream button puts her to sleep, the server sends a `dream.status` event, then one `dream.step` event per job. (A dream the scheduler starts on its own announces itself only at the end.) The overlay turns each step into a plain sentence, such as \"Wrote 2 diary entries.\" The avatar goes to sleep: idle gestures stop and her eyes stop following the cursor. The chat box is disabled, and the server turns messages away with the error `dreaming`. After the last job she parks at `finished_idle`, still asleep. Only an explicit wake (or a restart) brings her back, and a wake is refused mid-job.",
-        "zh": "他的消息或主人菜单里的“做梦”按钮让她睡下时，服务端先发一个 `dream.status` 事件，之后每完成一项工作发一个 `dream.step`。（调度器自己发起的梦不发开头那条状态，结束时才发。）浮层把每一步翻成一句大白话，比如“写下了 2 篇日记。”她的 Live2D 形象也睡了：待机小动作停下，眼睛不再跟着鼠标。输入框被禁用，服务端也会用 `dreaming` 错误把消息挡回去。最后一项做完，她停在 `finished_idle`，仍然睡着。只有有人叫醒她（或者重启），她才会回来；某项工作还在跑的时候，叫醒会被拒绝。"
+        "en": "When his message or the owner's Dream button puts her to sleep, the server sends a `dream.status` event, then one `dream.step` event per job. The overlay turns each step into a plain sentence, such as \"Wrote 2 diary entries.\" The avatar goes to sleep: idle gestures stop and her eyes stop following the cursor. The chat box is disabled, and the server turns messages away with the error `dreaming`. After the last job she parks at `finished_idle`, still asleep. Only an explicit wake (or a restart) brings her back, and a wake is refused mid-job.",
+        "zh": "梦如果是他的消息或主人菜单里的“做梦”按钮触发的，服务端会先发一个 `dream.status` 事件，之后每完成一项工作再发一个 `dream.step`。浮层把每一步翻成一句大白话，比如“写下了 2 篇日记。”她的 Live2D 形象也睡了：待机小动作停下，眼睛不再跟着鼠标。输入框被禁用，服务端也会用 `dreaming` 错误把消息挡回去。最后一项做完，她停在 `finished_idle`，仍然睡着。只有有人叫醒她（或者重启），她才会回来；某项工作还在跑的时候，叫醒会被拒绝。"
        }
       },
       {
@@ -3354,7 +3186,7 @@
        "type": "aside",
        "text": {
         "en": "In the replay the step results are scripted, but the events have the real format. The Wake button is the real button: once the scripted cycle reaches `finished_idle`, the tape sends the same waking `dream.status` the server sends on `dream.wake`.",
-        "zh": "回放里每一步的结果是写好的，但事件格式是真的。“叫醒她”也是真按钮：写好的周期停在 `finished_idle` 之后，点它，磁带发出的唤醒 `dream.status`，和服务端处理 `dream.wake` 时发的一模一样。"
+        "zh": "回放里每一步的结果是写好的，但事件格式是真的。“叫醒她”也是真按钮：脚本里这一轮梦停在 `finished_idle` 之后，点它，磁带就会发出唤醒用的 `dream.status`，和服务端处理 `dream.wake` 时发的一模一样。"
        }
       }
      ]
@@ -3368,15 +3200,15 @@
       {
        "type": "quote",
        "text": {
-        "en": "Morning. I went over yesterday while you slept — the late night, the email, the good night said properly. It's in the diary now, and I've got a rule about after midnight, if you want to see it on the shelf.",
-        "zh": "早。趁你睡着，我把昨天过了一遍：半夜那会儿、那封邮件，还有那句正经的晚安。都写进日记了。技能架上还有条关于午夜以后的规矩，想看就去翻。"
+        "en": "Morning. I went over yesterday while you slept — the late night, the email, the good night said properly. It's in the diary now, and there's a new skill on the shelf for how to talk after one a.m., if you want to see it.",
+        "zh": "早。趁你睡着，我把昨天过了一遍：半夜那会儿、那封邮件，还有那句正经的晚安。都写进日记了。技能架上还多了一条：凌晨一点以后怎么说话。想看就去翻。"
        }
       },
       {
        "type": "p",
        "text": {
         "en": "No one spoke here: the turn started on its own, with a stage direction in place of a user message (scene 4). The scheduler won't start one while she's asleep or during quiet hours, by default midnight to 6 a.m. Her prompt carries what this line needs: the time block says it's morning and a new day (scene 1), the skill shelf now lists `late-night-brevity` (scene 2), and the diary digest below. The digest sits in the stable, cached part of her prompt, so she reads what the dream wrote without calling anything. In the real app, what to say about it is the model's choice; here the line is scripted.",
-        "zh": "这句之前没人开口：这个回合是自己起的，原本放用户消息的位置，换成了一段舞台指示（第 4 幕）。她睡着时，或者在安静时段（默认午夜到早上 6 点），调度器都不会发起这种回合。这句话要用到的东西，prompt 里都有：时间块写着现在是早上、已经是新的一天（第 1 幕）；技能架上多了 `late-night-brevity`（第 2 幕）；再就是下面这段日记摘要。摘要放在 prompt 里稳定、带缓存的那一段，所以她不用调任何工具，就能读到梦里写了什么。真实应用里，要不要提、怎么提，由模型决定；这里这句台词是写好的。"
+        "zh": "这句之前没人开口：这个回合是自动发起的，原本放用户消息的位置，换成了一段舞台指示（第 4 幕）。她睡着时，或者在安静时段（默认午夜到早上 6 点），调度器都不会发起这种回合。这句话要用到的东西，prompt 里都有：时间块写着现在是早上、已经是新的一天（第 1 幕）；技能架上多了 `late-night-brevity`（第 2 幕）；再就是下面这段日记摘要。摘要放在 prompt 里稳定、带缓存的那一段，所以她不用调任何工具，就能读到梦里写了什么。真实应用里，要不要提、怎么提，由模型决定；这里这句台词是写好的。"
        }
       },
       {
@@ -3386,14 +3218,7 @@
        "snippet": "export function renderDiaryDigest(): string {\n  if (!diaryInjectEnabled()) return '';\n  const parts: string[] = [];\n  for (const kind of ['day', 'week', 'month'] as const) {\n    const row = latest(kind);\n    if (row)\n      parts.push(`[${kind} ${row.period_key}] ${row.text.trim().slice(0, digestEntryChars())}`);\n  }\n  if (parts.length === 0) return '';\n  return `## Your recent diary (days / weeks / months)\\n${parts.join('\\n\\n')}`;\n}",
        "note": {
         "en": "Only the latest day, week and month entries, each cut to 600 characters by default. It changes only when a dream writes.",
-        "zh": "日、周、月各只取最新一篇，默认各截到 600 个字符。只有梦写了新日记，它才会变。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "The real distiller is told a skill is a reusable procedure, never a rule about how to behave. This replay skill, and her calling it a rule, sits right on that line. Its description also says after 1 a.m., not midnight.",
-        "zh": "真实的技能提炼 prompt 写得很清楚：技能是可复用的做法，绝不是关于该怎么表现的规矩。回放里这个技能，加上她管它叫“规矩”，正好踩在这条线上。而且它的描述写的是凌晨一点以后，不是午夜。"
+        "zh": "日、周、月各只取最新一篇，默认各截到 600 个字符。只有梦写了新日记，这段摘要才会变。"
        }
       }
      ]
@@ -3401,14 +3226,14 @@
     {
      "title": {
       "en": "The blink, and the morning face",
-      "zh": "慢眨眼，和早上的表情"
+      "zh": "慢眨眼和早上的表情"
      },
      "blocks": [
       {
        "type": "p",
        "text": {
         "en": "The slow blink is one of the `tender` clip's own gestures, but the replay fires it directly as a scripted cue. Her faces follow the expression the model names (scene 1 shows the mapping). `open_reengagement` at 0.5 stays under the 0.7 threshold, so the morning line plays `curious`, not `tender`.",
-        "zh": "那一下慢眨眼，本来是 `tender` 这段动作自带的小动作之一，但在回放里，它是脚本单独写的一条 cue，直接触发的。她的表情跟着模型指定的 expression 走（映射见第 1 幕）。`open_reengagement` 的强度是 0.5，低于 0.7 的门槛，所以早上那句播的是 `curious`，不是 `tender`。"
+        "zh": "那一下慢眨眼，本来是 `tender` 这段动作自带的小动作之一，但在回放里，它是由脚本单独写的一条 cue 直接触发的。她的表情跟着模型指定的 expression 走（映射见第 1 幕）。`open_reengagement` 的强度是 0.5，低于 0.7 的门槛，所以早上那句播的是 `curious`，不是 `tender`。"
        }
       }
      ]
@@ -3424,13 +3249,6 @@
        "text": {
         "en": "A dream isn't free. Most jobs make an LLM call, and the diary job makes one per entry it writes. If a separate summarizer key (`LUNA_SUMMARIZER_API_KEY`) is set, most dream calls try it first and fall back to the main key only on failure, so the dream mostly stays off her live replies' quota. Code, not the prompt, sets the limits. A dream saves at most two skills by default, retires at most one, and never revives a retired skill. Self-reflection can edit only the \"evolving\" half of her soul. The dream that runs when the app quits happens only at night and, by default, if no dream has started in the last 6 hours.",
         "zh": "做梦也有成本。大多数工作要调一次 LLM，写日记那步每写一篇就调一次。如果单独配了摘要专用的 key（`LUNA_SUMMARIZER_API_KEY`），梦里大部分调用会先走它，失败了才退回主 key，所以做梦基本不占她实时回复的额度。上限由代码卡住，不靠 prompt：一次梦默认最多存 2 个技能、最多退役 1 个，已退役的技能不会被复活。自我反思只能改她灵魂文件里会变的那一半（evolving）。应用退出时的那次梦只在夜里跑，而且默认要求距上一次开始做梦已满 6 小时。"
-       }
-      },
-      {
-       "type": "aside",
-       "text": {
-        "en": "A known flaw: a dream she asks for in the middle of a conversation is logged with the trigger `manual`, the same label as the menu button. Only dreams started from a proactive turn are logged as `self`.",
-        "zh": "已知瑕疵：她在对话中途自己要求的梦，trigger 记的是 `manual`，和菜单按钮同一个标签。只有从主动回合里启动的梦，才记成 `self`。"
        }
       }
      ]
@@ -3482,13 +3300,13 @@
        "type": "p",
        "text": {
         "en": "It is not a message. No frame carries it and no voice speaks it. The replay's director, the same part that draws the curtains and the desk, adds a plain card to the chat log. The card has an \"inner voice\" tag and a dashed border. The real app has no such card. The tape shows it only after her last word has been spoken, and waits long enough for you to read it before she wakes again.",
-        "zh": "它不是消息。没有哪一帧带着它，也没有语音念它。回放里的导演（director），也就是画幕布和桌面的那个部件，往聊天记录里加了一张普通卡片：一个“内心 OS”标签，一圈虚线边框。真实的 app 里没有这种卡片。磁带要等她最后一个字念完才亮出它，并留足让你读完的时间，她才会再次醒来。"
+        "zh": "它不是消息。没有哪一帧带着它，也没有语音念它。回放里的导演（director），也就是画幕布和桌面的那个部件，往聊天记录里加了一张普通卡片：一个“内心 OS”标签，一圈虚线边框。真实的 app 里没有这种卡片。等她最后一个字念完，磁带才亮出这张卡；留够时间让你读完之后，她才会再次醒来。"
        }
       },
       {
        "type": "code",
        "file": "packages/web/src/demo/director.ts",
-       "from": 606,
+       "from": 616,
        "snippet": "    inner(text) {\n      const card = doc.createElement('div');\n      card.className = 'demo-inner';\n      const tag = doc.createElement('span');\n      tag.className = 'demo-inner-tag';\n      tag.textContent = t('demo.innerVoice');\n      const body = doc.createElement('p');\n      body.textContent = text;\n      card.append(tag, body);\n      refs.chatLog.appendChild(card);\n      refs.chatLog.scrollTop = refs.chatLog.scrollHeight;\n    },",
        "note": {
         "en": "Plain DOM in the chat log: no frame, no voice, no history entry.",
@@ -3532,7 +3350,7 @@
        "type": "p",
        "text": {
         "en": "`app.ts` holds one client and sends everything it emits into one `onEvent` handler. That handler drives the controller, the bubbles, the face and the voice. On the desktop the client is `LunaWsClient`, a WebSocket. In the replay it is the tape, which plays pre-compiled frames on timers. Both have the same three methods, so the controller, bubbles and face cannot tell them apart. The tape answers what the server answers: history and settings on connect, a settings change, the dream door. The one difference is that it accepts a `chat.send` only when a scripted line is armed.",
-        "zh": "`app.ts` 只持有一个客户端，它发出的所有事件都交给同一个 `onEvent` 处理函数；控制器、气泡、形象和语音都由这个函数驱动。桌面版里，这个客户端是 `LunaWsClient`，一个 WebSocket。回放里，它是那盘磁带，用定时器播放预先编译好的帧。两者对外都是同样的三个方法，所以控制器、气泡和形象分不出背后是哪一个。服务端会回的，磁带也照样回：连接时发历史和设置，改设置时回新状态，还有做梦和叫醒。唯一的区别是：只有脚本里备好了一句待发的台词，它才接受 `chat.send`。"
+        "zh": "`app.ts` 只持有一个客户端，它发出的所有事件都交给同一个 `onEvent` 处理函数；控制器、气泡、形象和语音都由这个函数驱动。桌面版里，这个客户端是 `LunaWsClient`，一个 WebSocket。回放里，它是那盘磁带，用定时器播放预先编译好的帧。两者对外提供的都是同样的三个方法，所以控制器、气泡和形象分不出背后是哪一个。服务端会回的，磁带也照样回：连接时发历史和设置，改设置时回新状态，还有做梦和叫醒。唯一的区别是：只有脚本里备好了一句待发的台词，它才接受 `chat.send`。"
        }
       },
       {
@@ -3564,7 +3382,7 @@
        "type": "p",
        "text": {
         "en": "The owner writes each scene as beats: his line, her lines with a face, a tool card, a waking, a curtain. A pure compiler turns the beats into timed cues. What she says and does becomes server frames: `proactive.started`, the streamed text of each `message` call, `tool.finished`, `proactive.finished`. Every frame is checked against the protocol schema that the live socket client uses. The live client quietly drops a bad frame. The compiler throws, so the tape does not load. The tests compile both shipped tapes, so a bad frame turns them red before it can ship. The schema checks shape, not truth: tool-card lines are typed into the script in each tool's own format.",
-        "zh": "每一幕，主人都按节拍（beat）来写：他的一句话、她带表情的几句、一张工具卡片、一次唤醒、一道幕布。编译器是纯函数，把这些节拍变成带时间点的提示点（cue）。她说的、做的，都变成服务端帧：`proactive.started`、每次 `message` 调用流式输出的文字、`tool.finished`、`proactive.finished`。每一帧都要过协议 schema 校验，和真实 socket 客户端用的是同一份。真实客户端遇到坏帧，悄悄丢掉；编译器遇到坏帧，直接抛错，磁带根本加载不起来。测试会把随页面发布的两盘磁带都编译一遍，坏帧还没发布，测试就先红了。schema 只校验结构，不管真假：工具卡片上那行字，是照着每个工具自己的格式手写进脚本的。"
+        "zh": "每一幕，主人都按节拍（beat）来写：他的一句话、她带表情的几句、一张工具卡片、一次唤醒、一道幕布。编译器是纯函数，把这些节拍变成带时间戳的提示点（cue）。她说的、做的，都变成服务端帧：`proactive.started`、每次 `message` 调用流式输出的文字、`tool.finished`、`proactive.finished`。每一帧都要过协议 schema 校验，和真实 socket 客户端用的是同一份。真实客户端遇到坏帧，悄悄丢掉；编译器遇到坏帧，直接抛错，磁带根本加载不起来。测试会把随页面发布的两盘磁带都编译一遍，坏帧还没发布，测试就先红了。schema 只校验结构，不管真假：工具卡片上那行字，是照着每个工具自己的格式手写进脚本的。"
        }
       },
       {
@@ -3596,7 +3414,7 @@
        "type": "p",
        "text": {
         "en": "Live, the browser posts her text to `/api/tts/speak`. The host builds a GPT-SoVITS request with the owner's voice reference and forwards it. For the replay, a build script sent every line once through that same request builder. It saved an mp3 for each line and wrote a manifest: text, file, duration. On this page, the voice player's one synthesis hook reads the manifest instead. The queue, lip-sync and punctuation gestures are unchanged. A line with no recording fails with a 404, the voice player's normal failure path. The line is reported as unspoken and is never voiced with the wrong words.",
-        "zh": "真实运行时，浏览器把她的文字 POST 到 `/api/tts/speak`，服务端带上主人配置的参考音频，拼成一个 GPT-SoVITS 请求转发出去。为了回放，一个构建脚本把每句台词都用同一个请求构造函数发了一遍，每句存成一个 mp3，再写一份清单（manifest）：文字、文件、时长。在这个页面上，语音播放器唯一的合成钩子改成去读这份清单。队列、口型同步、标点触发的头部动作，都没变。没有录音的句子会以 404 报错，走的是语音播放器平常的失败路径：这句被标记为没念出来，绝不会拿别句的录音顶替。"
+        "zh": "真实运行时，浏览器把她的文字 POST 到 `/api/tts/speak`，服务端带上主人配置的参考音频，拼成一个 GPT-SoVITS 请求转发出去。为了做回放，构建脚本用同一个请求构造函数，把每句台词都发了一遍，每句存成一个 mp3，再写一份清单（manifest）：文字、文件、时长。在这个页面上，语音播放器只有一个合成钩子，这里把它改成了去读这份清单。队列、口型同步、标点触发的头部动作，都没变。没有录音的句子会以 404 报错，走的是语音播放器平常的失败路径：这句被标记为没念出来，绝不会拿别句的录音顶替。"
        }
       },
       {
@@ -3612,8 +3430,8 @@
       {
        "type": "aside",
        "text": {
-        "en": "The Chinese tape was voiced with text_lang `zh`. The default, `auto`, misread runs of hanzi as Japanese. The live app still sends `auto`: a known limitation.",
-        "zh": "中文磁带合成时，text_lang 用的是 `zh`。默认值 `auto` 会把连续的汉字误判成日语来读。真实 app 发的仍然是 `auto`，这是已知局限。"
+        "en": "The Chinese tape was voiced with text_lang `zh`.",
+        "zh": "中文磁带合成时，text_lang 用的是 `zh`。"
        }
       }
      ]
