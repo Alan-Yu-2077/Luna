@@ -981,13 +981,14 @@ body.pet { background: none; }
 
 .main-menu {
   position: absolute; inset: 0 auto 0 0; width: 42%; z-index: 30;
-  display: flex; flex-direction: column; justify-content: center; gap: 14px;
-  padding-left: clamp(48px, 7vw, 110px);
+  display: flex; flex-direction: column; justify-content: center; gap: clamp(14px, 1.6vw, 21px);
+  /* v0.51.6 (owner): 1.5× the type and a step further right; full size from a ~1300px-wide window. */
+  padding-left: clamp(64px, 11vw, 180px);
   transition: transform 0.6s ease, opacity 0.6s ease;
 }
 .menu-mark {
-  font-size: 15px; font-weight: 800; letter-spacing: 0.42em; color: #8fa6bf;
-  margin-bottom: 26px; user-select: none;
+  font-size: clamp(15px, 1.75vw, 22.5px); font-weight: 800; letter-spacing: 0.42em; color: #8fa6bf;
+  margin-bottom: clamp(26px, 3vw, 39px); user-select: none;
 }
 .menu-item {
   appearance: none; background: none; border: none; padding: 2px 0; cursor: pointer;
@@ -995,8 +996,8 @@ body.pet { background: none; }
   transform-origin: left center;
   transition: transform 0.35s var(--spring-ease, ease), color 0.3s ease;
 }
-.menu-item.primary { font-size: 38px; font-weight: 800; }
-.menu-item.secondary { font-size: 27px; font-weight: 700; margin-top: 2px; }
+.menu-item.primary { font-size: clamp(38px, 4.4vw, 57px); font-weight: 800; }
+.menu-item.secondary { font-size: clamp(27px, 3.15vw, 40.5px); font-weight: 700; margin-top: 3px; }
 .menu-item:hover, .menu-item:focus-visible { color: var(--sky-text); transform: translateX(14px) scale(1.06); }
 .menu-item:focus-visible { outline: 2px solid var(--lavender-deep); outline-offset: 6px; border-radius: 4px; }
 .menu-item[aria-disabled='true'] { color: #c3cfdc; cursor: default; }
@@ -1221,7 +1222,7 @@ body.pet { background: none; }
    The version line, and the reduced-motion pass: every stage transition drops
    to a 0.2s fade, ambient loops stop, and the spring hover becomes a plain
    color change — the destinations all remain reachable, just undramatic. */
-.menu-version { position: absolute; left: clamp(48px, 7vw, 110px); bottom: 26px;
+.menu-version { position: absolute; left: clamp(64px, 11vw, 180px); bottom: 26px;
   font-size: 11px; color: var(--muted); letter-spacing: 0.08em; user-select: none; }
 
 /* v0.45.4: the player card「小唱机」 (Initiative 32, candidate A) — session page only. Signature
