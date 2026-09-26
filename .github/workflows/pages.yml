@@ -39,6 +39,11 @@ jobs:
           bun-version: latest
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      # v0.51.7: the replay's checks run before it ships — every tape compiles against the protocol
+      # schema, both languages share one skeleton, every line has its voice, every note is held to
+      # its source. A bad tape fails this deploy instead of a visitor's page load.
+      - name: Test the replay (tapes, voices, notes) and the front end
+        run: bun test packages/web
       - name: Build the showcase (replay at /, engineering map at /engineering/)
         run: bun run --cwd packages/web build:demo
       - uses: actions/configure-pages@v5

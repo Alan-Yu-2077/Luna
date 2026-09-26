@@ -26,6 +26,7 @@ export const PACING = {
   toolNoteMs: 160, // started → the progress note
   speechCharMs: 55, // the voice estimate for a line the manifest does not carry
   speechLeadMs: 400,
+  gestureMs: 900, // a gesture's start → her next frame (v0.51.7)
   proactiveDelayMs: 2500,
   skipMs: 2600, // the curtain's default stay
   dreamLeadMs: 600, // dream.status → the first step
@@ -157,8 +158,9 @@ class RunBuilder {
   ) {}
 
   private frame(at: number, frame: ServerEvent): void {
-    // The same gate the real wsClient applies to every inbound frame — a script that would produce
-    // an invalid frame fails here, at compile time, never in a visitor's browser.
+    // The same schema the real wsClient checks every inbound frame against. A script that would
+    // produce an invalid frame throws here — in the tests, which the Pages deploy runs before it
+    // builds, so a bad tape fails the deploy instead of reaching a visitor.
     ServerEvent.parse(frame);
     this.cues.push({ at, kind: 'frame', frame });
   }
@@ -265,11 +267,17 @@ class RunBuilder {
         this.t += beat.ms;
         return;
       case 'action':
+        // v0.51.7: the live idle scheduler never starts a gesture while she speaks — neither does the
+        // tape. It waits for the current line to end, and her next frame gives it a moment. When her
+        // turn is over, it closes first: an idle gesture is not part of the model's turn.
+        if (!moreInTurn) this.closeTurn();
+        this.t = Math.max(this.t, this.speechEnd);
         this.cues.push({
           at: this.t,
           kind: 'sink',
           call: { kind: 'action', name: beat.name, ...(beat.intensity !== undefined ? { intensity: beat.intensity } : {}) },
         });
+        this.t += PACING.gestureMs;
         return;
       case 'pulse':
         this.cues.push({ at: this.t, kind: 'sink', call: { kind: 'pulse', pose: beat.pose, ms: beat.ms } });

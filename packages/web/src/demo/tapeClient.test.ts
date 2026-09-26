@@ -157,8 +157,10 @@ describe('send', () => {
     expect(types(log)).toContain('tool.started');
     clock.advance(CHUNK); // "yo" is one chunk
     expect(types(log).slice(-2)).toEqual(['tool.progress', 'tool.finished']);
-    clock.advance(300); // the gap, then the turn closes and the action cue lands on the same tick
+    clock.advance(300); // the gap, then the turn closes
     expect(types(log).slice(-1)).toEqual(['turn.result']);
+    expect(log.sinks).toEqual([]); // v0.51.7: the gesture waits for her line to finish speaking
+    clock.advance(1000 - 300); // "yo" has a 1000ms voice, begun when its frames finished
     expect(log.sinks).toEqual([{ kind: 'action', name: 'browKnit' }]);
     // A second Send mid-run does nothing — the beat is spent.
     tape.send({ type: 'chat.send', text: 'hi' });
@@ -170,7 +172,8 @@ describe('send', () => {
     tape.connect();
     clock.advance(0);
     tape.send({ type: 'chat.send', text: 'hi' });
-    clock.advance(THINK + CHUNK + 1000 - 1); // one chunk of "yo" + a 1000ms voice
+    // one chunk of "yo" + its 1000ms voice + the gesture's moment after it (v0.51.7)
+    clock.advance(THINK + CHUNK + 1000 + PACING.gestureMs - 1);
     expect(log.arms).toEqual(['hi']);
     clock.advance(1);
     expect(log.arms).toEqual(['hi', 'again']);
@@ -343,18 +346,23 @@ describe('the dream door (v0.47.0)', () => {
     expect(log.ends).toEqual([[0, true]]);
   });
 
-  test('dream.wake mid-cycle ends it early with a waking status; dream.enter mid-run is refused; no block → nothing', () => {
+  test('dream.wake mid-cycle is refused as the server refuses it; after the cycle it wakes her; dream.enter mid-run is refused; no block → nothing', () => {
     const { tape, log, clock } = harness(staged);
     tape.connect();
     clock.advance(0);
     tape.send({ type: 'dream.enter' });
     clock.advance(650); // inside step 1
     tape.send({ type: 'dream.wake' });
+    // v0.51.7: ws.ts answers a mid-job wake with task_in_progress — so does the tape, and the dream runs on.
+    const refused = log.events[log.events.length - 1];
+    expect(refused?.type === 'error' ? refused.code : null).toBe('task_in_progress');
+    expect(tape.phase()).toBe('dream');
+    clock.advance(5000);
+    expect(types(log).filter((t) => t === 'dream.step')).toHaveLength(2); // both jobs ran
+    tape.send({ type: 'dream.wake' }); // finished_idle: now the wake is accepted
     const last = log.events[log.events.length - 1];
     expect(last?.type === 'dream.status' ? last.is_dreaming : null).toBe(false);
     expect(tape.phase()).toBe('armed');
-    clock.advance(5000);
-    expect(types(log).filter((t) => t === 'dream.step')).toHaveLength(1); // the second step never came
     tape.send({ type: 'chat.send', text: 'play it' });
     tape.send({ type: 'dream.enter' });
     expect(tape.phase()).toBe('running');
@@ -384,7 +392,7 @@ describe('pause and resume (← Menu, then Talk)', () => {
     expect(types(log).slice(before)).toEqual(['settings.state']);
     clock.advance(0);
     expect(types(log).slice(before + 1)).toEqual(['tool.started']);
-    clock.advance(CHUNK + 1000);
+    clock.advance(CHUNK + 1000 + PACING.gestureMs);
     expect(types(log).filter((t) => t === 'turn.started')).toHaveLength(1);
     expect(types(log).filter((t) => t === 'turn.result')).toHaveLength(1);
     expect(log.arms).toEqual(['hi', 'again']);

@@ -170,6 +170,26 @@ describe('retrieve (hybrid)', () => {
     expect(first.turn_id).toBe('new');
   });
 
+  // v0.51.7: two memories that tie exactly used to rank in whatever order SQL returned them.
+  test('an exact tie ranks the same way whatever order the rows were written in', async () => {
+    Bun.env['LUNA_MEMORY_EMBEDDING'] = '0';
+    const t = Date.now() - 86_400_000;
+    const ranked = async (ids: string[]): Promise<string[]> => {
+      db.prepare('DELETE FROM l3_facts').run();
+      for (const id of ids) {
+        db.prepare(
+          'INSERT INTO l3_facts (id, category, text, dedup_key, confidence, created_ms) VALUES (?, ?, ?, ?, ?, ?)',
+        ).run(id, 'preferences', 'likes the tokyo trip photos', `k-${id}`, null, t);
+      }
+      const hits = await retrieve('s', 'tokyo trip photos');
+      return hits.filter((h) => h.source === 'l3').map((h) => h.id);
+    };
+    const forward = await ranked(['pf_a', 'pf_b']);
+    const backward = await ranked(['pf_b', 'pf_a']);
+    expect(forward).toEqual(['pf_b', 'pf_a']);
+    expect(backward).toEqual(forward);
+  });
+
   test('soft-deleted facts never surface', async () => {
     Bun.env['LUNA_MEMORY_EMBEDDING'] = '0';
     const added = addFact('preferences', 'loves matcha desserts');

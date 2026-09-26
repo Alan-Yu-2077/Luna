@@ -1,7 +1,7 @@
 {
   "dreams": [
     {
-      "cycle_id": "dream-49-mubs622o",
+      "cycle_id": "dream-50-mubs622o",
       "started_ms": 1790027520000,
       "ended_ms": 1790027753208,
       "aborted": false,
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "cycle_id": "dream-48-muabwmlc",
+      "cycle_id": "dream-49-muabwmlc",
       "started_ms": 1789939740000,
       "ended_ms": 1789939871610,
       "aborted": false,
@@ -113,14 +113,14 @@
       ]
     },
     {
-      "cycle_id": "dream-48-mu8x02dc",
+      "cycle_id": "dream-49-mu8x02dc",
       "started_ms": 1789854240000,
       "ended_ms": 1789854300000,
       "aborted": true,
       "steps": []
     },
     {
-      "cycle_id": "dream-47-mu619hxc",
+      "cycle_id": "dream-48-mu619hxc",
       "started_ms": 1789680000000,
       "ended_ms": 1789680149607,
       "aborted": false,
@@ -176,7 +176,7 @@
       ]
     },
     {
-      "cycle_id": "dream-46-mu4lactc",
+      "cycle_id": "dream-47-mu4lactc",
       "started_ms": 1789592700000,
       "ended_ms": 1789592871947,
       "aborted": false,
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "cycle_id": "dream-45-mu37qnuo",
+      "cycle_id": "dream-46-mu37qnuo",
       "started_ms": 1789509480000,
       "ended_ms": 1789509618312,
       "aborted": false,
@@ -288,7 +288,7 @@
       ]
     },
     {
-      "cycle_id": "dream-44-mu1qz880",
+      "cycle_id": "dream-45-mu1qz880",
       "started_ms": 1789420860000,
       "ended_ms": 1789420942710,
       "aborted": false,
@@ -344,7 +344,7 @@
       ]
     },
     {
-      "cycle_id": "dream-43-mu0b58ao",
+      "cycle_id": "dream-44-mu0b58ao",
       "started_ms": 1789333800000,
       "ended_ms": 1789333873139,
       "aborted": false,
@@ -382,7 +382,7 @@
         {
           "step": "run_diaries",
           "status": "ok",
-          "detail": "1 diaries written",
+          "detail": "2 diaries written",
           "ms": 13800
         },
         {
@@ -396,6 +396,62 @@
           "status": "ok",
           "detail": "misses_before=4 filled=4 after=0",
           "ms": 2700
+        }
+      ]
+    },
+    {
+      "cycle_id": "dream-43-mtywk8qo",
+      "started_ms": 1789248840000,
+      "ended_ms": 1789248913941,
+      "aborted": false,
+      "steps": [
+        {
+          "step": "rate_salience",
+          "status": "ok",
+          "detail": "rated 14 turns",
+          "ms": 16400
+        },
+        {
+          "step": "refine_semantic",
+          "status": "ok",
+          "detail": "removed 0, added 1",
+          "ms": 17800
+        },
+        {
+          "step": "refine_layer1",
+          "status": "skipped",
+          "detail": "nothing to fold",
+          "ms": 29
+        },
+        {
+          "step": "memory_audit",
+          "status": "skipped",
+          "detail": "memory consistent",
+          "ms": 11900
+        },
+        {
+          "step": "persona_update",
+          "status": "skipped",
+          "detail": "persona unchanged",
+          "ms": 3600
+        },
+        {
+          "step": "run_diaries",
+          "status": "ok",
+          "detail": "1 diaries written",
+          "ms": 12700
+        },
+        {
+          "step": "distill_skills",
+          "status": "skipped",
+          "detail": "nothing to distill",
+          "ms": 5400
+        },
+        {
+          "step": "rag_refresh",
+          "status": "ok",
+          "detail": "misses_before=3 filled=3 after=0",
+          "ms": 2400
         }
       ]
     },

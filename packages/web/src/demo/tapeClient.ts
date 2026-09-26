@@ -58,6 +58,7 @@ export type TapeClient = {
 };
 
 const WAKE_FRAME: ServerEvent = { type: 'dream.status', is_dreaming: false, current_step: null, last_dream_ms: DEMO_LAST_DREAM_MS };
+const WAKE_REFUSED: ServerEvent = { type: 'error', code: 'task_in_progress', message: 'wake rejected: task_in_progress' };
 
 export function createTapeClient(deps: TapeDeps): TapeClient {
   const sched = deps.scheduler ?? realScheduler;
@@ -255,6 +256,12 @@ export function createTapeClient(deps: TapeDeps): TapeClient {
         return;
       }
       if (e.type === 'dream.wake') {
+        // v0.51.7: what ws.ts answers — a dream still running its jobs refuses the wake (dreamState's
+        // task_in_progress); only a finished cycle, holding in finished_idle, can be woken.
+        if (phase === 'dream' && dream && dream.holdAt === null) {
+          deps.onEvent(WAKE_REFUSED);
+          return;
+        }
         wake();
         return;
       }

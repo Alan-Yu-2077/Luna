@@ -277,7 +277,11 @@ export async function retrieve(
   const eligible = hits
     .map((h, i) => ({ h, cos: cosScores[i] }))
     .filter((x) => x.h.score > 0.05);
-  const byScore = [...eligible].sort((a, b) => b.h.score - a.h.score).map((x) => x.h);
+  // Equal scores are ordered, not left to the order the candidates arrived in (SQL promises none
+  // for two rows of the same millisecond): newer first, then id — the conversation query's own
+  // `t_ms DESC, id DESC` — so the same memories always rank the same way.
+  const tieBreak = (a: Hit, b: Hit): number => b.t_ms - a.t_ms || (a.id < b.id ? 1 : a.id > b.id ? -1 : 0);
+  const byScore = [...eligible].sort((a, b) => b.h.score - a.h.score || tieBreak(a.h, b.h)).map((x) => x.h);
 
   // Relevance floor: the top floorN by pure cosine (≥ floorMinCos) are guaranteed ahead of the
   // recency-blended fill, so a decisively-relevant old memory isn't dropped below k. All-null cosine
@@ -288,7 +292,7 @@ export async function retrieve(
     floorN > 0
       ? eligible
           .filter((x): x is { h: Hit; cos: number } => typeof x.cos === 'number' && x.cos >= floorMinCos)
-          .sort((a, b) => b.cos - a.cos)
+          .sort((a, b) => b.cos - a.cos || tieBreak(a.h, b.h))
           .slice(0, floorN)
           .map((x) => x.h)
       : [];

@@ -201,7 +201,8 @@ describe('voice durations', () => {
 });
 
 describe('choreography and pauses', () => {
-  test('action/pulse become sink cues at the current time; a pause only moves the clock', () => {
+  // v0.51.7: an action waits for her voice to end, then gives her next frame a moment.
+  test('action/pulse become sink cues — the action after any speech, the pulse at the current time; a pause only moves the clock', () => {
     const compiled = compileScene(
       scene([
         { kind: 'user', text: 'u' },
@@ -214,7 +215,7 @@ describe('choreography and pauses', () => {
     const cues = compiled.turns[0]!.run.cues;
     expect(cues).toEqual([
       { at: 400, kind: 'sink', call: { kind: 'action', name: 'browKnit', intensity: 0.7 } },
-      { at: 400, kind: 'sink', call: { kind: 'pulse', pose: { browLY: 0.06 }, ms: 500 } },
+      { at: 400 + PACING.gestureMs, kind: 'sink', call: { kind: 'pulse', pose: { browLY: 0.06 }, ms: 500 } },
     ]);
     expect(compiled.turns[0]!.run.turns).toEqual([]);
   });
