@@ -1,7 +1,8 @@
 # Third-Party Licenses
 
-Luna-ts is MIT-licensed (see `LICENSE`). It redistributes the following third-party
-components, which are licensed separately and are **not** covered by that MIT grant.
+Luna-ts is MIT-licensed (see `LICENSE`). The files below are **not** covered by that MIT
+grant: third-party components redistributed under their own licenses, and the replay's
+avatar and voice assets, which this project grants no license for at all.
 
 --------------------------------------------------------------------------------
 
@@ -17,7 +18,26 @@ components, which are licensed separately and are **not** covered by that MIT gr
 - **Downstream obligation:** Live2D imposes revenue-based licensing terms on some
   commercial users. If you ship a product with it, review the EULA above.
 - Any Live2D avatar model you add (e.g. under `packages/web/public/models/`) is your
-  own asset under its own license — this project ships no model.
+  own asset under its own license. The app loads no model by default: it shows an empty
+  state until you point it at one (`LUNA_MODEL_URL` or the desktop model picker;
+  `localStorage['luna:model-url']` in a browser).
+
+--------------------------------------------------------------------------------
+
+## Replay assets — `packages/web/public/models/yumi/`, `packages/web/demo/{en,zh}/voice/*.mp3`, `docs/assets/moment-*`
+
+- **NOT covered by this project's MIT license, and not the author's assets.** No
+  permission to use, copy or redistribute them is granted here.
+- `packages/web/public/models/yumi/` — the Live2D avatar model the GitHub Pages replay
+  renders (the Pages workflow's `build:demo` copies it into the site). A build of the app
+  from this repository carries these files too, but the app does not load them unless
+  pointed there (`LUNA_MODEL_URL`, the model picker, or `luna:model-url`).
+- `packages/web/demo/{en,zh}/voice/*.mp3` — Luna's replay lines, pre-rendered with a
+  GPT-SoVITS voice, including earlier takes kept in this repository's history. Only these
+  recordings are here: the voice model that produced them, and its reference audio, are
+  not in this repository.
+- `docs/assets/moment-*.png`, `docs/assets/moment-reunion-*.webp` — screenshots of the app
+  wearing this model; the model as shown in them is likewise not covered.
 
 --------------------------------------------------------------------------------
 

@@ -1,7 +1,8 @@
 # Setup — bring your own model & voice
 
-Luna ships with **no avatar model and no voice weights** — you supply your own. A fresh clone runs
-text-only and silent; this guide covers adding an avatar and (optionally) a
+Luna comes with **no avatar and no voice of her own** — you supply both. (The repository does hold
+the replay's model, `packages/web/public/models/yumi/`, but it is not MIT-licensed and not yours to
+reuse; see [`LICENSE`](../LICENSE).) A fresh clone runs text-only and silent; this guide covers adding an avatar and (optionally) a
 higher-quality voice.
 
 ## The guided way (desktop app) — recommended
@@ -40,9 +41,8 @@ cp .env.example .env    # set ANTHROPIC_API_KEY (or an OpenAI-compatible gateway
 bun run dev             # server + web at http://localhost:5173
 ```
 
-That's a complete, talking Luna: chat works, and she speaks with the browser's built-in voice (Web
-Speech API — no download, no backend). The avatar area shows a friendly "No avatar installed" card
-until you add a model.
+That's a complete Luna in text: chat works, and she stays silent until a GPT-SoVITS voice is
+configured (§2). The avatar area shows a friendly "No avatar installed" card until you add a model.
 
 ## 1. Install a Live2D model
 

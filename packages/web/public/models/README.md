@@ -1,9 +1,12 @@
 # Live2D models
 
-This directory is where Luna looks for the avatar model. **The app ships no model of its own** — you
+This directory is where Luna looks for the avatar model. **The app wears no model of its own** — you
 bring your own. The one tracked subfolder, `yumi/`, is the showcase avatar: the GitHub Pages replay
-(`demo.html`, `bun run build:demo`) is built from this tree in CI and needs it there. The desktop app
-does not pick it up unless you point `LUNA_MODEL_URL` at it.
+(`demo.html`, `bun run build:demo`) is built from this tree in CI and needs it there. The app does
+not pick it up unless you point it there (`LUNA_MODEL_URL`, the model picker, or
+`localStorage['luna:model-url']`). **`yumi/` is not the author's asset and is not covered by the MIT
+license** — see [`LICENSE`](../../../../LICENSE) and
+[`THIRD_PARTY_LICENSES`](../../../../THIRD_PARTY_LICENSES); do not reuse or redistribute it.
 
 ## Drop-in contract
 
@@ -22,7 +25,7 @@ The web front end serves everything under `public/models/` at `/models/…`, so 
 
 ## Notes
 
-- This `README.md` is a tracked keeper so the (otherwise empty) `models/` directory survives a fresh
-  clone — the build copies `public/models/` into `dist/models/`, and git does not preserve empty dirs.
+- This `README.md` is a tracked keeper so the `models/` directory survives even in a checkout without
+  `yumi/` — the build copies `public/models/` into `dist/models/`, and git does not preserve empty dirs.
 - Where to find free/redistributable models, how to wire one up, and the per-model expression-preset
   caveat are covered in the setup guide.

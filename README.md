@@ -230,9 +230,11 @@ the two things she owns up to in the replay's curtain call:
   computer — my database, my config, my Mac. There's no guarantee her brothers and sisters will run on
   yours, and I can't support them if they don't.
 - **The voice and the avatar aren't mine to give.** The GPT-SoVITS voice and the Live2D model she
-  wears are not my assets and can't be redistributed. The model files here exist only so the replay
-  can show her; they aren't covered by the MIT license, and the app itself ships neither — you would
-  bring your own.
+  wears are not my assets and can't be redistributed. What the repository holds of them is here only
+  so she can be shown: the Live2D model's files for the replay, her replay lines as pre-rendered mp3s,
+  and the screenshots she appears in. The voice model itself is not here. None of it is covered by
+  the MIT license, and I can't give you permission to use, copy or redistribute it. The app uses
+  neither by default: it has no voice of its own, and no avatar until you point it at a Live2D model.
 
 Maybe one day there will be a version made for anyone to run. Until then, the replay is the way to
 meet her.
@@ -256,10 +258,11 @@ your local config.
 
 ## 📄 License
 
-[MIT](LICENSE), with one carve-out: the vendored **Live2D Cubism Core** runtime
+[MIT](LICENSE), with two carve-outs. The vendored **Live2D Cubism Core** runtime
 (`packages/web/public/live2dcubismcore.min.js`) is proprietary to Live2D Inc. and governed by its own
-license. See [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES). The voice and the Live2D avatar are not
-covered either — see [above](#-open-source-not-a-product).
+license — see [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES). And the replay's Live2D model, its
+pre-rendered voice lines and the screenshots she appears in are not covered at all — see
+[above](#-open-source-not-a-product) and [`LICENSE`](LICENSE).
 
 ## ❤️ Acknowledgements
 

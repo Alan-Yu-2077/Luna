@@ -26,7 +26,8 @@ bun run --cwd packages/desktop  tsc --noEmit
 bun run --cwd packages/music-cli tsc --noEmit
 ```
 
-No avatar model or voice weights ship with the repo — see [`docs/SETUP.md`](docs/SETUP.md) to add your own.
+No voice weights ship with the repo, and the only tracked avatar (`packages/web/public/models/yumi/`)
+belongs to the replay and is not MIT-licensed — see [`docs/SETUP.md`](docs/SETUP.md) to add your own.
 
 ## The rules that matter
 

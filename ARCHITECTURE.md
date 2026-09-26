@@ -224,8 +224,10 @@ A framework-free TypeScript app.
 - **`ui/`** — the chat surface, speech bubbles, the collapsible companion layout, and the settings
   workspace.
 
-No avatar model or voice weights ship in this repo. The front end renders a friendly empty state until a
-Live2D model is installed; voice is bring-your-own. See [`.env.example`](.env.example) for the
+No voice weights ship in this repo, and the app wears no avatar by default: the front end renders a
+friendly empty state until a Live2D model is installed, and voice is bring-your-own. The one tracked
+model, `packages/web/public/models/yumi/`, is the replay's; it is not MIT-licensed (see
+[`LICENSE`](LICENSE)) and the app does not load it unless pointed at it. See [`.env.example`](.env.example) for the
 configuration surface.
 
 **The interface language (v0.48.x).** Every string the front end writes itself lives in one
