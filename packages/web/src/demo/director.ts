@@ -777,8 +777,8 @@ export const GUIDE_COPY: Record<
       'Nothing here is invented. Every bubble, tool card, unprompted message, quiet note and dream is a ' +
       'shipped product capability, driven by the same code the app runs — with her own voice, pre-rendered.',
     how:
-      'Lines are typed for you — press ➤ (or Enter). When a scene ends, press Next scene (or pick a scene ' +
-      'from the pill at the top). Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her ' +
+      'Lines are typed for you — press ➤ (or Enter). When a scene ends, press Next scene; scenes open in ' +
+      'order, and any you have watched can be replayed from the pill at the top. Scroll to zoom, drag to move her, double-click to reset. ← Menu opens her ' +
       'Diary, Skills and Dream. After each scene, a button pops up beside the scene name and opens the engineering notes: ' +
       'why she did that, and the code behind it.',
     enter: 'Enter',
@@ -789,7 +789,7 @@ export const GUIDE_COPY: Record<
     sub: '真实场景 · 真实前端 · 她自己的声音',
     p1: '接下来你看到的是一段回放：照着真实使用场景复现的日常片段，用 Luna 真正的前端和渲染引擎播出来。这个页面背后没有在运行的 AI。',
     p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
-    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」，也可以点顶上的幕名直接选。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，顶上幕名旁边会冒出一个按钮，点它就能翻开工程笔记：她为什么这么做，背后是哪段代码。',
+    how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」；幕是按顺序解锁的，看过的可以点顶上的幕名回去重看。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，顶上幕名旁边会冒出一个按钮，点它就能翻开工程笔记：她为什么这么做，背后是哪段代码。',
     enter: '进入',
     loading: '正在把她接过来… {pct}%',
   },
