@@ -20,6 +20,32 @@ export type DirectorRefs = {
   chatLog: HTMLElement;
 };
 
+// v0.51.9 (owner): the picker only takes a visitor to what they have earned — every scene they have
+// watched to its end, and the one after it. Nothing further ahead until the show reaches it. The mark is
+// kept for this tab (like the language choice), so a reload doesn't send them back to scene 1.
+export const FURTHEST_KEY = 'luna.demo.furthest';
+
+export function sceneOpen(index: number, furthest: number): boolean {
+  return index <= furthest + 1;
+}
+
+export function readFurthest(store: Pick<Storage, 'getItem'> | null | undefined): number {
+  try {
+    const n = Number(store?.getItem(FURTHEST_KEY) ?? '-1');
+    return Number.isInteger(n) && n >= -1 ? n : -1;
+  } catch {
+    return -1;
+  }
+}
+
+export function saveFurthest(store: Pick<Storage, 'setItem'> | null | undefined, n: number): void {
+  try {
+    store?.setItem(FURTHEST_KEY, String(n));
+  } catch {
+    /* storage unavailable (a private window): the lock just resets with the page */
+  }
+}
+
 export type Director = {
   arm(text: string): void;
   disarm(): void;
@@ -78,6 +104,9 @@ const STYLE = `
 }
 .demo-scenes button:hover { background: var(--user-bubble); }
 .demo-scenes button.current { color: var(--sky-text); font-weight: 600; }
+.demo-scenes button:disabled { color: var(--muted); cursor: default; opacity: 0.65; }
+.demo-scenes button:disabled:hover { background: none; }
+.demo-scenes button:disabled::after { content: ' 🔒'; font-size: 0.85em; }
 .demo-next {
   border: none; cursor: pointer; background: var(--sky); color: var(--sky-text);
   font: inherit; font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 999px;
@@ -294,12 +323,21 @@ export function mountDirector(
   const list = doc.createElement('ul');
   list.className = 'demo-scenes';
   list.hidden = true;
+  const store = ((): Storage | null => {
+    try {
+      return doc.defaultView?.sessionStorage ?? null;
+    } catch {
+      return null;
+    }
+  })();
+  let furthest = readFurthest(store);
   const items = opts.sceneTitles.map((title, i) => {
     const li = doc.createElement('li');
     const b = doc.createElement('button');
     b.type = 'button';
     b.textContent = `${i + 1}. ${title}`;
     b.addEventListener('click', () => {
+      if (!sceneOpen(i, furthest)) return;
       list.hidden = true;
       opts.onJump(i);
     });
@@ -307,6 +345,14 @@ export function mountDirector(
     list.appendChild(li);
     return b;
   });
+  const paintLocks = (): void => {
+    items.forEach((b, i) => {
+      const open = sceneOpen(i, furthest);
+      b.disabled = !open;
+      b.title = open ? '' : t('demo.sceneLocked');
+    });
+  };
+  paintLocks();
   label.addEventListener('click', () => {
     list.hidden = !list.hidden;
   });
@@ -603,6 +649,11 @@ export function mountDirector(
     },
 
     sceneEnd(index, hasNext) {
+      if (index > furthest) {
+        furthest = index;
+        saveFurthest(store, furthest);
+        paintLocks();
+      }
       next.textContent = t(hasNext ? 'demo.next' : 'demo.replay');
       nextHandler = hasNext ? opts.onNext : () => doc.location.reload();
       next.hidden = false;

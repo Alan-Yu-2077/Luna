@@ -235,6 +235,7 @@ const UI_COPY = {
   // ── the showcase replay's director (demo-only DOM; the app never shows these) ──
   'demo.scene': { en: 'Scene {n}/{total} · {title}', zh: '第 {n}/{total} 幕 · {title}' },
   'demo.next': { en: 'Next scene →', zh: '下一幕 →' },
+  'demo.sceneLocked': { en: 'Watch the scenes before it first', zh: '先看完前面的幕' },
   'demo.replay': { en: 'Replay ↻', zh: '重看 ↻' },
   'demo.map': { en: 'Engineering map →', zh: '工程图谱 →' },
   'demo.switchLang': { en: '中文', zh: 'English' },

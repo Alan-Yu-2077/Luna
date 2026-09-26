@@ -69,13 +69,104 @@ on one machine, and a live model for every visitor would cost more than it shows
 
 ## 🧩 What's inside
 
-| | |
-| --- | --- |
-| 🧠 **Memory that sleeps on it** | A verbatim working window, salience-scored turns and structured long-lived facts in one SQLite file. An offline **dream cycle** rates the day, rewrites the facts, writes her diary and distills reusable skills. Recall blends meaning, keywords and recency, with a relevance floor so an old memory that matters is never buried. |
-| 🌱 **Initiative with brakes** | She can start a conversation — a silence ladder, a music-moment wake, a second thought — behind deterministic rails: a surface tool (a shell command, an edit) is refused in a waking until she has said what she is about to do. |
-| 🛠 **Tools, gated** | Web search and SSRF-guarded page reading, weather, time, music (what's playing, his library, lyrics), and a code agent (grep, symbols, edits, tests, typecheck) that cannot touch secrets or the code that grades it. |
-| 🗣 **A body and a voice** | Speech is a tool call: each bubble carries an expression that drives a Live2D face, voiced by a GPT-SoVITS model, the face changing as each line begins. |
-| 🔌 **One contract** | A single Zod-typed WebSocket protocol shared by server and web — tool calls and messages stream as they happen; a wire change missing on either side is a compile error. |
+Everything below is in this repository and covered by its tests; the file-level map is
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
+
+### 🧠 Memory that sleeps on it
+
+- **Three layers, one SQLite file.** A verbatim window of recent turns, salience-scored exchanges, and
+  structured long-lived facts, all in one WAL-mode `luna.sqlite`.
+- **Recall that weighs three things.** Each candidate is scored on recency, importance and relevance
+  (the Generative-Agents formula). Relevance combines embedding similarity (via `sqlite-vec`) with a
+  keyword match that splits Chinese into character pairs, so no word segmenter is needed. A relevance
+  floor keeps the few strongest matches in, however old they are.
+- **A dream cycle.** Eight offline steps: rate the day's salience → rewrite the facts → tidy the
+  working memory → audit it all → update her soul → write her diaries → distill skills → re-embed.
+  She can go to sleep on her own, you can send her, and closing the app at night (21:00–06:00 by
+  default) sends her too.
+- **Diaries.** Day, week and month entries in her own voice. The newest ones are read back into her
+  context, and the front end has a diary book to page through.
+- **A soul file.** A fixed core that only the owner edits, and an evolving part — who she is, and what
+  the two of them are to each other — that she rewrites herself while dreaming.
+- **Skills.** `save_skill` keeps a procedure "for a version of myself I haven't met yet". Their titles
+  sit on a shelf in her prompt, `recall_skill` finds the rest by meaning, and dreams distill new ones
+  from the day. The owner can review and retire them in a panel.
+
+### 🌱 Initiative with brakes
+
+- **A silence ladder.** Engaged → one light line after a quiet while → re-nudges on exponential
+  backoff → a message left for later → dormant, recovering only after genuine silence. The gap counts
+  from whoever spoke last, so she never nudges into a conversation she has just answered.
+- **Rails before tokens.** Quiet hours, cooldowns and a daily quota are checked mechanically, before a
+  single model call is spent on an obvious "not now".
+- **Speak, work quietly, or rest.** A waking can end in any of the three, and a ledger records which.
+  When she wanders, she starts from her own interests — her soul, her diary, her skills — not from
+  whatever you two just talked about.
+- **Other reasons to wake.** A song change can be a moment worth a line (with its own cooldown and
+  quota). Right after you speak, a short one-shot timer may let her add one more thing — decided by a
+  probability, never by a flag the model raises for itself.
+- **Speak before acting.** In a proactive turn, a tool runs silently only if it explicitly declares
+  itself safe. Everything else — a shell command, an edit, touching his music player — is refused
+  until she has said what she is about to do. Undeclared means unsafe.
+- **Activeness belongs to the owner.** Aloof, balanced or clingy: a setting that scales her eagerness
+  inside the rails, and one she cannot change herself.
+
+### 🛠 Tools, gated
+
+Twenty-eight tools, mounted by capability switches at boot.
+
+- **The web.** Search through Tavily, and page reading behind an SSRF guard that validates the resolved
+  IP, re-validates every redirect, and pins the connection to the address it checked, so DNS
+  rebinding can't slip through.
+- **His surroundings.** Weather (QWeather with a key, keyless Open-Meteo otherwise), the time, and
+  what's playing on his Mac: the current track, his NetEase library (opened read-only), lyrics, and
+  play / pause / skip.
+- **A code agent.** Read, list, grep, a tree-sitter repo map, symbol lookup, edit, multi-edit, write,
+  shell, typecheck, lint, tests and a step plan. An edit is refused on a file she hasn't read this
+  session, and every TS/JS write gets an instant syntax check folded into its result.
+- **Two walls.** Secrets and credentials can't be read, written or executed. The evaluator firewall —
+  the tests, the type and lint configs, the shell deny-list, the sandbox itself, the proactive safety
+  gate, her thinking contract — can be read but never written: she cannot edit what grades her. Known
+  destructive shell forms are refused outright.
+- **Self-edits are proposals.** `propose_self_edit` returns a diff for a human to review; there is no
+  write path behind it at all.
+- **Declared concurrency.** Every tool states whether it may run in parallel, one at a time per
+  session, or one at a time globally, and the dispatcher enforces it.
+
+### 🧭 An honest turn
+
+- **A turn is a graph.** Parse input → build request → open stream → dispatch tools → append results
+  → finalize, as a declarative state graph. Tool calls stream to the page as they happen, never
+  buffered.
+- **Speech is a tool call.** Every bubble goes through the `message` tool, whose schema enforces the
+  humanity caps — at most 280 characters and five sentences a reply — so she stays a spoken presence,
+  not an essay.
+- **A thinking contract, and guards behind it.** A fixed block in her prompt shapes how she reasons so
+  promises turn into acts. If she says she'll do something and no tool fires, the turn gets one
+  bounded retry, and an audit counts the misses.
+- **Cache-stable prompts.** Identity, soul, contract and rules form one byte-stable cached block. Time,
+  weather, music, lyrics and recalled memories ride in the uncached tail, so the cache survives every
+  turn.
+- **One thing at a time.** A reply, a proactive waking and a dream are mutually exclusive per session.
+
+### 🎭 A body and a voice
+
+- **Fifteen expressions.** Each bubble carries one; it drives the Live2D face as the line begins, and
+  the mood pill beside her (Curious, Playful, Calm…).
+- **Her own voice.** Lines are spoken by a GPT-SoVITS model, and the audio drives four mouth parameters
+  for lip-sync. No voice model means she stays silent — by design, there is no stand-in voice.
+- **A desktop pet.** The Electron shell can float her over the desktop: transparent, frameless, always
+  on top, with clicks passing through everywhere except her.
+
+### 🔌 Built to be read
+
+- **One contract.** A single Zod-typed WebSocket protocol shared by server and web; an event missing on
+  either side is a compile error.
+- **Traces.** Every turn writes a structured trace to SQLite — each graph transition, each tool event,
+  every event sent to the page — with a local viewer to read it.
+- **Tests on two systems.** Over two thousand tests, run in CI on Ubuntu and Windows on every push.
+- **A replay that's checked.** Every engineering note in the replay is pinned to a commit, and a test
+  checks each snippet against the repository.
 
 ## 🏗 How it fits together
 
@@ -130,11 +221,21 @@ log, not this page, is the honest account of how she was built.
 | [`.env.example`](.env.example) | Every configuration knob, documented |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Conventions, tests, workflow |
 
-## 🧪 Running it
+## 🧪 Open source, not a product
 
-This repository is **the engineering, published for reading** — not a product. It was developed
-around a single instance on one machine, so there is no promise it runs on yours, and the voice and the
-avatar are not part of what is offered for reuse. If you want to try anyway:
+The code is open source under MIT — read it, borrow from it, learn from it. What it can't promise are
+the two things she owns up to in the replay's curtain call:
+
+- **It may not run on your machine.** Luna was built by one person, around the one instance on my
+  computer — my database, my config, my Mac. There's no guarantee her brothers and sisters will run on
+  yours, and I can't support them if they don't.
+- **The voice and the avatar aren't mine to give.** The GPT-SoVITS voice and the Live2D model she
+  wears are not my assets and can't be redistributed. The model files here exist only so the replay
+  can show her; they aren't covered by the MIT license, and the app itself ships neither — you would
+  bring your own.
+
+Maybe one day there will be a version made for anyone to run. Until then, the replay is the way to
+meet her.
 
 <details>
 <summary>Build from source (unsupported)</summary>
@@ -157,7 +258,8 @@ your local config.
 
 [MIT](LICENSE), with one carve-out: the vendored **Live2D Cubism Core** runtime
 (`packages/web/public/live2dcubismcore.min.js`) is proprietary to Live2D Inc. and governed by its own
-license. See [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES).
+license. See [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES). The voice and the Live2D avatar are not
+covered either — see [above](#-open-source-not-a-product).
 
 ## ❤️ Acknowledgements
 
