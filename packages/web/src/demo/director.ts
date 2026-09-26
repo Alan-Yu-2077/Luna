@@ -222,6 +222,7 @@ body:has(.menu-mode) .demo-play, body:has(.menu-mode) .demo-desk { display: none
 .demo-guide h2 { margin: 0 0 4px; font-size: 22px; }
 .demo-guide .demo-guide-sub { margin: 0 0 16px; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
 .demo-guide p { display: block; margin: 0 0 10px; font-size: 14px; line-height: 1.6; }
+.demo-guide .demo-guide-length { margin: 0 0 14px; padding: 8px 12px; border-radius: 10px; background: var(--user-bubble); font-size: 13px; }
 .demo-guide .demo-guide-how { margin: 14px 0 0; padding: 12px 14px; background: var(--user-bubble); border-radius: 12px; font-size: 13px; line-height: 1.6; }
 .demo-guide .demo-guide-enter {
   display: block; margin: 18px auto 0; border: none; cursor: pointer; background: var(--sky); color: var(--sky-text);
@@ -763,13 +764,18 @@ export const PICKER_COPY = {
   en: { label: 'English', sub: 'I speak English', badge: 'Recommended' },
 } as const;
 
+// The whole replay, watched through — the tapes' own timeline plus a visitor's clicks. A test in
+// director.test.ts recomputes it from both tapes, so the card cannot drift from the script.
+export const REPLAY_MINUTES = 20;
+
 export const GUIDE_COPY: Record<
   UiLang,
-  { title: string; sub: string; p1: string; p2: string; how: string; enter: string; loading: string }
+  { title: string; sub: string; length: string; p1: string; p2: string; how: string; enter: string; loading: string }
 > = {
   en: {
     title: 'Luna · a replay',
     sub: 'real scenes · real front end · her real voice',
+    length: `⏱ About ${REPLAY_MINUTES} minutes from start to finish. Reading every engineering note adds an hour or more.`,
     p1:
       'What you are about to watch is a replay: daily-use scenes reproduced from real ones, played back ' +
       'through Luna’s real front end and rendering engine. There is no AI running behind this page.',
@@ -787,6 +793,7 @@ export const GUIDE_COPY: Record<
   zh: {
     title: 'Luna · 回放',
     sub: '真实场景 · 真实前端 · 她自己的声音',
+    length: `⏱ 完整看一遍大约 ${REPLAY_MINUTES} 分钟。要是把工程笔记都读完，还得再加一个小时以上。`,
     p1: '接下来你看到的是一段回放：照着真实使用场景复现的日常片段，用 Luna 真正的前端和渲染引擎播出来。这个页面背后没有在运行的 AI。',
     p2: '这里没有一样是编的。每个气泡、每张工具卡、她主动开口、悄悄做的小事，还有梦，都是产品真实具备的能力，由 app 里同一份代码驱动；声音是她自己的，提前渲染好的。',
     how: '台词会替你打好，按 ➤（或回车）发送。一幕演完点「下一幕」；幕是按顺序解锁的，看过的可以点顶上的幕名回去重看。滚轮缩放，拖动挪位置，双击复位。「← 菜单」里有她的日记、技能和梦。每一幕演完，顶上幕名旁边会冒出一个按钮，点它就能翻开工程笔记：她为什么这么做，背后是哪段代码。',
@@ -852,7 +859,7 @@ export function mountGuide(doc: Document, opts: { lang: UiLang | null; onEnter?:
       setTimeout(() => guide.remove(), 600);
       opts.onEnter?.();
     });
-    card.append(h, p(c.sub, 'demo-guide-sub'), p(c.p1), p(c.p2), how, enter);
+    card.append(h, p(c.sub, 'demo-guide-sub'), p(c.length, 'demo-guide-length'), p(c.p1), p(c.p2), how, enter);
   };
 
   let resolve: (lang: UiLang) => void = () => {};
